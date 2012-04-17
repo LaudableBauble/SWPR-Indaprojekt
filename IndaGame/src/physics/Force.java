@@ -3,7 +3,7 @@ package physics;
 import auxillary.Vector2;
 
 /**
- * A force instance is interpreted by the physics engine and is the only way unconnected bodies can communicate in the game.
+ * A force instance is interpreted by the physics engine and is the only way unconnected bodies can communicate with each other in the game, ie. through collisions.
  */
 public class Force
 {

@@ -2,6 +2,9 @@ package physics;
 
 import auxillary.Vector2;
 
+/**
+ * A body extends a shape to also include movement by altering its velocity, something the physics simulator does with its use of forces.
+ */
 public class Body
 {
 	// The PhysicsSimulator this body is part of.

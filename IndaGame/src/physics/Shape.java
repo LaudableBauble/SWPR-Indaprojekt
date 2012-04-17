@@ -11,7 +11,7 @@ import auxillary.Vector2;
  */
 public class Shape
 {
-	// The width, height and position. Note that position is always in the center of the shape.
+	// The width, height and position. Note that position is always where the origin of the shape is.
 	private float _Width;
 	private float _Height;
 	private Vector2 _Position;
@@ -183,7 +183,7 @@ public class Shape
 	 */
 	public Vector2[] getAxes()
 	{
-		// Note that because of parallel edges in a rectangle only two edges have to returned.
+		// Note that because of parallel edges in a rectangle only two edges have to be returned.
 		return new Vector2[] { Vector2.subtract(getTopRight(), getTopLeft()).perpendicular().normalize(),
 				Vector2.subtract(getBottomRight(), getTopRight()).perpendicular().normalize() };
 	}
