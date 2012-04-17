@@ -7,6 +7,9 @@ import auxillary.Vector2;
  */
 public class Force
 {
+	//This is just a conflict test.
+	private float a;
+	
 	// The target body, force direction and strength.
 	private Body _Body;
 	private Vector2 _Force;
