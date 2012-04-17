@@ -7,7 +7,10 @@ import auxillary.Vector2;
  */
 public class Force
 {
-	// The target body, force direction and strength.
+	//This is just a conflict test from the local copy.
+	private float b;
+	
+	// The target body, force direction and magnitude.
 	private Body _Body;
 	private Vector2 _Force;
 

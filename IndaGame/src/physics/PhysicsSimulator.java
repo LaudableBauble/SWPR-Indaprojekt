@@ -261,8 +261,7 @@ public class PhysicsSimulator
 					// Check for minimum.
 					if (o < overlap)
 					{
-						// Store the minimum overlap and the axis it was
-						// projected upon.
+						// Store the minimum overlap and the axis it was projected upon.
 						overlap = o;
 						smallest = (Vector2.subtract(b1.getShape().getCenter(), b2.getShape().getCenter()).dot(a) < 0) ? Vector2.multiply(a, -1) : a;
 					}
@@ -314,8 +313,7 @@ public class PhysicsSimulator
 	 */
 	private void clearIntersection(Body b1, Body b2, Vector2 mtv)
 	{
-		// Add the MTV to the first body and subtract it from the second. Only
-		// move dynamic bodies.
+		// Add the MTV to the first body and subtract it from the second. Only move dynamic bodies!
 		if (!b1.getIsStatic())
 		{
 			b1.getShape().setPosition(Vector2.add(b1.getShape().getPosition(), mtv));
