@@ -267,10 +267,22 @@ public class Body
 
 	/**
 	 * Get the body's staticness.
+	 * 
 	 * @return Whether the body is static or not.
 	 */
 	public boolean getIsStatic()
 	{
 		return _IsStatic;
+	}
+
+	/**
+	 * Set the maximum velocity of this body.
+	 * 
+	 * @param The
+	 *            max velocity.
+	 */
+	public void setMaxVelocity(double max)
+	{
+		_MaxVelocity = max;
 	}
 }

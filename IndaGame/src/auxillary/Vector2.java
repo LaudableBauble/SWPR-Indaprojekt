@@ -130,7 +130,7 @@ public class Vector2
 	 */
 	public Vector2 perpendicular()
 	{
-		return new Vector2(y, -x);
+		return new Vector2(-y, x);
 	}
 
 	/**
@@ -211,6 +211,16 @@ public class Vector2
 	{
 		// Calculate the length of the Vector and return the result.
 		return getDistance(v, new Vector2(0, 0));
+	}
+
+	/**
+	 * Get this vector's length.
+	 * 
+	 * @return This vector's length.
+	 */
+	public double getLength()
+	{
+		return getDistance(this, new Vector2(0, 0));
 	}
 
 	// Get the distance between two vectors.

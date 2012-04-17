@@ -91,8 +91,8 @@ public class PhysicsSimulator
 						{
 							// Calculate the Impact force and vector for both
 							// bodies.
-							addForce(impactForce(b1, b2));
-							addForce(impactForce(b2, b1));
+							//addForce(impactForce(b1, b2));
+							//addForce(impactForce(b2, b1));
 							// Move the bodies so that they don't intersect each
 							// other anymore.
 							clearIntersection(b1, b2, mtv);
@@ -233,9 +233,15 @@ public class PhysicsSimulator
 		double overlap = Double.MAX_VALUE;
 		// The smallest axis found.
 		Vector2 smallest = null;
+		
+		//Debug string containing collision data.
+		String debug = "";
 
 		// Get the axes of both bodies.
 		Vector2[][] axes = new Vector2[][] { b1.getShape().getAxes(), b2.getShape().getAxes() };
+
+		debug += "\nBegin: Narrow Phase - Velocity: " + Vector2.max(b1.getVelocity(), b2.getVelocity()) + " -> (Body1: " + b1.getPosition() + ", Body2: "
+				+ b2.getPosition() + ")";
 
 		// Iterate over the axes of both bodies.
 		for (Vector2[] v : axes)
@@ -250,6 +256,8 @@ public class PhysicsSimulator
 				// Get the overlap.
 				double o = Vector2.getOverlap(p1, p2);
 
+				debug += "\n\tAxis: " + a + ", Overlap: " + o;
+
 				// Do the projections overlap?
 				if (o == -1)
 				{
@@ -261,13 +269,17 @@ public class PhysicsSimulator
 					// Check for minimum.
 					if (o < overlap)
 					{
-						// Store the minimum overlap and the axis it was projected upon.
+						// Store the minimum overlap and the axis it was projected upon. Make sure that the separation vector is pointing the right way.
 						overlap = o;
-						smallest = (Vector2.subtract(b1.getShape().getCenter(), b2.getShape().getCenter()).dot(a) < 0) ? Vector2.multiply(a, -1) : a;
+						smallest = a;
+						// smallest = (Vector2.subtract(b2.getShape().getCenter(), b1.getShape().getCenter()).dot(a) < 0) ? Vector2.multiply(a, -1) : a;
 					}
 				}
 			}
 		}
+
+		System.out.println(debug + "\n\tCollision - Axis: " + smallest + ", Dot: " + Vector2.subtract(b1.getShape().getCenter(), b2.getShape().getCenter()).dot(smallest)
+				+ ", Velocity: " + Vector2.max(b1.getVelocity(), b2.getVelocity()) + " -> (Body1: " + b1.getPosition() + ", Body2: " + b2.getPosition() + ")");
 
 		// We now know that every axis had an overlap on it, which means we can
 		// guarantee an intersection between the bodies.
@@ -322,18 +334,16 @@ public class PhysicsSimulator
 		{
 			b2.getShape().setPosition(Vector2.subtract(b2.getShape().getPosition(), mtv));
 		}
-
-		System.out.println(this + ": Clear Intersection. (MTV: " + mtv + ", Body1: " + b1.getPosition() + ", Body2: " + b2.getPosition() + ")");
 	}
 
 	/**
-	 * Calculate the impact force.
+	 * Calculate the impact force vector.
 	 * 
 	 * @param b1
 	 *            The first body.
 	 * @param b2
 	 *            The second body.
-	 * @return The impact force.
+	 * @return The impact force vector.
 	 */
 	private Force impactForce(Body b1, Body b2)
 	{
@@ -348,14 +358,12 @@ public class PhysicsSimulator
 		Vector2 collision = Helper.toCentroid(intersection);
 
 		// The mass ratio between the objects.
-		double massRatio = (b2.getMass() / b1.getMass());
+		double massRatio = b2.getMass() / b1.getMass();
 
-		// The average kinetic energy. Multiply with something to lower the
-		// collision force and also with the mass ratio.
+		// The average kinetic energy. Multiply with something to lower the collision force and also with the mass ratio.
 		Vector2 averageEnergy = Vector2.multiply(Vector2.multiply(Vector2.divide(energyBT, 2), energyDecrease), massRatio);
 
-		// Multiply the Average Kinetic Energy with the collision vector
-		// direction relative to the body's position.
+		// Multiply the Average kinetic Energy with the collision vector direction relative to the body's position.
 		Vector2 impact = Vector2.multiply(averageEnergy, Vector2.getDirection(Vector2.getAngle(collision, b1.getPosition())));
 
 		// Return the average vector.

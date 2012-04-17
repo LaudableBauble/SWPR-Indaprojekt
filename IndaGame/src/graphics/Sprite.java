@@ -26,6 +26,8 @@ public class Sprite
 	private double _TimePerFrame;
 	// The elapsed time until the beginning of the current frame. 0 = the start time each frame update, 1 = the difference since the start time.
 	private double[] _CurrentElapsedTime;
+	// Whether the sprite is allowed to animate.
+	private boolean _AnimationEnabled;
 
 	/**
 	 * Constructor for a sprite.
@@ -68,6 +70,9 @@ public class Sprite
 	 */
 	public void update()
 	{
+		// Stop here if animation is not enabled.
+		if (!_AnimationEnabled) { return; }
+
 		// Add the elapsed time since last update.
 		_CurrentElapsedTime[1] = (System.currentTimeMillis() - _CurrentElapsedTime[0]);
 
@@ -103,7 +108,6 @@ public class Sprite
 	 */
 	public void draw(Graphics2D graphics, String path, Vector2 v)
 	{
-		// Draw the sprite at the correct vector.
 		graphics.drawImage(getSprite(path, _SpriteIndex), (int) v.x, (int) v.y, null);
 	}
 
@@ -119,7 +123,6 @@ public class Sprite
 	 */
 	public void draw(Graphics2D graphics, int pathIndex, Vector2 v)
 	{
-		// Draw the sprite at the correct vector.
 		graphics.drawImage(getSprite(pathIndex, _SpriteIndex), (int) v.x, (int) v.y, null);
 	}
 
@@ -369,5 +372,17 @@ public class Sprite
 	{
 		_SpriteIndex = value;
 		_FrameIndex = 0;
+	}
+
+	/**
+	 * Set whether the sprite is allowed to animate. If true, this will reset the sprite's frame index.
+	 * 
+	 * @param value
+	 *            Whether the sprite is allowed to animate.
+	 */
+	public void setAnimationEnabled(boolean value)
+	{
+		_AnimationEnabled = value;
+		_FrameIndex = (_AnimationEnabled) ? _FrameIndex : 0;
 	}
 }
