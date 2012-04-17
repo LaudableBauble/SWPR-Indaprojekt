@@ -6,10 +6,7 @@ import auxillary.Vector2;
  * A force instance is interpreted by the physics engine and is the only way unconnected bodies can communicate with each other in the game, ie. through collisions.
  */
 public class Force
-{
-	//This is just a conflict test from the local copy.
-	private float b;
-	
+{	
 	// The target body, force direction and magnitude.
 	private Body _Body;
 	private Vector2 _Force;
