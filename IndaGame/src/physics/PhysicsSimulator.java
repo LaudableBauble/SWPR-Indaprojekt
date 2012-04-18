@@ -2,8 +2,6 @@ package physics;
 
 import input.InputManager;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
@@ -114,38 +112,6 @@ public class PhysicsSimulator
 		catch (Exception e)
 		{
 			System.out.println(this + ": Update Physics Error. (" + e + ")");
-		}
-	}
-
-	/**
-	 * Draw something here. Currently not in use.
-	 * 
-	 * @param g
-	 *            The graphics component.
-	 */
-	public void draw(Graphics2D g)
-	{
-		// Check if the array isn't empty.
-		try
-		{
-			// The color switching.
-			Color old = g.getColor();
-			g.setColor(Color.red);
-
-			// If debugging, draw each body's shape.
-			for (Body b : _Bodies)
-			{
-				g.drawRect((int) (b.getPosition().x - b.getShape().getWidth() / 2), (int) (b.getPosition().y - b.getShape().getHeight() / 2), (int) b.getShape().getWidth(),
-						(int) b.getShape().getHeight());
-			}
-
-			// Revert to old color.
-			g.setColor(old);
-		}
-		// Catch the exception.
-		catch (Exception e)
-		{
-			System.out.println(this + ": Draw Error. (" + e + ")");
 		}
 	}
 
@@ -621,5 +587,36 @@ public class PhysicsSimulator
 		{
 			System.out.println(this + ": Adding Friction Force to Body Error. (" + e + ")");
 		}
+	}
+
+	/**
+	 * Get the list of bodies.
+	 * 
+	 * @return The list of bodies.
+	 */
+	public ArrayList<Body> getBodies()
+	{
+		return new ArrayList<Body>(_Bodies);
+	}
+
+	/**
+	 * Get the gravity.
+	 * 
+	 * @return The gravity.
+	 */
+	public double getGravity()
+	{
+		return _Gravity;
+	}
+
+	/**
+	 * Set the gravity.
+	 * 
+	 * @param gravity
+	 *            The new gravity.
+	 */
+	public void setGravity(double gravity)
+	{
+		_Gravity = gravity;
 	}
 }

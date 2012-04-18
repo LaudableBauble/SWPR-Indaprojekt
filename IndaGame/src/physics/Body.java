@@ -224,6 +224,17 @@ public class Body
 	}
 
 	/**
+	 * Set the mass of the body.
+	 * 
+	 * @param mass
+	 *            The new mass.
+	 */
+	public void setMass(double mass)
+	{
+		_Mass = mass;
+	}
+
+	/**
 	 * Get the body's friction coefficient.
 	 * 
 	 * @return The friction coefficient of the body.
@@ -234,6 +245,17 @@ public class Body
 	}
 
 	/**
+	 * Set the body's friction coefficient.
+	 * 
+	 * @param friction
+	 *            The new friction coefficient of the body.
+	 */
+	public void setFrictionCoefficient(double friction)
+	{
+		_FrictionCoefficient = friction;
+	}
+
+	/**
 	 * Get the body's acceleration value.
 	 * 
 	 * @return The acceleration value of the body.
@@ -241,6 +263,17 @@ public class Body
 	public double getAccelerationValue()
 	{
 		return _AccelerationValue;
+	}
+
+	/**
+	 * Set the body's acceleration value.
+	 * 
+	 * @param The
+	 *            new acceleration value of the body.
+	 */
+	public void setAccelerationValue(double acceleration)
+	{
+		_AccelerationValue = acceleration;
 	}
 
 	/**

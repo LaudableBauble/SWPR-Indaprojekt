@@ -9,6 +9,7 @@ import java.awt.Canvas;
 
 import screens.BackgroundScreen;
 import screens.MainMenuScreen;
+import debug.DebugManager;
 
 public class Game extends Canvas
 {
@@ -26,17 +27,8 @@ public class Game extends Canvas
 
 	private boolean exit;
 
-	// The PhysicsSimulator.
-	// public PhysicsSimulator physics;
-
-	// The DebugManager.
-	// public DebugManager debug;
-
 	// The background.
 	// public Sprite background;
-
-	// Object creation.
-	// public Player player;
 
 	/**
 	 * The static main method of the game. This is where the game starts.
@@ -61,13 +53,9 @@ public class Game extends Canvas
 		timer = new GameTimer();
 		_ScreenManager = new ScreenManager(this);
 		exit = false;
-		// debug = new DebugManager();
 
 		// The background.
 		// background = new Sprite();
-
-		// Enable debug.
-		// debug.debug = true;
 
 		// Initialize.
 		initialize();
@@ -91,10 +79,10 @@ public class Game extends Canvas
 	public void handleInput()
 	{
 		// Send the Key and Mouse Events to the Debug Manager.
-		// debug.handleInput(window.inputManager, physics);
+		DebugManager.getInstance().handleInput(window.inputManager);
 
 		// Calculate the used time by the handle input function.
-		// debug.setPhaseTime(0);
+		DebugManager.getInstance().setPhaseTime(0);
 	}
 
 	public void draw()
@@ -109,13 +97,13 @@ public class Game extends Canvas
 		// background.draw(window.getGraphics(), new Vector(0,0), this);
 
 		// Debug Draw.
-		// debug.draw(window.getGraphics(), physics);
+		DebugManager.getInstance().draw(window.getGraphics());
 
 		// End drawing.
 		window.drawEnd();
 
 		// Calculate the used time by the drawing function.
-		// debug.setPhaseTime(3);
+		DebugManager.getInstance().setPhaseTime(3);
 	}
 
 	public void updateLoop()
@@ -130,16 +118,16 @@ public class Game extends Canvas
 			timer.update();
 
 			// Calculate the startup time.
-			// debug.setPhaseStartTime();
+			DebugManager.getInstance().setPhaseStartTime();
 
 			// Handle the mouse and keyboard input.
 			handleInput();
 
 			// Calculate the used time by the physics update function.
-			// debug.setPhaseTime(1);
+			DebugManager.getInstance().setPhaseTime(1);
 
 			// Calculate the used time by the body update function.
-			// debug.setPhaseTime(2);
+			DebugManager.getInstance().setPhaseTime(2);
 
 			// Draw all Objects.
 			draw();
@@ -150,10 +138,7 @@ public class Game extends Canvas
 			window.update();
 
 			// Calculate the used time at end of the game loop. FIX THE FPS COUNTER!!!
-			// debug.setPhaseEndTime();
-
-			// Update the Debug Manager.
-			// debug.update();
+			DebugManager.getInstance().setPhaseEndTime();
 
 			// Sleep some time.
 			try
@@ -201,7 +186,7 @@ public class Game extends Canvas
 	{
 		return window;
 	}
-	
+
 	/**
 	 * Get the game's timer.
 	 * 

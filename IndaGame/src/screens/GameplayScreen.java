@@ -16,6 +16,7 @@ import main.Player;
 import physics.PhysicsSimulator;
 import auxillary.Helper;
 import auxillary.Vector2;
+import debug.DebugManager;
 
 /**
  * This screen implements the actual game logic by reusing components from before.
@@ -45,8 +46,12 @@ public class GameplayScreen extends GameScreen
 		_TransitionOnTime = TimeSpan.FromSeconds(1.5);
 		_TransitionOffTime = TimeSpan.FromSeconds(0.5);
 
-		// Set up the physics simulator.
+		// Set up the physics simulator and let the debug manager know about it.
 		_Physics = new PhysicsSimulator();
+		DebugManager.getInstance().setPhysicsSimulator(_Physics);
+		
+		// Enable debug.
+		DebugManager.getInstance().debug = true;
 
 		// Create the player.
 		_Player = new Player(_Physics);
@@ -157,8 +162,5 @@ public class GameplayScreen extends GameScreen
 		{
 			entity.draw(graphics);
 		}
-
-		// Draw the physics manager.
-		_Physics.draw(graphics);
 	}
 }
