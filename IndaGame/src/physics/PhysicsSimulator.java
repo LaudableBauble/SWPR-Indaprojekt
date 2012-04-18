@@ -2,6 +2,7 @@ package physics;
 
 import input.InputManager;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.util.ArrayList;
@@ -127,7 +128,19 @@ public class PhysicsSimulator
 		// Check if the array isn't empty.
 		try
 		{
-			// Draw something here.
+			// The color switching.
+			Color old = g.getColor();
+			g.setColor(Color.red);
+
+			// If debugging, draw each body's shape.
+			for (Body b : _Bodies)
+			{
+				g.drawRect((int) (b.getPosition().x - b.getShape().getWidth() / 2), (int) (b.getPosition().y - b.getShape().getHeight() / 2), (int) b.getShape().getWidth(),
+						(int) b.getShape().getHeight());
+			}
+
+			// Revert to old color.
+			g.setColor(old);
 		}
 		// Catch the exception.
 		catch (Exception e)

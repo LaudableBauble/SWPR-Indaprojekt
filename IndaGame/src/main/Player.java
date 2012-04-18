@@ -95,7 +95,7 @@ public class Player extends Entity
 
 		// Set the shape of the body.
 		_Body.getShape().setWidth(_Sprites.getSprite(0).getCurrentFrame().getWidth());
-		_Body.getShape().setHeight(_Sprites.getSprite(0).getCurrentFrame().getHeight());
+		_Body.getShape().setHeight(_Sprites.getSprite(0).getCurrentFrame().getHeight() / 2);
 	}
 
 	/**

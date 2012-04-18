@@ -7,8 +7,11 @@ import input.InputManager;
 
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import main.Entity;
+import main.EntityDepthComparator;
 import main.Player;
 import physics.PhysicsSimulator;
 import auxillary.Helper;
@@ -24,17 +27,14 @@ public class GameplayScreen extends GameScreen
 	// The PhysicsSimulator.
 	private PhysicsSimulator _Physics;
 
-	// The DebugManager.
-	// public DebugManager debug;
-
-	// The background.
-	// public Sprite background;
+	// List of entities.
+	ArrayList<Entity> _Entities;
 
 	// The player.
 	private Player _Player;
 
 	// A bookshelf.
-	Entity _Shelf;
+	private Entity _Shelf;
 
 	/**
 	 * Constructor for the game screen.
@@ -45,15 +45,22 @@ public class GameplayScreen extends GameScreen
 		_TransitionOnTime = TimeSpan.FromSeconds(1.5);
 		_TransitionOffTime = TimeSpan.FromSeconds(0.5);
 
-		// Create some things.
+		// Set up the physics simulator.
 		_Physics = new PhysicsSimulator();
+
+		// Create the player.
 		_Player = new Player(_Physics);
 		_Player.getBody().getShape().setPosition(new Vector2(300, 300));
 
-		// Add entities to the physics simulator.
+		// Create the shelf.
 		_Shelf = new Entity(_Physics);
 		_Shelf.getBody().getShape().setPosition(new Vector2(500, 300));
 		_Shelf.getBody().setIsStatic(true);
+
+		// Add the entities to the list.
+		_Entities = new ArrayList<>();
+		_Entities.add(_Player);
+		_Entities.add(_Shelf);
 	}
 
 	/**
@@ -93,8 +100,11 @@ public class GameplayScreen extends GameScreen
 		// Otherwise let the game instance handle input as usual.
 		else
 		{
-			// Let the player respond to input.
-			_Player.handleInput(input);
+			// Let all entities respond to input.
+			for (Entity entity : _Entities)
+			{
+				entity.handleInput(input);
+			}
 		}
 	}
 
@@ -116,11 +126,14 @@ public class GameplayScreen extends GameScreen
 		// Update the physics simulator.
 		_Physics.update();
 
-		// Update the player.
-		_Player.update(gameTime);
+		// Sort the list of entities by descending depth.
+		Collections.sort(_Entities, new EntityDepthComparator());
 
-		// Update the shelf.
-		_Shelf.update(gameTime);
+		// Update all entities.
+		for (Entity entity : _Entities)
+		{
+			entity.update(gameTime);
+		}
 	}
 
 	/**
@@ -139,11 +152,13 @@ public class GameplayScreen extends GameScreen
 			_ScreenManager.fadeBackBufferToBlack(255 - getTransitionAlpha());
 		}
 
-		// Draw the player.
-		_Player.draw(graphics);
+		// Draw all entities.
+		for (Entity entity : _Entities)
+		{
+			entity.draw(graphics);
+		}
 
-		// Draw the shelf.
-		_Shelf.draw(graphics);
+		// Draw the physics manager.
+		_Physics.draw(graphics);
 	}
-
 }

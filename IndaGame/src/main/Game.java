@@ -61,22 +61,13 @@ public class Game extends Canvas
 		timer = new GameTimer();
 		_ScreenManager = new ScreenManager(this);
 		exit = false;
-		// physics = new PhysicsSimulator();
 		// debug = new DebugManager();
 
 		// The background.
 		// background = new Sprite();
 
-		// Initialize the PhysicsSimulator.
-		// physics.initialize();
 		// Enable debug.
 		// debug.debug = true;
-
-		// Initialize the Player and Sentry.
-		// player.initialize(physics);
-
-		// Initialize the zombies.
-		// for (int i = 0; i < numberOfZombies; i++) { dummy.get(i).initialize(physics); }
 
 		// Initialize.
 		initialize();
@@ -87,8 +78,6 @@ public class Game extends Canvas
 		// Add screens to the screen manager.
 		_ScreenManager.addScreen(new BackgroundScreen());
 		_ScreenManager.addScreen(new MainMenuScreen());
-		// Make the Player controllable by the player.
-		// player.canBeControlled = true;
 	}
 
 	public void loadContent()
@@ -97,26 +86,12 @@ public class Game extends Canvas
 		_ScreenManager.loadContent();
 		// Load the Sprite.
 		// background.loadContent("Grass[0].jpg");
-		// player.loadContent("Monster[1].gif");
-
-		// Load the zombies' content.
-		// for (int i = 0; i < numberOfZombies; i++) { dummy.get(i).loadContent("ZombieGuy1_Front[0].png"); }
 	}
 
 	public void handleInput()
 	{
-		// Let the screen manager handle input.
-		// _ScreenManager.handleInput(window.inputManager);
-		// Send the Key and Mouse Events to the Physics Simulator.
-		// physics.handleInput(window.inputManager);
 		// Send the Key and Mouse Events to the Debug Manager.
 		// debug.handleInput(window.inputManager, physics);
-
-		// Send the Key and Mouse Events to the Objects.
-		// player.handleInput(window.inputManager);
-
-		// Handle the input for the zombies.
-		// for (int i = 0; i < numberOfZombies; i++) { dummy.get(i).handleInput(window.inputManager); }
 
 		// Calculate the used time by the handle input function.
 		// debug.setPhaseTime(0);
@@ -132,15 +107,6 @@ public class Game extends Canvas
 
 		// Draw the Background.
 		// background.draw(window.getGraphics(), new Vector(0,0), this);
-		// Draw our monster.
-		// player.draw(window.getGraphics(), this);
-
-		// Draw the zombies.
-		// sentry.draw(window.getGraphics(), this);
-		// for (int i = 0; i < numberOfZombies; i++) { dummy.get(i).draw(window.getGraphics(), this); }
-
-		// Draw the PhysicsSimulator (If there's something to draw).
-		// physics.draw(window.getGraphics());
 
 		// Debug Draw.
 		// debug.draw(window.getGraphics(), physics);
@@ -169,14 +135,8 @@ public class Game extends Canvas
 			// Handle the mouse and keyboard input.
 			handleInput();
 
-			// Update the PhysicsSimulator.
-			// physics.update();
-
 			// Calculate the used time by the physics update function.
 			// debug.setPhaseTime(1);
-
-			// Update all Objects before they're drawn.
-			// player.update();
 
 			// Calculate the used time by the body update function.
 			// debug.setPhaseTime(2);

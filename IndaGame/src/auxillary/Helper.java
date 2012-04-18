@@ -173,7 +173,7 @@ public final class Helper
 		return (new Vector2((x - (width / 2)), (y - (height / 2))));
 	}
 
-	// Convert from a centroid vector a top left vector.
+	// Convert from a centroid vector to a top left vector.
 	public static Vector2 toTopLeft(Vector2 v, double width, double height)
 	{
 		// Subtract half the width to the X-coordinate and half the height to the Y-coordinate.
