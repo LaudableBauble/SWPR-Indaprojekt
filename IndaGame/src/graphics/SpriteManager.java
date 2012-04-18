@@ -80,6 +80,7 @@ public class SpriteManager
 			{
 				sprite.setPosition(position);
 			}
+			
 			sprite.update(gameTime);
 		}
 	}

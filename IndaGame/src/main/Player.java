@@ -20,6 +20,8 @@ public class Player extends Entity
 	private boolean _CanBeControlled;
 	// The maximum speed the player can travel willingly in any direction.
 	private double _MaxSpeed;
+	// The currently active sprite.
+	private Sprite _CurrentSprite;
 
 	/**
 	 * Constructor for a player.
@@ -85,6 +87,9 @@ public class Player extends Entity
 		right.setVisibility(Visibility.Invisible);
 		left.setVisibility(Visibility.Invisible);
 
+		// Current sprite is facing up.
+		_CurrentSprite = front;
+
 		// Load all sprites' content.
 		_Sprites.loadContent();
 
@@ -143,9 +148,6 @@ public class Player extends Entity
 
 		// Determine which sprite should be drawn.
 		changeSprite();
-
-		// If the player stands still there should be no animation.
-		// _Sprites.getSprite(0).setEnableAnimation((_Body.getVelocity().getLength() == 0) ? false : true);
 	}
 
 	/**
@@ -154,19 +156,24 @@ public class Player extends Entity
 	private void changeSprite()
 	{
 		// If the player is not moving, stop here.
-		if (_Body.getVelocity().getLength() == 0) { return; }
+		if (_Body.getVelocity().getLength() == 0)
+		{
+			// If the player stands still there should be no animation.
+			_CurrentSprite.setEnableAnimation((_Body.getVelocity().getLength() == 0) ? false : true);
+			return;
+		}
 
 		// Determine which sprite should be drawn.
-		Sprite sprite = getCurrentSprite(getDirection());
+		_CurrentSprite = getCurrentSprite(getDirection());
 
 		// Make the sprite visible and enable its animation.
-		sprite.setVisibility(Visibility.Visible);
-		sprite.setEnableAnimation(true);
+		_CurrentSprite.setVisibility(Visibility.Visible);
+		_CurrentSprite.setEnableAnimation(true);
 
 		// For all other sprites, make them invisible and disable their animation.
 		for (Sprite s : _Sprites.getSprites())
 		{
-			if (sprite != s)
+			if (_CurrentSprite != s)
 			{
 				s.setVisibility(Visibility.Invisible);
 				s.setEnableAnimation(false);
@@ -186,32 +193,32 @@ public class Player extends Entity
 		// If facing down.
 		if (dir >= 45 && dir <= 135)
 		{
-			return _Sprites.getSprite(1);
+			return _Sprites.getSprite(0);
 		}
 		// If facing up.
 		else if (dir >= -135 && dir <= -45)
 		{
-			return _Sprites.getSprite(0);
+			return _Sprites.getSprite(1);
 		}
 		// If facing right.
-		else if (dir >= 135 && dir >= -135)
+		else if (dir >= -45 && dir <= 45)
 		{
 			return _Sprites.getSprite(2);
 		}
 		// If facing left.
-		else if (dir >= -45 && dir <= 45) { return _Sprites.getSprite(3); }
+		else if ((dir >= 135 && dir <= 180) || (dir >= -180 && dir <= -135)) { return _Sprites.getSprite(3); }
 
 		// No sprite matched.
 		return null;
 	}
 
 	/**
-	 * Get the direction of the player in radians. If standing still, it will always point left.
+	 * Get the direction of the player in degrees. If standing still, it will always point left.
 	 * 
 	 * @return The direction of the player.
 	 */
 	private double getDirection()
 	{
-		return Vector2.getAngle(_Body.getVelocity()) * (180 / Math.PI);
+		return _Body.getVelocity().getAngle() * (180 / Math.PI);
 	}
 }

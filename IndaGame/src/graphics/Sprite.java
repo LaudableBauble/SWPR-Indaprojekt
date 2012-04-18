@@ -61,12 +61,13 @@ public class Sprite
 		_Manager = null;
 		_Name = name;
 		_Position = new Vector2(0, 0);
-		_TimePerFrame = .5f;
+		_TimePerFrame = .2f;
 		_Scale = 1;
 		_Depth = 0;
 		_Rotation = 0;
 		_Tag = "";
 		_Transparence = 1;
+		_AnimationDirection = true;
 		_Visibility = Visibility.Visible;
 		_Orientation = Orientation.Right;
 		_Frames = new ArrayList<Frame>();
@@ -93,6 +94,7 @@ public class Sprite
 		// Update the frames.
 		if (_EnableAnimation)
 		{
+			updateIndices();
 			updateFrame(gameTime);
 		}
 	}
@@ -137,6 +139,7 @@ public class Sprite
 	{
 		// Add the frame to the list of frames.
 		_Frames.add(frame);
+		_FrameEndIndex++;
 		return frame;
 	}
 
@@ -208,10 +211,10 @@ public class Sprite
 	public void updateFrame(GameTimer gameTime)
 	{
 		// Get the time since the last Update.
-		_TotalElapsedTime += (float) gameTime.getElapsedTime().Seconds();
+		_TotalElapsedTime += (float) gameTime.getElapsedTime().TotalSeconds();
 
 		// If it's not time to change frame yet, stop here.
-		if (_TotalElapsedTime > _TimePerFrame) { return; }
+		if (_TotalElapsedTime < _TimePerFrame) { return; }
 
 		// If the animation is going forward.
 		if (_AnimationDirection)
@@ -241,9 +244,27 @@ public class Sprite
 				_FrameIndex = _FrameEndIndex;
 			}
 		}
+		
+		//Load the new frame's texture into memory.
+		loadFrame();
 
 		// Substract the time per frame, to be certain the next frame is drawn in time.
 		_TotalElapsedTime -= _TimePerFrame;
+	}
+
+	/**
+	 * Update all indices so that they stay within bounds.
+	 */
+	private void updateIndices()
+	{
+		// The min and max values.
+		int min = 0;
+		int max = _Frames.size() - 1;
+
+		// Clamp all indeces.
+		_FrameIndex = Math.min(Math.max(_FrameIndex, 0), Math.max(max, 0));
+		_FrameStartIndex = Math.min(Math.max(_FrameStartIndex, 0), Math.max(max, 0));
+		_FrameEndIndex = Math.min(Math.max(_FrameEndIndex, 0), Math.max(max, 0));
 	}
 
 	/**

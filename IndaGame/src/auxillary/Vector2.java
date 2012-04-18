@@ -237,22 +237,19 @@ public class Vector2
 	// Calculate the direction from an angle.
 	public static Vector2 getDirection(double angleRadians)
 	{
-		// Return the direction.
-		return (new Vector2((double) -Math.cos(angleRadians), (double) -Math.sin(angleRadians)));
+		return new Vector2((double) -Math.cos(angleRadians), (double) -Math.sin(angleRadians));
 	}
 
 	// Calculate the direction from a Vector and it length.
 	public static Vector2 getDirection(Vector2 v, double length)
 	{
-		// Return the direction.
-		return (divide(v, length));
+		return divide(v, length);
 	}
 
 	// Calculate the direction from this Vector using its own length.
 	public static Vector2 getDirection(Vector2 v)
 	{
-		// Return the direction.
-		return (divide(v, getLength(v)));
+		return divide(v, getLength(v));
 	}
 
 	// Get the angle between two Vectors.
@@ -267,6 +264,16 @@ public class Vector2
 	{
 		// Return the angle.
 		return Math.atan2((double) (vector.y - multiply(vector, 1.5).y), (double) (vector.x - multiply(vector, 1.5).x));
+	}
+
+	/**
+	 * Get this vector's angle, in the range of -pi to pi. (0, 0) is assumed to be the center and a direction towards the positive x-axis (right) returns an angle of 0. Uses clockwise ordering.
+	 * 
+	 * @return The direction in radians.
+	 */
+	public double getAngle()
+	{
+		return Math.atan2(this.y, this.x);
 	}
 
 	// Convert into String.
