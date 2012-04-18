@@ -1,10 +1,12 @@
 package graphics;
 
+import infrastructure.Enums.Orientation;
+import infrastructure.Enums.Visibility;
+import infrastructure.GameTimer;
+
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import auxillary.Helper;
 import auxillary.Vector2;
@@ -14,133 +16,108 @@ import auxillary.Vector2;
  */
 public class Sprite
 {
-	// Create the sprites.
-	private ArrayList<HashMap> _Sprites;
-	// Create a String array that holds all sprite paths.
-	private ArrayList<ArrayList<String>> _SpritePath;
-	// The Sprite Index.
-	private int _SpriteIndex;
-	// The Frame Index.
+	// Fields.
+	private SpriteManager _Manager;
+	private BufferedImage _Texture;
+	private Vector2 _Position;
+	private String _Name;
+	private String _Tag;
+	private ArrayList<Frame> _Frames;
 	private int _FrameIndex;
-	// The Time per Frame, in milliseconds.
-	private double _TimePerFrame;
-	// The elapsed time until the beginning of the current frame. 0 = the start time each frame update, 1 = the difference since the start time.
-	private double[] _CurrentElapsedTime;
-	// Whether the sprite is allowed to animate.
-	private boolean _AnimationEnabled;
+	private float _TimePerFrame;
+	private int _FrameStartIndex;
+	private int _FrameEndIndex;
+	private boolean _EnableAnimation;
+	private boolean _AnimationDirection;
+	private float _TotalElapsedTime;
+	private float _Rotation;
+	private float _Scale;
+	private int _Depth;
+	private float _Transparence;
+	private Visibility _Visibility;
+	private Orientation _Orientation;
 
 	/**
 	 * Constructor for a sprite.
+	 * 
+	 * @param name
+	 *            The name of the sprite.
 	 */
-	public Sprite()
+	public Sprite(String name)
 	{
-		// Initialize the variables.
-		initialize();
+		// Intialize the sprite.
+		initialize(name);
 	}
 
-	private void initialize()
+	/**
+	 * Initialize the sprite.
+	 * 
+	 * @param name
+	 *            The name of the sprite.
+	 */
+	private void initialize(String name)
 	{
-		// Initialize the variables.
-		_Sprites = new ArrayList<HashMap>();
-		_SpritePath = new ArrayList<ArrayList<String>>();
-		_Sprites.add(new HashMap());
-		_SpritePath.add(new ArrayList<String>());
-		_SpriteIndex = 0;
-		_FrameIndex = 0;
-		_TimePerFrame = 0;
-		_CurrentElapsedTime = new double[2];
-		_CurrentElapsedTime[0] = System.currentTimeMillis();
-		_CurrentElapsedTime[1] = 0;
+		// Initialize some variables.
+		_Manager = null;
+		_Name = name;
+		_Position = new Vector2(0, 0);
+		_TimePerFrame = .5f;
+		_Scale = 1;
+		_Depth = 0;
+		_Rotation = 0;
+		_Tag = "";
+		_Transparence = 1;
+		_Visibility = Visibility.Visible;
+		_Orientation = Orientation.Right;
+		_Frames = new ArrayList<Frame>();
+		_TotalElapsedTime = 0;
 	}
 
 	/**
 	 * Load content.
-	 * 
-	 * @param path
-	 *            The path of an image.
 	 */
-	public void loadContent(String path)
+	public void loadContent()
 	{
-		// Load the sprite and send it to the sprites variable.
-		_Sprites.get(0).put(path, loadSprite(path, _SpriteIndex));
+		// Load the first frame, if there exists one.
+		loadFrame();
 	}
 
 	/**
-	 * Update the sprite.
+	 * Update the sprite and all its frames.
+	 * 
+	 * @param gameTime
+	 *            The game timer.
 	 */
-	public void update()
+	public void update(GameTimer gameTime)
 	{
-		// Stop here if animation is not enabled.
-		if (!_AnimationEnabled) { return; }
-
-		// Add the elapsed time since last update.
-		_CurrentElapsedTime[1] = (System.currentTimeMillis() - _CurrentElapsedTime[0]);
-
-		// If it's time to change sprite frame.
-		if (_CurrentElapsedTime[1] >= _TimePerFrame)
+		// Update the frames.
+		if (_EnableAnimation)
 		{
-			// Check if the sprite frame limit isn't reached.
-			if (_FrameIndex < (_SpritePath.get(_SpriteIndex).size() - 1))
-			{
-				// Increment the sprite frame index.
-				_FrameIndex++;
-			}
-			// Else, reset the spriteIndex.
-			else
-			{
-				_FrameIndex = 0;
-			}
-
-			// Reset the elapsed time counter.
-			_CurrentElapsedTime[0] = System.currentTimeMillis();
+			updateFrame(gameTime);
 		}
 	}
 
 	/**
-	 * Draw the sprite.
+	 * Draw the sprite and its current frame to the screen.
 	 * 
 	 * @param graphics
-	 *            The graphics component.
-	 * @param path
-	 *            The path of the image.
-	 * @param v
-	 *            The position of the image.
+	 *            The graphics component to use.
 	 */
-	public void draw(Graphics2D graphics, String path, Vector2 v)
+	public void draw(Graphics2D graphics)
 	{
-		graphics.drawImage(getSprite(path, _SpriteIndex), (int) v.x, (int) v.y, null);
-	}
+		// If the sprite is not visible, end here.
+		if (_Visibility == Visibility.Invisible) { return; }
 
-	/**
-	 * Draw the sprite.
-	 * 
-	 * @param graphics
-	 *            The graphics component.
-	 * @param pathIndex
-	 *            The path index of the image.
-	 * @param v
-	 *            The position of the image.
-	 */
-	public void draw(Graphics2D graphics, int pathIndex, Vector2 v)
-	{
-		graphics.drawImage(getSprite(pathIndex, _SpriteIndex), (int) v.x, (int) v.y, null);
-	}
+		// Manage the orientation.
+		if (_Orientation == Orientation.Left)
+		{
+		}
 
-	/**
-	 * Draw the sprite.
-	 * 
-	 * @param graphics
-	 *            The graphics component.
-	 * @param v
-	 *            The position of the image.
-	 */
-	public void draw(Graphics2D graphics, Vector2 v)
-	{
-		// Try.
+		// Try to draw.
 		try
 		{
-			// Draw the sprite at the correct vector.
-			graphics.drawImage(getSprite(_FrameIndex, _SpriteIndex), (int) v.x, (int) v.y, null);
+			// Draw the sprite.
+			graphics.drawImage(_Texture, (int) _Position.x, (int) _Position.y, null);
 		}
 		// Catch
 		catch (Exception e)
@@ -150,239 +127,289 @@ public class Sprite
 	}
 
 	/**
-	 * Load the sprite.
+	 * Add a frame to the sprite.
 	 * 
-	 * @param path
-	 *            The path of the image.
-	 * @param index
-	 *            The index of the image.
-	 * @return The image.
+	 * @param frame
+	 *            The frame to add.
+	 * @return The added frame.
 	 */
-	public BufferedImage loadSprite(String path, int index)
+	public Frame addFrame(Frame frame)
 	{
-		// Create the Url variable that'll hold the sprite path.
-		URL url = null;
+		// Add the frame to the list of frames.
+		_Frames.add(frame);
+		return frame;
+	}
 
+	/**
+	 * Get a frame's index.
+	 * 
+	 * @param name
+	 *            The path name of the frame.
+	 * @return The index of the frame.
+	 */
+	public int getFrameIndex(String name)
+	{
+		// Loop through the list of frames and find the one with the right name.
+		for (Frame f : new ArrayList<Frame>(_Frames))
+		{
+			if (f.getPathName().equals(name)) { return _Frames.indexOf(f); }
+		}
+
+		// No frame found.
+		return -1;
+	}
+
+	/**
+	 * Remove a frame from the sprite.
+	 * 
+	 * @param name
+	 *            The path name of the frame.
+	 */
+	public void removeFrame(String name)
+	{
+		_Frames.remove(getFrameIndex(name));
+	}
+
+	/**
+	 * Load the current frame's texture.
+	 */
+	public void loadFrame()
+	{
 		// Try.
 		try
 		{
-			// Add the sprite Path.
-			_SpritePath.get(index).add(path);
+			// Quit if there is not enough frames.
+			if (_FrameIndex >= _Frames.size()) { return; }
+
+			// If a frame has a texture already stored on its premises, load that texture.
+			if (_Frames.get(_FrameIndex).getTexture() != null)
+			{
+				_Texture = _Frames.get(_FrameIndex).getTexture();
+			}
+			// Otherwise load one by using the name of the frame.
+			else
+			{
+				_Texture = Helper.loadImage(_Frames.get(_FrameIndex).getPathName());
+			}
 		}
-		// Catch the exceptions and display them.
+		// Catch
 		catch (Exception e)
 		{
-			System.out.println(this + ": Add Sprite Path Error. (" + e + ")");
+			System.out.println(this + ": Load Frame Error. (" + e + ")");
 		}
-
-		// Load the sprite and return it.
-		return Helper.loadImage(path);
 	}
 
 	/**
-	 * Get a sprite.
+	 * Update the sprite's frames.
 	 * 
-	 * @param path
-	 *            The path of the image.
-	 * @param index
-	 *            The index of the image.
-	 * @return The image.
+	 * @param gameTime
+	 *            The game timer.
 	 */
-	public BufferedImage getSprite(String path, int index)
+	public void updateFrame(GameTimer gameTime)
 	{
-		// Get the Sprite.
-		BufferedImage img = (BufferedImage) _Sprites.get(index).get(path);
+		// Get the time since the last Update.
+		_TotalElapsedTime += (float) gameTime.getElapsedTime().Seconds();
 
-		// If the sprite doesn't exist, load it instead.
-		if (img == null)
+		// If it's not time to change frame yet, stop here.
+		if (_TotalElapsedTime > _TimePerFrame) { return; }
+
+		// If the animation is going forward.
+		if (_AnimationDirection)
 		{
-			// Load the Sprite.
-			img = loadSprite("Images/" + path, index);
-			_Sprites.get(index).put(path, img);
+			// If the number of drawn frames are less than the total, change to the next.
+			if (_FrameIndex < _FrameEndIndex)
+			{
+				_FrameIndex++;
+			}
+			// Make the animation start over.
+			else
+			{
+				_FrameIndex = _FrameStartIndex;
+			}
 		}
-
-		// Return the sprite.
-		return img;
-	}
-
-	/**
-	 * Get a sprite.
-	 * 
-	 * @param pathIndex
-	 *            The path index of the image.
-	 * @param index
-	 *            The index of the image.
-	 * @return The image.
-	 */
-	public BufferedImage getSprite(int pathIndex, int index)
-	{
-		// Check if the pathIndex is within range.
-		if (_SpritePath.get(index).size() >= pathIndex)
-		{
-			return (BufferedImage) _Sprites.get(index).get(_SpritePath.get(index).get(pathIndex));
-		}
-		// Else load the last sprite in the array.
+		// If the animation is going backwards.
 		else
 		{
-			return (BufferedImage) _Sprites.get(index).get(_SpritePath.get(index).get(_SpritePath.get(index).size() - 1));
+			// If the number of drawn frames are less than the total, change to the next.
+			if (_FrameIndex > _FrameStartIndex)
+			{
+				_FrameIndex--;
+			}
+			// Make the animation start over.
+			else
+			{
+				_FrameIndex = _FrameEndIndex;
+			}
 		}
+
+		// Substract the time per frame, to be certain the next frame is drawn in time.
+		_TotalElapsedTime -= _TimePerFrame;
 	}
 
 	/**
-	 * Add a image to the sprite.
+	 * Get the manager this sprite belongs to.
 	 * 
-	 * @param path
-	 *            The path of the image.
+	 * @return The sprite manager.
 	 */
-	public void addSprite(String path)
+	public SpriteManager getSpriteManager()
 	{
-		// Try to add a new sprite.
-		try
-		{
-			// Add a String array and a new HashMap to the respective Lists.
-			_Sprites.add(new HashMap());
-			_SpritePath.add(new ArrayList<String>());
-			// Load the sprite and send it to the sprites variable.
-			_Sprites.get(_Sprites.size() - 1).put(path, loadSprite(path, _Sprites.size() - 1));
-		}
-		// Catch the exceptions and display them.
-		catch (Exception e)
-		{
-			System.out.println(this + ": Add Sprite Error. (" + e + ")");
-		}
+		return _Manager;
 	}
 
 	/**
-	 * Add a frame to the sprite.
+	 * Set the manager this sprite belongs to.
 	 * 
-	 * @param path
-	 *            The path of the image.
+	 * @param manager
+	 *            The sprite manager.
+	 */
+	public void setSpriteManager(SpriteManager manager)
+	{
+		_Manager = manager;
+	}
+
+	/**
+	 * Get the sprite's current texture.
+	 * 
+	 * @return The texture.
+	 */
+	public BufferedImage getTexture()
+	{
+		return _Texture;
+	}
+
+	/**
+	 * Get the sprite's position.
+	 * 
+	 * @return The position.
+	 */
+	public Vector2 getPosition()
+	{
+		return _Position;
+	}
+
+	/**
+	 * Set the sprite's position.
+	 * 
+	 * @param The
+	 *            new position.
+	 */
+	public void setPosition(Vector2 position)
+	{
+		_Position = position;
+	}
+
+	/**
+	 * Get the sprite's name. This has no bearing on any image paths.
+	 * 
+	 * @return The name.
+	 */
+	public String getName()
+	{
+		return _Name;
+	}
+
+	/**
+	 * Get the tag of the body, used to get a specific sprite.
+	 * 
+	 * @return The tag.
+	 */
+	public String getTag()
+	{
+		return _Tag;
+	}
+
+	/**
+	 * Get the number of frames.
+	 * 
+	 * @return The number of frames.
+	 */
+	public int getFrameCount()
+	{
+		return _Frames.size();
+	}
+
+	/**
+	 * Get the current frame index.
+	 * 
+	 * @return The current frame index.
+	 */
+	public int getCurrentFrameIndex()
+	{
+		return _FrameIndex;
+	}
+
+	/**
+	 * Set the current frame index.
+	 * 
 	 * @param index
-	 *            The index of the sprite.
+	 *            The current frame index.
 	 */
-	public void addFrame(String path, int index)
+	public void setCurrentFrameIndex(int index)
 	{
-		// Try to add a new sprite frame.
-		try
-		{
-			// Load the sprite and send it to the sprites variable.
-			_Sprites.get(index).put(path, loadSprite(path, index));
-		}
-		// Catch the exceptions and display them.
-		catch (Exception e)
-		{
-			System.out.println(this + ": Add Sprite Frame Error. (" + e + ")");
-		}
+		_FrameIndex = index;
 	}
 
 	/**
-	 * Get the sprite's width.
+	 * Get the current frame.
 	 * 
-	 * @param path
-	 *            The path of the image.
-	 * @param index
-	 *            The index of the sprite.
-	 * @return The width of the sprite.
+	 * @return The current frame.
 	 */
-	public int getWidth(String path, int index)
+	public Frame getCurrentFrame()
 	{
-		return getSprite(path, index).getWidth(null);
+		return (_FrameIndex < _Frames.size()) ? _Frames.get(_FrameIndex) : null;
 	}
 
 	/**
-	 * Get the sprite's height.
+	 * Set the time in seconds every frame has on screen before the next appears.
 	 * 
-	 * @param path
-	 *            The path of the image.
-	 * @param index
-	 *            The index of the sprite.
-	 * @return The height of the sprite.
-	 */
-	public int getHeight(String path, int index)
-	{
-		return getSprite(path, index).getHeight(null);
-	}
-
-	/**
-	 * Get the sprite's width.
-	 * 
-	 * @param pathIndex
-	 *            The path index of the image.
-	 * @param index
-	 *            The index of the sprite.
-	 * @return The width of the sprite.
-	 */
-	public int getWidth(int pathIndex, int index)
-	{
-		return getSprite(pathIndex, index).getWidth(null);
-	}
-
-	/**
-	 * Get the sprite's height.
-	 * 
-	 * @param pathIndex
-	 *            The path index of the image.
-	 * @param index
-	 *            The index of the sprite.
-	 * @return The height of the sprite.
-	 */
-	public int getHeight(int pathIndex, int index)
-	{
-		return getSprite(pathIndex, index).getHeight(null);
-	}
-
-	/**
-	 * Get the sprite's timePerFrame variable.
-	 * 
-	 * @return The time per frame.
-	 */
-	public double getTimePerFrame()
-	{
-		return _TimePerFrame;
-	}
-
-	/**
-	 * Get the sprite's spriteIndex variable.
-	 * 
-	 * @return The sprite's index.
-	 */
-	public int getSpriteIndex()
-	{
-		return _SpriteIndex;
-	}
-
-	/**
-	 * Set the sprite's timePerFrame variable.
-	 * 
-	 * @param value
+	 * @param timePerFrame
 	 *            The new time per frame.
 	 */
-	public void setTimePerFrame(double value)
+	public void setTimePerFrame(float timePerFrame)
 	{
-		_TimePerFrame = value;
+		_TimePerFrame = timePerFrame;
 	}
 
 	/**
-	 * Set the sprite's spriteIndex variable.
+	 * Set whether the sprite enables animations or not.
 	 * 
-	 * @param value
-	 *            The new sprite index.
+	 * @param enable
+	 *            Whether the sprite enables animations.
 	 */
-	public void setSpriteIndex(int value)
+	public void setEnableAnimation(boolean enable)
 	{
-		_SpriteIndex = value;
-		_FrameIndex = 0;
+		_EnableAnimation = enable;
 	}
 
 	/**
-	 * Set whether the sprite is allowed to animate. If true, this will reset the sprite's frame index.
+	 * Get the depth the sprite is being drawn at.
 	 * 
-	 * @param value
-	 *            Whether the sprite is allowed to animate.
+	 * @return The depth.
 	 */
-	public void setAnimationEnabled(boolean value)
+	public int getDepth()
 	{
-		_AnimationEnabled = value;
-		_FrameIndex = (_AnimationEnabled) ? _FrameIndex : 0;
+		return _Depth;
+	}
+
+	/**
+	 * Set the transparence of the sprite. The values lies between 0 and 1.
+	 * 
+	 * @param transparence
+	 *            The new transparence.
+	 */
+	public void setTransparence(float transparence)
+	{
+		_Transparence = transparence;
+	}
+
+	/**
+	 * Set the state of visibility for the sprite.
+	 * 
+	 * @param visiblity
+	 *            The new state of visibility.
+	 */
+	public void setVisibility(Visibility visiblity)
+	{
+		_Visibility = visiblity;
 	}
 }

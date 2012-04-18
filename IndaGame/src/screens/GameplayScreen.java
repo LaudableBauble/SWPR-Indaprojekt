@@ -65,7 +65,7 @@ public class GameplayScreen extends GameScreen
 		_ScreenManager.getGame().getWindow().setBackBufferColor(Helper.CornFlowerBlue);
 
 		// Load the player's content.
-		_Player.loadContent("Character/ZombieGuy1_Front[0].png");
+		_Player.loadContent();
 		_Shelf.loadContent("Bookshelf[1].png");
 
 		// Once the load has finished, we use ResetElapsedTime to tell the game's
@@ -117,10 +117,10 @@ public class GameplayScreen extends GameScreen
 		_Physics.update();
 
 		// Update the player.
-		_Player.update();
+		_Player.update(gameTime);
 
 		// Update the shelf.
-		_Shelf.update();
+		_Shelf.update(gameTime);
 	}
 
 	/**

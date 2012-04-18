@@ -1,5 +1,9 @@
 package main;
 
+import graphics.Frame;
+import graphics.Sprite;
+import infrastructure.Enums.Visibility;
+import infrastructure.GameTimer;
 import input.InputManager;
 
 import java.awt.event.KeyEvent;
@@ -46,36 +50,47 @@ public class Player extends Entity
 
 	/**
 	 * Load content.
-	 * 
-	 * @param spritePath
-	 *            The path of the player's sprite.
 	 */
-	public void loadContent(String spritePath)
+	public void loadContent()
 	{
-		// Get the Object's version of this method.
-		super.loadContent(spritePath);
-
 		// Add and load all the different sprites.
-		// Front.
-		_Sprite.addFrame("Character/ZombieGuy1_Front[1].png", 0);
-		_Sprite.addFrame("Character/ZombieGuy1_Front[2].png", 0);
-		_Sprite.addFrame("Character/ZombieGuy1_Front[3].png", 0);
-		// Back.
-		_Sprite.addSprite("Character/ZombieGuy1_Back[0].png");
-		_Sprite.addFrame("Character/ZombieGuy1_Back[1].png", 1);
-		_Sprite.addFrame("Character/ZombieGuy1_Back[2].png", 1);
-		_Sprite.addFrame("Character/ZombieGuy1_Back[3].png", 1);
-		// Right.
-		_Sprite.addSprite("Character/ZombieGuy1_Right[0].png");
-		_Sprite.addFrame("Character/ZombieGuy1_Right[1].png", 2);
-		_Sprite.addFrame("Character/ZombieGuy1_Right[2].png", 2);
-		// Left.
-		_Sprite.addSprite("Character/ZombieGuy1_Left[0].png");
-		_Sprite.addFrame("Character/ZombieGuy1_Left[1].png", 3);
-		_Sprite.addFrame("Character/ZombieGuy1_Left[2].png", 3);
 
-		// Change the timePerFrame.
-		_Sprite.setTimePerFrame(100);
+		// Front.
+		Sprite front = _Sprites.addSprite(new Sprite("Front"));
+		front.addFrame(new Frame("Character/ZombieGuy1_Front[1].png"));
+		front.addFrame(new Frame("Character/ZombieGuy1_Front[2].png"));
+		front.addFrame(new Frame("Character/ZombieGuy1_Front[3].png"));
+
+		// Back.
+		Sprite back = _Sprites.addSprite(new Sprite("Back"));
+		back.addFrame(new Frame("Character/ZombieGuy1_Back[0].png"));
+		back.addFrame(new Frame("Character/ZombieGuy1_Back[1].png"));
+		back.addFrame(new Frame("Character/ZombieGuy1_Back[2].png"));
+		back.addFrame(new Frame("Character/ZombieGuy1_Back[3].png"));
+
+		// Right.
+		Sprite right = _Sprites.addSprite(new Sprite("Right"));
+		right.addFrame(new Frame("Character/ZombieGuy1_Right[0].png"));
+		right.addFrame(new Frame("Character/ZombieGuy1_Right[1].png"));
+		right.addFrame(new Frame("Character/ZombieGuy1_Right[2].png"));
+
+		// Left.
+		Sprite left = _Sprites.addSprite(new Sprite("Left"));
+		left.addFrame(new Frame("Character/ZombieGuy1_Left[0].png"));
+		left.addFrame(new Frame("Character/ZombieGuy1_Left[1].png"));
+		left.addFrame(new Frame("Character/ZombieGuy1_Left[2].png"));
+
+		// Only make one sprite visible.
+		back.setVisibility(Visibility.Invisible);
+		right.setVisibility(Visibility.Invisible);
+		left.setVisibility(Visibility.Invisible);
+
+		// Load all sprites' content.
+		_Sprites.loadContent();
+
+		// Set the shape of the body.
+		_Body.getShape().setWidth(_Sprites.getSprite(0).getCurrentFrame().getWidth());
+		_Body.getShape().setHeight(_Sprites.getSprite(0).getCurrentFrame().getHeight());
 	}
 
 	/**
@@ -117,63 +132,77 @@ public class Player extends Entity
 
 	/**
 	 * Update the player.
+	 * 
+	 * @param gameTime
+	 *            The game timer.
 	 */
-	public void update()
+	public void update(GameTimer gameTime)
 	{
 		// Call the base method.
-		super.update();
+		super.update(gameTime);
 
 		// Determine which sprite should be drawn.
-		changeSpriteIndex();
+		changeSprite();
 
 		// If the player stands still there should be no animation.
-		_Sprite.setAnimationEnabled((_Body.getVelocity().getLength() < 1) ? false : true);
+		// _Sprites.getSprite(0).setEnableAnimation((_Body.getVelocity().getLength() == 0) ? false : true);
 	}
 
 	/**
-	 * Change the index of the sprite depending on velocity direction. Makes the player look towards where he is heading.
+	 * Change the sprite depending on velocity direction. Makes the player look towards where he is heading.
 	 */
-	private void changeSpriteIndex()
+	private void changeSprite()
 	{
 		// If the player is not moving, stop here.
 		if (_Body.getVelocity().getLength() == 0) { return; }
 
-		// Calculate the player's direction in radians.
-		double dir = getDirection();
-
 		// Determine which sprite should be drawn.
-		// If facing down.
-		if ((dir >= 45) && (dir <= 135))
+		Sprite sprite = getCurrentSprite(getDirection());
+
+		// Make the sprite visible and enable its animation.
+		sprite.setVisibility(Visibility.Visible);
+		sprite.setEnableAnimation(true);
+
+		// For all other sprites, make them invisible and disable their animation.
+		for (Sprite s : _Sprites.getSprites())
 		{
-			if (_Sprite.getSpriteIndex() != 1)
+			if (sprite != s)
 			{
-				_Sprite.setSpriteIndex(1);
+				s.setVisibility(Visibility.Invisible);
+				s.setEnableAnimation(false);
 			}
+		}
+	}
+
+	/**
+	 * Get the current sprite based on player velocity direction.
+	 * 
+	 * @param dir
+	 *            The direction of the player.
+	 * @return The current sprite.
+	 */
+	private Sprite getCurrentSprite(double dir)
+	{
+		// If facing down.
+		if (dir >= 45 && dir <= 135)
+		{
+			return _Sprites.getSprite(1);
 		}
 		// If facing up.
-		else if ((dir >= -135) && (dir <= -45))
+		else if (dir >= -135 && dir <= -45)
 		{
-			if (_Sprite.getSpriteIndex() != 0)
-			{
-				_Sprite.setSpriteIndex(0);
-			}
+			return _Sprites.getSprite(0);
 		}
 		// If facing right.
-		else if ((dir >= 135) && (dir >= -135))
+		else if (dir >= 135 && dir >= -135)
 		{
-			if (_Sprite.getSpriteIndex() != 2)
-			{
-				_Sprite.setSpriteIndex(2);
-			}
+			return _Sprites.getSprite(2);
 		}
 		// If facing left.
-		else if ((dir >= -45) && (dir <= 45))
-		{
-			if (_Sprite.getSpriteIndex() != 3)
-			{
-				_Sprite.setSpriteIndex(3);
-			}
-		}
+		else if (dir >= -45 && dir <= 45) { return _Sprites.getSprite(3); }
+
+		// No sprite matched.
+		return null;
 	}
 
 	/**

@@ -1,6 +1,9 @@
 package main;
 
+import graphics.Frame;
 import graphics.Sprite;
+import graphics.SpriteManager;
+import infrastructure.GameTimer;
 import input.InputManager;
 
 import java.awt.Graphics2D;
@@ -15,7 +18,7 @@ import auxillary.Helper;
 public class Entity
 {
 	// The Sprite and Body.
-	protected Sprite _Sprite;
+	protected SpriteManager _Sprites;
 	protected Body _Body;
 
 	/**
@@ -38,24 +41,29 @@ public class Entity
 	protected void initialize(PhysicsSimulator physics)
 	{
 		// Initialize the variables.
-		_Sprite = new Sprite();
+		_Sprites = new SpriteManager();
 		_Body = new Body(physics);
 		_Body.addBody();
 	}
 
 	/**
-	 * Load content.
+	 * Load content and add a sprite.
 	 * 
 	 * @param spritePath
 	 *            The path of the main sprite.
 	 */
 	public void loadContent(String spritePath)
 	{
-		// Load the sprite.
-		_Sprite.loadContent(spritePath);
+		// Add a sprite.
+		_Sprites.addSprite(new Sprite("Entity"));
+		_Sprites.getSprite(0).addFrame(new Frame(spritePath));
+
+		// Load all sprites' content.
+		_Sprites.loadContent();
+
 		// Set the shape of the body.
-		_Body.getShape().setWidth(_Sprite.getWidth(spritePath, 0));
-		_Body.getShape().setHeight(_Sprite.getHeight(spritePath, 0));
+		_Body.getShape().setWidth(_Sprites.getSprite(0).getCurrentFrame().getWidth());
+		_Body.getShape().setHeight(_Sprites.getSprite(0).getCurrentFrame().getHeight());
 	}
 
 	/**
@@ -83,12 +91,15 @@ public class Entity
 
 	/**
 	 * Update the entity.
+	 * 
+	 * @param gameTime
+	 *            The game timer.
 	 */
-	public void update()
+	public void update(GameTimer gameTime)
 	{
-		// Update the body and sprite.
+		// Update the body and sprites.
 		_Body.update();
-		_Sprite.update();
+		_Sprites.update(gameTime, Helper.toTopLeft(_Body.getPosition(), _Body.getShape().getWidth(), _Body.getShape().getHeight()));
 	}
 
 	/**
@@ -100,7 +111,7 @@ public class Entity
 	public void draw(Graphics2D graphics)
 	{
 		// Draw the sprite.
-		_Sprite.draw(graphics, Helper.toTopLeft(_Body.getPosition(), _Body.getShape().getWidth(), _Body.getShape().getHeight()));
+		_Sprites.draw(graphics);
 	}
 
 	/**
