@@ -47,7 +47,7 @@ public class Player extends Entity
 
 		// Initialize the variables.
 		_CanBeControlled = true;
-		_MaxSpeed = 2;
+		_MaxSpeed = 3;
 	}
 
 	/**

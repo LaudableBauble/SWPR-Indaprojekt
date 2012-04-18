@@ -91,8 +91,8 @@ public class PhysicsSimulator
 						{
 							// Calculate the Impact force and vector for both
 							// bodies.
-							//addForce(impactForce(b1, b2));
-							//addForce(impactForce(b2, b1));
+							// addForce(impactForce(b1, b2));
+							// addForce(impactForce(b2, b1));
 							// Move the bodies so that they don't intersect each
 							// other anymore.
 							clearIntersection(b1, b2, mtv);
@@ -233,15 +233,15 @@ public class PhysicsSimulator
 		double overlap = Double.MAX_VALUE;
 		// The smallest axis found.
 		Vector2 smallest = null;
-		
-		//Debug string containing collision data.
+
+		// Debug string containing collision data.
 		String debug = "";
 
 		// Get the axes of both bodies.
 		Vector2[][] axes = new Vector2[][] { b1.getShape().getAxes(), b2.getShape().getAxes() };
 
-		debug += "\nBegin: Narrow Phase - Velocity: " + Vector2.max(b1.getVelocity(), b2.getVelocity()) + " -> (Body1: " + b1.getPosition() + ", Body2: "
-				+ b2.getPosition() + ")";
+		debug += "\nBegin: Narrow Phase - Velocity: " + Vector2.max(b1.getVelocity(), b2.getVelocity()) + " -> (Body1: " + b1.getPosition() + ", Body2: " + b2.getPosition()
+				+ ")";
 
 		// Iterate over the axes of both bodies.
 		for (Vector2[] v : axes)
@@ -329,10 +329,12 @@ public class PhysicsSimulator
 		if (!b1.getIsStatic())
 		{
 			b1.getShape().setPosition(Vector2.add(b1.getShape().getPosition(), mtv));
+			b1.setVelocity(Vector2.empty());
 		}
 		if (!b2.getIsStatic())
 		{
 			b2.getShape().setPosition(Vector2.subtract(b2.getShape().getPosition(), mtv));
+			b2.setVelocity(Vector2.empty());
 		}
 	}
 
