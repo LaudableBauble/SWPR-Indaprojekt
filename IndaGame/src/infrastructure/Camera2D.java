@@ -129,15 +129,11 @@ public class Camera2D
 	 */
 	public AffineTransform getTransformMatrix()
 	{
-		// Create the transformation matrix.
-		// _Transform = Matrix.CreateTranslation(new Vector3(_Position.inverse(), 0)) * Matrix.CreateRotationZ(_Rotation) * Matrix.CreateScale(new Vector3(_ZoomValue, _ZoomValue, 1)) *
-		// Matrix.CreateTranslation(new Vector3(_Origin, 0));
-
 		_Transform.setToIdentity();
-		_Transform.translate(_Position.inverse().x, _Position.inverse().y);
 		_Transform.rotate(_Rotation);
-		_Transform.translate(_Origin.x, _Origin.y);
 		_Transform.scale(_ZoomValue, _ZoomValue);
+		_Transform.translate(-_Position.x, -_Position.y);
+		_Transform.translate(_Origin.x / _ZoomValue, _Origin.y / _ZoomValue);
 
 		// Return the matrix.
 		return _Transform;

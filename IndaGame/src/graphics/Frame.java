@@ -117,4 +117,14 @@ public class Frame
 	{
 		return _Width;
 	}
+
+	/**
+	 * Get the frame's origin.
+	 * 
+	 * @return The origin of the frame.
+	 */
+	public Vector2 getOrigin()
+	{
+		return _Origin;
+	}
 }

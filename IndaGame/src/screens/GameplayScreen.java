@@ -94,6 +94,8 @@ public class GameplayScreen extends GameScreen
 		// Load the player's content.
 		_Player.loadContent();
 		_Shelf.loadContent("Bookshelf[1].png");
+		//_Shelf.getSprites().getSprite(0).setRotation(1);
+		//_Shelf.getSprites().getSprite(0).setScale(2);
 
 		// Once the load has finished, we use ResetElapsedTime to tell the game's
 		// timing mechanism that we have just finished a very long frame, and that

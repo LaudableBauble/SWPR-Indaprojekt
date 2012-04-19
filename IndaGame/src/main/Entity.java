@@ -155,4 +155,14 @@ public class Entity
 	{
 		_Depth = depth;
 	}
+
+	/**
+	 * Get the manager of all this entity's sprites.
+	 * 
+	 * @return The sprite manager.
+	 */
+	public SpriteManager getSprites()
+	{
+		return _Sprites;
+	}
 }

@@ -5,7 +5,10 @@ import infrastructure.Enums.Visibility;
 import infrastructure.GameTimer;
 
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
 import java.util.ArrayList;
 
 import auxillary.Helper;
@@ -30,8 +33,8 @@ public class Sprite
 	private boolean _EnableAnimation;
 	private boolean _AnimationDirection;
 	private float _TotalElapsedTime;
-	private float _Rotation;
-	private float _Scale;
+	private double _Rotation;
+	private double _Scale;
 	private int _Depth;
 	private float _Transparence;
 	private Visibility _Visibility;
@@ -118,8 +121,26 @@ public class Sprite
 		// Try to draw.
 		try
 		{
+			// Temporarily save the old matrix.
+			//AffineTransform old = graphics.getTransform();
+			// Whip up a drawing matrix to enable scale and rotation and add it to the current matrix.
+			// graphics.transform(AffineTransform.getRotateInstance(_Rotation).getScaleInstance(_Scale, _Scale));
+
+			// Rotate and scale the sprite.
+			AffineTransform matrix = new AffineTransform();
+			matrix.translate(_Frames.get(_FrameIndex).getOrigin().x, _Frames.get(_FrameIndex).getOrigin().y);
+			matrix.rotate(_Rotation);
+			matrix.scale(_Scale, _Scale);
+			matrix.translate(-_Frames.get(_FrameIndex).getOrigin().x / _Scale, -_Frames.get(_FrameIndex).getOrigin().y / _Scale);
+
+			BufferedImageOp bio = new AffineTransformOp(matrix, AffineTransformOp.TYPE_BILINEAR);
+
 			// Draw the sprite.
-			graphics.drawImage(_Texture, (int) _Position.x, (int) _Position.y, null);
+			//graphics.drawImage(_Texture, (int) _Position.x, (int) _Position.y, null);
+			graphics.drawImage(bio.filter(_Texture, null), (int) _Position.x, (int) _Position.y, null);
+
+			// Revert to the old matrix configuration.
+			//graphics.setTransform(old);
 		}
 		// Catch
 		catch (Exception e)
@@ -244,8 +265,8 @@ public class Sprite
 				_FrameIndex = _FrameEndIndex;
 			}
 		}
-		
-		//Load the new frame's texture into memory.
+
+		// Load the new frame's texture into memory.
 		loadFrame();
 
 		// Substract the time per frame, to be certain the next frame is drawn in time.
@@ -432,5 +453,27 @@ public class Sprite
 	public void setVisibility(Visibility visiblity)
 	{
 		_Visibility = visiblity;
+	}
+
+	/**
+	 * Set the sprite's scale. 1 is default.
+	 * 
+	 * @param scale
+	 *            The new scale.
+	 */
+	public void setScale(double scale)
+	{
+		_Scale = scale;
+	}
+
+	/**
+	 * Set the sprite's rotation.
+	 * 
+	 * @param rotation
+	 *            The new rotation.
+	 */
+	public void setRotation(double rotation)
+	{
+		_Rotation = rotation;
 	}
 }
