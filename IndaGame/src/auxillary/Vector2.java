@@ -1,5 +1,7 @@
 package auxillary;
 
+import java.awt.Point;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -23,6 +25,19 @@ public class Vector2
 		// Pass along the values.
 		x = posX;
 		y = posY;
+	}
+
+	/**
+	 * Constructor for a vector.
+	 * 
+	 * @param p
+	 *            The point vector.
+	 */
+	public Vector2(Point p)
+	{
+		// Pass along the values.
+		x = p.getX();
+		y = p.getY();
 	}
 
 	/**
@@ -92,6 +107,16 @@ public class Vector2
 	{
 		// Inverse the direction of the Vector and return the result.
 		return (new Vector2((v.x * -1), (v.y * -1)));
+	}
+
+	/**
+	 * Inverse this vector.
+	 * 
+	 * @return This vector inverted.
+	 */
+	public Vector2 inverse()
+	{
+		return inverse(this);
 	}
 
 	// Convert this Vector into aVector with absolute values.
@@ -289,6 +314,20 @@ public class Vector2
 	}
 
 	/**
+	 * Transform a vector with a matrix.
+	 * 
+	 * @param v
+	 *            The vector to transform.
+	 * @param matrix
+	 *            The matrix to use.
+	 * @return The transformed vector.
+	 */
+	public static Vector2 transform(Vector2 v, AffineTransform matrix)
+	{
+		return new Vector2((Point) matrix.transform(new Point((int) v.x, (int) v.y), new Point(0, 0)));
+	}
+
+	/**
 	 * Get this vector's angle, in the range of -pi to pi. (0, 0) is assumed to be the center and a direction towards the positive x-axis (right) returns an angle of 0. Uses clockwise ordering.
 	 * 
 	 * @return The direction in radians.
@@ -316,7 +355,7 @@ public class Vector2
 	}
 
 	// Clam the Vector above or/and beneath a value.
-	public static Vector2 clam(Vector2 vOrigin, Vector2 vClam, double value)
+	public static Vector2 clamp(Vector2 vOrigin, Vector2 vClam, double value)
 	{
 		// Create the return vector.
 		Vector2 vReturn = vClam;
@@ -344,8 +383,16 @@ public class Vector2
 		return vReturn;
 	}
 
-	// Clam the Vector beneath a value.
-	public static Vector2 clam(Vector2 v, double value)
+	/**
+	 * Clamp a vector between a boundary.
+	 * 
+	 * @param v
+	 *            The vector to clamp.
+	 * @param boundary
+	 *            The boundary vector. Clamps between the normal and inverse boundary.
+	 * @return The clamped vector.
+	 */
+	public static Vector2 clamp(Vector2 v, Vector2 boundary)
 	{
 		// Create the return vector.
 		Vector2 vReturn = v;
@@ -353,24 +400,31 @@ public class Vector2
 		// The X Coordinate.
 		if (v.x >= 0)
 		{
-			vReturn.x = Math.min(v.x, value);
+			vReturn.x = Math.min(v.x, boundary.x);
 		}
 		if (v.x < 0)
 		{
-			vReturn.x = Math.max(v.x, -value);
+			vReturn.x = Math.max(v.x, -boundary.x);
 		}
 		// The Y Coordinate.
 		if (v.y >= 0)
 		{
-			vReturn.y = Math.min(v.y, value);
+			vReturn.y = Math.min(v.y, boundary.y);
 		}
 		if (v.y < 0)
 		{
-			vReturn.y = Math.max(v.y, -value);
+			vReturn.y = Math.max(v.y, -boundary.y);
 		}
 
 		// Return the clamped Vector.
 		return vReturn;
+	}
+
+	// Clam the Vector beneath a value.
+	public static Vector2 clamp(Vector2 v, double value)
+	{
+		// Return the clamped Vector.
+		return clamp(v, new Vector2(value, value));
 	}
 
 	// Round the Vector.

@@ -3,8 +3,9 @@ package debug;
 import input.InputManager;
 
 import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
+import java.awt.geom.AffineTransform;
 
 import physics.Body;
 import physics.PhysicsSimulator;
@@ -21,6 +22,8 @@ public class DebugManager
 
 	// The physics simulator.
 	private PhysicsSimulator _Physics;
+	// The drawing matrix.
+	private AffineTransform _Transform;
 
 	// The time each phase takes.
 	private long startTime;
@@ -57,6 +60,7 @@ public class DebugManager
 		debug = false;
 		// Initialize the debugBody variable.
 		debugBody = new Body();
+		_Transform = new AffineTransform();
 	}
 
 	/**
@@ -152,7 +156,7 @@ public class DebugManager
 	 * @param graphics
 	 *            The graphics component.
 	 */
-	public void draw(Graphics graphics)
+	public void draw(Graphics2D graphics)
 	{
 		// Check if debug is enabled, otherwise stop.
 		if (!debug) { return; }
@@ -171,6 +175,10 @@ public class DebugManager
 				// Change the color for the debug window.
 				graphics.setColor(Color.red);
 
+				// Save the old graphics matrix and insert the camera matrix in its place.
+				AffineTransform oldMatrix = graphics.getTransform();
+				graphics.setTransform(_Transform);
+
 				// Draw the body's shape.
 				graphics.drawRect((int) (b.getPosition().x - b.getShape().getWidth() / 2), (int) (b.getPosition().y - b.getShape().getHeight() / 2), (int) b.getShape()
 						.getWidth(), (int) b.getShape().getHeight());
@@ -181,6 +189,9 @@ public class DebugManager
 				// Draw the body's position and velocity.
 				graphics.drawString("V: " + Vector3.round(b.getVelocity(), 2).toString() + " - P: " + Vector2.round(b.getPosition(), 2).toString(), (int) b.getPosition().x,
 						(int) b.getPosition().y - 2);
+
+				// Reinstate the old graphics matrix.
+				graphics.setTransform(oldMatrix);
 			}
 			// Catch the exception.
 			catch (Exception e)
@@ -327,5 +338,16 @@ public class DebugManager
 	public void setPhysicsSimulator(PhysicsSimulator physics)
 	{
 		_Physics = physics;
+	}
+
+	/**
+	 * Set the drawing matrix to use.
+	 * 
+	 * @param matrix
+	 *            The drawing matrix to use.
+	 */
+	public void setTransformMatrix(AffineTransform matrix)
+	{
+		_Transform = matrix;
 	}
 }

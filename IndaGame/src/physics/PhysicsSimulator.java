@@ -638,7 +638,7 @@ public class PhysicsSimulator
 			// ////////////////////////////////////////////////////////
 			// System.out.println(this + ": Old Velocity: (" + f.body.velocity.toString() + ")");
 			// Clam the friction above or beneath zero and subtract it from the velocity.
-			f.getBody().setVelocity(new Vector3(Vector2.clam(f.getBody().getVelocity().toVector2(), friction, 0), f.getBody().getVelocity().z));
+			f.getBody().setVelocity(new Vector3(Vector2.clamp(f.getBody().getVelocity().toVector2(), friction, 0), f.getBody().getVelocity().z));
 			// ////////////////////////////////////////////////////////
 			// System.out.println(this + ": Velocity with applied Friction: (" + friction.toString() + ")");
 			// System.out.println(this + ": ----------------------------------------------------------------------------");

@@ -181,6 +181,22 @@ public final class Helper
 	}
 
 	/**
+	 * Move a source vector a number of steps, within given values.
+	 * 
+	 * @param source
+	 *            The source vector.
+	 * @param amount
+	 *            The amount to move.
+	 * @param boundary
+	 *            The maximum movement possible.
+	 * @return The constrained vector.
+	 */
+	public static Vector2 constrainMovement(Vector2 source, Vector2 amount, Vector2 boundary)
+	{
+		return Vector2.add(source, Vector2.clamp(amount, boundary));
+	}
+
+	/**
 	 * Rotate a vector around a point.
 	 * 
 	 * @param position

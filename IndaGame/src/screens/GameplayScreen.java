@@ -1,12 +1,17 @@
 package screens;
 
+import infrastructure.Camera2D;
 import infrastructure.GameScreen;
 import infrastructure.GameTimer;
+import infrastructure.ScreenManager;
 import infrastructure.TimeSpan;
 import input.InputManager;
 
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -27,9 +32,11 @@ public class GameplayScreen extends GameScreen
 	private Font _GameFont;
 	// The PhysicsSimulator.
 	private PhysicsSimulator _Physics;
+	// The camera.
+	private Camera2D _Camera;
 
 	// List of entities.
-	ArrayList<Entity> _Entities;
+	private ArrayList<Entity> _Entities;
 
 	// The player.
 	private Player _Player;
@@ -39,8 +46,11 @@ public class GameplayScreen extends GameScreen
 
 	/**
 	 * Constructor for the game screen.
+	 * 
+	 * @param screenManager
+	 *            This screen's manager.
 	 */
-	public GameplayScreen()
+	public GameplayScreen(ScreenManager screenManager)
 	{
 		// Set the time it takes for the Screen to transition on and off.
 		_TransitionOnTime = TimeSpan.FromSeconds(1.5);
@@ -50,17 +60,21 @@ public class GameplayScreen extends GameScreen
 		_Physics = new PhysicsSimulator();
 		DebugManager.getInstance().setPhysicsSimulator(_Physics);
 
+		// Set up the camera.
+		_Camera = new Camera2D(new Rectangle(0, 0, (int) screenManager.getWindowBounds().x, (int) screenManager.getWindowBounds().y), new Rectangle(0, 0, 3000, 3000));
+		_Camera.setPosition(new Vector2(1000, 1000));
+
 		// Enable debug.
 		DebugManager.getInstance().debug = true;
 
 		// Create the player.
 		_Player = new Player(_Physics);
-		_Player.getBody().getShape().setLayeredPosition(new Vector2(300, 300));
-		//_Player.getBody().getShape().setPosition(new Vector3(300, 300, 28));
+		_Player.getBody().getShape().setLayeredPosition(new Vector2(1000, 1000));
+		// _Player.getBody().getShape().setPosition(new Vector3(300, 300, 28));
 
 		// Create the shelf.
 		_Shelf = new Entity(_Physics);
-		_Shelf.getBody().getShape().setLayeredPosition(new Vector2(500, 300));
+		_Shelf.getBody().getShape().setLayeredPosition(new Vector2(1200, 1000));
 		_Shelf.getBody().setIsStatic(true);
 
 		// Add the entities to the list.
@@ -111,6 +125,37 @@ public class GameplayScreen extends GameScreen
 			{
 				entity.handleInput(input);
 			}
+
+			// If to zoom in.
+			if (input.isKeyDown(KeyEvent.VK_O))
+			{
+				_Camera.zoom(.01f);
+			}
+			// If to zoom out.
+			if (input.isKeyDown(KeyEvent.VK_P))
+			{
+				_Camera.zoom(-.01f);
+			}
+			// If to move up.
+			if (input.isKeyDown(KeyEvent.VK_I))
+			{
+				_Camera.move(new Vector2(0, -1));
+			}
+			// If to move right.
+			if (input.isKeyDown(KeyEvent.VK_L))
+			{
+				_Camera.move(new Vector2(1, 0));
+			}
+			// If to move down.
+			if (input.isKeyDown(KeyEvent.VK_K))
+			{
+				_Camera.move(new Vector2(0, 1));
+			}
+			// If to move left.
+			if (input.isKeyDown(KeyEvent.VK_J))
+			{
+				_Camera.move(new Vector2(-1, 0));
+			}
 		}
 	}
 
@@ -140,6 +185,11 @@ public class GameplayScreen extends GameScreen
 		{
 			entity.update(gameTime);
 		}
+
+		// Update the camera.
+		_Camera.update(gameTime);
+		// Share the camera matrix with the debug manager.
+		DebugManager.getInstance().setTransformMatrix(_Camera.getTransformMatrix());
 	}
 
 	/**
@@ -158,10 +208,17 @@ public class GameplayScreen extends GameScreen
 			_ScreenManager.fadeBackBufferToBlack(255 - getTransitionAlpha());
 		}
 
+		// Save the old graphics matrix and insert the camera matrix in its place.
+		AffineTransform old = graphics.getTransform();
+		graphics.setTransform(_Camera.getTransformMatrix());
+
 		// Draw all entities.
 		for (Entity entity : _Entities)
 		{
 			entity.draw(graphics);
 		}
+
+		// Reinstate the old graphics matrix.
+		graphics.setTransform(old);
 	}
 }

@@ -51,7 +51,7 @@ public class MainMenuScreen extends MenuScreen
 	 */
 	void playGameMenuEntrySelected()
 	{
-		LoadingScreen.load(_ScreenManager, true, new GameplayScreen());
+		LoadingScreen.load(_ScreenManager, true, new GameplayScreen(_ScreenManager));
 	}
 
 	/**
