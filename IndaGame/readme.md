@@ -1,6 +1,6 @@
 Indaprojekt - Sebastian Wigren och Philip Rendén
 
-Det är i huvudsak fyra metoder som är viktiga i spelet; loadContent(), handleInput(), update() och draw(). Alla dessa metoder finns i stort sett i varje klass jag skapat och de tre sistnämnda (handleInput(), update() och draw()) körs i varje uppdateringscykel i spelets main loop, dvs. i Game-klassens updateLoop().
+Det är i huvudsak fyra metoder som är viktiga i spelet; loadContent(), handleInput(), update() och draw(). Alla dessa metoder finns i stort sett i varje klass som skapats och de tre sistnämnda (handleInput(), update() och draw()) körs i varje uppdateringscykel i spelets main loop, dvs. i Game-klassens updateLoop().
 
 HandleInput() använder sig av InputManager för att ge andra klasser tillgång till input från tangentbord och mus.
 Update() använder sig av en timer (GameTimer) för att ge andra klasser tillgång till tid.

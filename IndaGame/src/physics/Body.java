@@ -1,6 +1,7 @@
 package physics;
 
 import auxillary.Vector2;
+import auxillary.Vector3;
 
 /**
  * A body extends a shape to also include movement by altering its velocity, something the physics simulator does with its use of forces.
@@ -21,7 +22,7 @@ public class Body
 	private double _AccelerationValue;
 
 	// The velocity and maximum velocity.
-	private Vector2 _Velocity;
+	private Vector3 _Velocity;
 	private double _MaxVelocity;
 
 	// If the body is static, in other words immovable.
@@ -90,7 +91,7 @@ public class Body
 		_IsStatic = false;
 		_MaxVelocity = 8;
 		_Mass = mass;
-		_Velocity = new Vector2(0, 0);
+		_Velocity = new Vector3(0, 0, 0);
 		_FrictionCoefficient = friction;
 		_AccelerationValue = 1;
 		_Physics = physics;
@@ -105,12 +106,12 @@ public class Body
 		if (!_IsStatic)
 		{
 			// Add the velocity to the position.
-			_Shape.setPosition(Vector2.add(_Shape.getPosition(), _Velocity));
+			_Shape.setPosition(Vector3.add(_Shape.getPosition(), _Velocity));
 		}
 		else
 		{
 			// Null the velocity.
-			_Velocity = new Vector2(0, 0);
+			_Velocity = new Vector3(0, 0, 0);
 		}
 	}
 
@@ -190,7 +191,7 @@ public class Body
 	 */
 	public Vector2 getPosition()
 	{
-		return _Shape.getPosition();
+		return _Shape.getLayeredPosition();
 	}
 
 	/**
@@ -198,7 +199,7 @@ public class Body
 	 * 
 	 * @return The velocity of the body.
 	 */
-	public Vector2 getVelocity()
+	public Vector3 getVelocity()
 	{
 		return _Velocity;
 	}
@@ -282,7 +283,7 @@ public class Body
 	 * @param velocity
 	 *            The new velocity.
 	 */
-	public void setVelocity(Vector2 velocity)
+	public void setVelocity(Vector3 velocity)
 	{
 		_Velocity = velocity;
 	}

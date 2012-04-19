@@ -219,6 +219,6 @@ public class Player extends Entity
 	 */
 	private double getDirection()
 	{
-		return _Body.getVelocity().getAngle() * (180 / Math.PI);
+		return _Body.getVelocity().toVector2().getAngle() * (180 / Math.PI);
 	}
 }

@@ -49,17 +49,18 @@ public class GameplayScreen extends GameScreen
 		// Set up the physics simulator and let the debug manager know about it.
 		_Physics = new PhysicsSimulator();
 		DebugManager.getInstance().setPhysicsSimulator(_Physics);
-		
+
 		// Enable debug.
 		DebugManager.getInstance().debug = true;
 
 		// Create the player.
 		_Player = new Player(_Physics);
-		_Player.getBody().getShape().setPosition(new Vector2(300, 300));
+		_Player.getBody().getShape().setLayeredPosition(new Vector2(300, 300));
+		//_Player.getBody().getShape().setPosition(new Vector3(300, 300, 28));
 
 		// Create the shelf.
 		_Shelf = new Entity(_Physics);
-		_Shelf.getBody().getShape().setPosition(new Vector2(500, 300));
+		_Shelf.getBody().getShape().setLayeredPosition(new Vector2(500, 300));
 		_Shelf.getBody().setIsStatic(true);
 
 		// Add the entities to the list.

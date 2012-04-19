@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import auxillary.Helper;
 import auxillary.Vector2;
+import auxillary.Vector3;
 
 /**
  * A physics simulator does just what its name implies; it tries to simulate the physics of bodies so that the game world behaves realistically.
@@ -78,12 +79,11 @@ public class PhysicsSimulator
 						continue;
 					}
 
-					// Check if the bodies are within range. If so, continue to
-					// the narrow phase part.
+					// Check if the bodies are within range. If so, continue to the narrow phase part.
 					if (broadPhase(b1, b2))
 					{
 						// Get the MTV by doing a narrow phase collision check.
-						Vector2 mtv = narrowPhase(b1, b2);
+						Vector2 mtv = checkLayerCollision(b1, b2);
 
 						// Check if the bodies intersect.
 						if (mtv != null)
@@ -95,6 +95,13 @@ public class PhysicsSimulator
 							// Move the bodies so that they don't intersect each
 							// other anymore.
 							clearIntersection(b1, b2, mtv);
+						}
+
+						// Check for ground collision.
+						if (checkGroundCollision(b1, b2))
+						{
+							// Move body1 above body2.
+							b1.getShape().setPosition(new Vector3(b1.getPosition().x, b1.getPosition().y, b2.getShape().getPosition().z + 1));
 						}
 					}
 				}
@@ -197,30 +204,24 @@ public class PhysicsSimulator
 	}
 
 	/**
-	 * Do a narrow phase collision check between two bodies by using SAT (Separating Axis Theorem). If a collision has occurred, get the MTV (Minimum Translation Vector) of the two intersecting
-	 * bodies.
+	 * Do a narrow phase collision check between two shapes by using SAT (Separating Axis Theorem). If a collision has occurred, get the MTV (Minimum Translation Vector) of the two intersecting
+	 * shapes.
 	 * 
-	 * @param b1
-	 *            The first body to check.
-	 * @param b2
-	 *            The second body to check.
+	 * @param s1
+	 *            The first shape to check.
+	 * @param s2
+	 *            The second shape to check.
 	 * @return The MTV of the intersection or null if the collision was negative.
 	 */
-	public Vector2 narrowPhase(Body b1, Body b2)
+	public Vector2 narrowPhase(Shape s1, Shape s2)
 	{
 		// The minimum amount of overlap. Start real high.
 		double overlap = Double.MAX_VALUE;
 		// The smallest axis found.
 		Vector2 smallest = null;
 
-		// Debug string containing collision data.
-		String debug = "";
-
 		// Get the axes of both bodies.
-		Vector2[][] axes = new Vector2[][] { b1.getShape().getAxes(), b2.getShape().getAxes() };
-
-		debug += "\nBegin: Narrow Phase - Velocity: " + Vector2.max(b1.getVelocity(), b2.getVelocity()) + " -> (Body1: " + b1.getPosition() + ", Body2: " + b2.getPosition()
-				+ ")";
+		Vector2[][] axes = new Vector2[][] { s1.getAxes(), s2.getAxes() };
 
 		// Iterate over the axes of both bodies.
 		for (Vector2[] v : axes)
@@ -229,13 +230,11 @@ public class PhysicsSimulator
 			for (Vector2 a : v)
 			{
 				// Project both bodies onto the axis.
-				Vector2 p1 = b1.getShape().project(a);
-				Vector2 p2 = b2.getShape().project(a);
+				Vector2 p1 = s1.project(a);
+				Vector2 p2 = s2.project(a);
 
 				// Get the overlap.
 				double o = Vector2.getOverlap(p1, p2);
-
-				debug += "\n\tAxis: " + a + ", Overlap: " + o;
 
 				// Do the projections overlap?
 				if (o == -1)
@@ -251,18 +250,89 @@ public class PhysicsSimulator
 						// Store the minimum overlap and the axis it was projected upon. Make sure that the separation vector is pointing the right way.
 						overlap = o;
 						smallest = a;
-						// smallest = (Vector2.subtract(b2.getShape().getCenter(), b1.getShape().getCenter()).dot(a) < 0) ? Vector2.multiply(a, -1) : a;
 					}
 				}
 			}
 		}
 
-		System.out.println(debug + "\n\tCollision - Axis: " + smallest + ", Dot: " + Vector2.subtract(b1.getShape().getCenter(), b2.getShape().getCenter()).dot(smallest)
-				+ ", Velocity: " + Vector2.max(b1.getVelocity(), b2.getVelocity()) + " -> (Body1: " + b1.getPosition() + ", Body2: " + b2.getPosition() + ")");
-
 		// We now know that every axis had an overlap on it, which means we can
 		// guarantee an intersection between the bodies.
 		return Vector2.multiply(smallest, overlap);
+	}
+
+	/**
+	 * Check for collisions between two bodies at a certain range of z-coordinates (height).
+	 * 
+	 * @param b1
+	 *            The first body to check.
+	 * @param b2
+	 *            The second body to check.
+	 * @return The MTV of the intersection or null if the collision was negative.
+	 */
+	private Vector2 checkLayerCollision(Body b1, Body b2)
+	{
+		// Get the min and max heights for both bodies.
+		Vector2 h1 = new Vector2(b1.getShape().getBottomHeight(), b1.getShape().getTopHeight());
+		Vector2 h2 = new Vector2(b2.getShape().getBottomHeight(), b2.getShape().getTopHeight());
+
+		// Get min and max heights for possible collisions between the bodies.
+		Vector2 heights = Vector2.getMiddleValues(h1, h2);
+
+		// If there were no heights found, no collision possible.
+		if (heights == null) { return null; }
+
+		// Check the bottom and top layer for collisions.
+		Vector2 bottom = narrowPhase(b1.getShape().getLayeredShape(heights.x), b2.getShape().getLayeredShape(heights.x));
+		Vector2 top = narrowPhase(b1.getShape().getLayeredShape(heights.y), b2.getShape().getLayeredShape(heights.y));
+
+		// The MTV to return.
+		Vector2 mtv = bottom;
+
+		// If there was a collision at top.
+		if (top != null)
+		{
+			// If there was no collision at bottom, choose the top's MTV.
+			if (mtv == null)
+			{
+				mtv = top;
+			}
+			// Otherwise choose the minimum of the two.
+			else
+			{
+				mtv = (mtv.getLength() > top.getLength()) ? top : mtv;
+			}
+		}
+
+		// Return the MTV.
+		return mtv;
+	}
+
+	/**
+	 * Check for collision between two bodies where one is coming from above the other. This is a preemptive step due to the use of body velocity to project future positions.
+	 * 
+	 * @param b1
+	 *            The first body to check.
+	 * @param b2
+	 *            The second body to check.
+	 * @return Whether there was a collision or not, from the first body's perspective.
+	 */
+	private boolean checkGroundCollision(Body b1, Body b2)
+	{
+		// Both bodies' height positions.
+		double h1 = b1.getShape().getBottomHeight();
+		double h2 = b2.getShape().getTopHeight();
+
+		// The difference in height.
+		double h = h1 - h2;
+
+		// If the distance between the bodies is not right, no collision. NOTE: Use velocity instead.
+		if (h > 2) { return false; }
+
+		// If there is no collision between the bodies, excluding height, no collision.
+		if (narrowPhase(b1.getShape().getLayeredShape(b1.getShape().getBottomHeight()), b2.getShape().getLayeredShape(b2.getShape().getTopHeight())) == null) { return false; }
+
+		// There must be a ground collision after all.
+		return true;
 	}
 
 	/**
@@ -284,8 +354,8 @@ public class PhysicsSimulator
 		Vector2 b1Pos = Vector2.getDirection(Vector2.getAngle(collision, b1.getPosition()));
 		Vector2 b2Pos = Vector2.getDirection(Vector2.getAngle(collision, b2.getPosition()));
 		// Multiply the direction with the absolute velocity of the body.
-		Vector2 b1Force = Vector2.multiply(b1Pos, Vector2.absolute(b1.getVelocity()));
-		Vector2 b2Force = Vector2.multiply(b2Pos, Vector2.absolute(b2.getVelocity()));
+		Vector2 b1Force = Vector3.multiply(Vector3.absolute(b1.getVelocity()), b1Pos).toVector2();
+		Vector2 b2Force = Vector3.multiply(Vector3.absolute(b2.getVelocity()), b2Pos).toVector2();
 
 		// Add the forces to the bodies.
 		addForce(new Force(b1, b1Force));
@@ -307,13 +377,13 @@ public class PhysicsSimulator
 		// Add the MTV to the first body and subtract it from the second. Only move dynamic bodies!
 		if (!b1.getIsStatic())
 		{
-			b1.getShape().setPosition(Vector2.add(b1.getShape().getPosition(), mtv));
-			b1.setVelocity(Vector2.empty());
+			b1.getShape().setLayeredPosition(Vector2.add(b1.getShape().getLayeredPosition(), mtv));
+			b1.setVelocity(Vector3.empty());
 		}
 		if (!b2.getIsStatic())
 		{
-			b2.getShape().setPosition(Vector2.subtract(b2.getShape().getPosition(), mtv));
-			b2.setVelocity(Vector2.empty());
+			b2.getShape().setLayeredPosition(Vector2.subtract(b2.getShape().getLayeredPosition(), mtv));
+			b2.setVelocity(Vector3.empty());
 		}
 	}
 
@@ -329,8 +399,8 @@ public class PhysicsSimulator
 	private Force impactForce(Body b1, Body b2)
 	{
 		// Calculate the Energy of the two bodies before impact.
-		Vector2 energyB1 = Vector2.absolute(Vector2.multiply(b1.getVelocity(), b1.getMass()));
-		Vector2 energyB2 = Vector2.absolute(Vector2.multiply(b2.getVelocity(), b2.getMass()));
+		Vector2 energyB1 = Vector3.absolute(Vector3.multiply(b1.getVelocity(), b1.getMass())).toVector2();
+		Vector2 energyB2 = Vector3.absolute(Vector3.multiply(b2.getVelocity(), b2.getMass())).toVector2();
 		Vector2 energyBT = Vector2.add(energyB1, energyB2);
 
 		// Get the intersection rectangle.
@@ -363,8 +433,8 @@ public class PhysicsSimulator
 	private Force impactForceEnergy(Body b1, Body b2)
 	{
 		// Calculate the Kinetic Energy of the two bodies.
-		Vector2 energyB1 = Vector2.divide(Vector2.multiply(Vector2.absolute(Vector2.multiply(b1.getVelocity(), b1.getVelocity())), b1.getMass()), 2);
-		Vector2 energyB2 = Vector2.divide(Vector2.multiply(Vector2.absolute(Vector2.multiply(b2.getVelocity(), b2.getVelocity())), b2.getMass()), 2);
+		Vector2 energyB1 = Vector3.divide(Vector3.multiply(Vector3.absolute(Vector3.multiply(b1.getVelocity(), b1.getVelocity())), b1.getMass()), 2).toVector2();
+		Vector2 energyB2 = Vector3.divide(Vector3.multiply(Vector3.absolute(Vector3.multiply(b2.getVelocity(), b2.getVelocity())), b2.getMass()), 2).toVector2();
 
 		// Get the intersection rectangle.
 		Rectangle intersection = b1.getShape().getIntersection(b2.getShape());
@@ -523,7 +593,7 @@ public class PhysicsSimulator
 				for (Force f : bodyForces)
 				{
 					// Add the Force to the body.
-					f.getBody().setVelocity(Vector2.add(f.getBody().getVelocity(), f.getForce()));
+					f.getBody().setVelocity(Vector3.add(f.getBody().getVelocity(), f.getForce()));
 				}
 			}
 			// Catch the exception.
@@ -543,15 +613,11 @@ public class PhysicsSimulator
 	 */
 	private Force getBodyFriction(Body b)
 	{
-		// First, multiply the friction coefficient with the gravity's force
-		// exertion on the body (mass * gravity value),
-		// then with the direction of the velocity. Inverse the vector and
-		// finally return the result.
-		// return (new Force(b,
-		// Vector.multiply(Vector.getDirection(Vector.getAngle(b.position,
-		// b.velocity)), (b.frictionCoefficient * (b.mass * gravity)))));
-		return (new Force(b, Vector2.multiply(Vector2.inverse(Vector2.getDirection(b.getVelocity(), Vector2.getLength(Vector2.absolute(b.getVelocity())))),
-				(b.getFrictionCoefficient() * (b.getMass() * _Gravity)))));
+		// First, multiply the friction coefficient with the gravity's force exertion on the body (mass * gravity value),
+		// then with the direction of the velocity. Inverse the vector and finally return the result.
+		// return (new Force(b, Vector.multiply(Vector.getDirection(Vector.getAngle(b.position, b.velocity)), (b.frictionCoefficient * (b.mass * gravity)))));
+		return new Force(b, Vector2.multiply(Vector2.inverse(Vector2.getDirection(b.getVelocity().toVector2(), Vector3.getLength(Vector3.absolute(b.getVelocity())))),
+				(b.getFrictionCoefficient() * (b.getMass() * _Gravity))));
 	}
 
 	/**
@@ -566,21 +632,16 @@ public class PhysicsSimulator
 		try
 		{
 			// ////////////////////////////////////////////////////////
-			// System.out.println(this + ": The Friction: (" +
-			// f.getForce().toString() + ")");
+			// System.out.println(this + ": The Friction: (" + f.getForce().toString() + ")");
 			// Calculate the Friction.
-			Vector2 friction = Vector2.add(f.getBody().getVelocity(), f.getForce());
+			Vector2 friction = Vector3.add(f.getBody().getVelocity(), f.getForce()).toVector2();
 			// ////////////////////////////////////////////////////////
-			// System.out.println(this + ": Old Velocity: (" +
-			// f.body.velocity.toString() + ")");
-			// Clam the friction above or beneath zero and subtract it from the
-			// velocity.
-			f.getBody().setVelocity(Vector2.clam(f.getBody().getVelocity(), friction, 0));
+			// System.out.println(this + ": Old Velocity: (" + f.body.velocity.toString() + ")");
+			// Clam the friction above or beneath zero and subtract it from the velocity.
+			f.getBody().setVelocity(new Vector3(Vector2.clam(f.getBody().getVelocity().toVector2(), friction, 0), f.getBody().getVelocity().z));
 			// ////////////////////////////////////////////////////////
-			// System.out.println(this + ": Velocity with applied Friction: (" +
-			// friction.toString() + ")");
-			// System.out.println(this +
-			// ": ----------------------------------------------------------------------------");
+			// System.out.println(this + ": Velocity with applied Friction: (" + friction.toString() + ")");
+			// System.out.println(this + ": ----------------------------------------------------------------------------");
 		}
 		// Catch the exception.
 		catch (Exception e)

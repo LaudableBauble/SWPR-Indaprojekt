@@ -158,6 +158,28 @@ public class Vector2
 	}
 
 	/**
+	 * Get the middle values of two overlapping vectors. Example: (3, -1) and (0, 9) yields (0, 3).
+	 * 
+	 * @param v1
+	 *            The first two coordinates.
+	 * @param v2
+	 *            The second two coordinates.
+	 * @return The middle values of the two vectors. Null if there is no overlap between the vectors.
+	 */
+	public static Vector2 getMiddleValues(Vector2 v1, Vector2 v2)
+	{
+		// If no overlap, quit here.
+		if (!v1.overlap(v2)) { return null; }
+
+		// Port the vectors to an array and sort it.
+		double[] v = new double[] { v1.x, v1.y, v2.x, v2.y };
+		Arrays.sort(v);
+
+		// Return the middle values.
+		return new Vector2(v[1], v[2]);
+	}
+
+	/**
 	 * Get the overlap between the vectors. Example: (3, -1) and (0, 9) yields 3-0 = 3.
 	 * 
 	 * @param v1

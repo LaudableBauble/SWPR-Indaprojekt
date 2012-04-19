@@ -4,6 +4,7 @@ import java.awt.Rectangle;
 
 import auxillary.Helper;
 import auxillary.Vector2;
+import auxillary.Vector3;
 
 /**
  * A shape is a geometrical form (rectangle) used primarily for collision detection. When used by a body it can interact with the world around it, otherwise it is nothing more than a ghost in the eyes
@@ -13,8 +14,9 @@ public class Shape
 {
 	// The width, height and position. Note that position is always where the origin of the shape is.
 	private float _Width;
+	private float _Depth;
 	private float _Height;
-	private Vector2 _Position;
+	private Vector3 _Position;
 	private float _Rotation;
 	private Vector2 _Origin;
 
@@ -61,7 +63,7 @@ public class Shape
 	protected void initialize(Vector2 position, float width, float height)
 	{
 		// Initialize some variables.
-		_Position = position;
+		_Position = new Vector3(position);
 		_Rotation = 0;
 		_Width = width;
 		_Height = height;
@@ -152,9 +154,17 @@ public class Shape
 	/**
 	 * Get the shape's position.
 	 */
-	public Vector2 getPosition()
+	public Vector3 getPosition()
 	{
 		return _Position;
+	}
+
+	/**
+	 * Get the shape's layered 2D-position, ie. only the x and y-coordinate.
+	 */
+	public Vector2 getLayeredPosition()
+	{
+		return _Position.vector2();
 	}
 
 	/**
@@ -163,9 +173,20 @@ public class Shape
 	 * @param position
 	 *            The new position.
 	 */
-	public void setPosition(Vector2 position)
+	public void setPosition(Vector3 position)
 	{
 		_Position = position;
+	}
+
+	/**
+	 * Set the shape's layered 2D-position, ie. only the x and y-coordinate. The z-coordinate is kept.
+	 * 
+	 * @param position
+	 *            The new position.
+	 */
+	public void setLayeredPosition(Vector2 position)
+	{
+		_Position = new Vector3(position.x, position.y, _Position.z);
 	}
 
 	/**
@@ -233,6 +254,18 @@ public class Shape
 	}
 
 	/**
+	 * Get the shape's form at the given height value. Null is returned if the shape do not occupy a space at that height.
+	 * 
+	 * @param z
+	 *            The z-coordinate or height.
+	 * @return The shape's form at the given height.
+	 */
+	public Shape getLayeredShape(double z)
+	{
+		return this;
+	}
+
+	/**
 	 * Get the position of the top-left corner of the shape, acknowledging rotation.
 	 * 
 	 * @return The position of the top-left corner.
@@ -274,5 +307,25 @@ public class Shape
 	{
 		Vector2 bottomRight = Helper.toBottomRight(this);
 		return Helper.rotateVector(bottomRight, Vector2.add(bottomRight, new Vector2(-_Origin.x, -_Origin.y)), _Rotation);
+	}
+
+	/**
+	 * Get the position (height) of the shape's top-edge, not acknowledging rotation.
+	 * 
+	 * @return The position (height) of the shape's top-edge.
+	 */
+	public double getTopHeight()
+	{
+		return (_Position.z + (_Height / 2));
+	}
+
+	/**
+	 * Get the position (height) of the shape's bottom-edge, not acknowledging rotation.
+	 * 
+	 * @return The position (height) of the shape's bottom-edge.
+	 */
+	public double getBottomHeight()
+	{
+		return (_Position.z - (_Height / 2));
 	}
 }

@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 import physics.Body;
 import physics.PhysicsSimulator;
 import auxillary.Vector2;
+import auxillary.Vector3;
 
 /**
  * The debug manager handles various debugging tasks, such as drawing the shape of each body.
@@ -178,7 +179,7 @@ public class DebugManager
 				graphics.setColor(Color.black);
 
 				// Draw the body's position and velocity.
-				graphics.drawString("V: " + Vector2.round(b.getVelocity(), 2).toString() + " - P: " + Vector2.round(b.getPosition(), 2).toString(), (int) b.getPosition().x,
+				graphics.drawString("V: " + Vector3.round(b.getVelocity(), 2).toString() + " - P: " + Vector2.round(b.getPosition(), 2).toString(), (int) b.getPosition().x,
 						(int) b.getPosition().y - 2);
 			}
 			// Catch the exception.
@@ -238,7 +239,7 @@ public class DebugManager
 			// Draw the information.
 			graphics.drawString("------- Body -------", 2, 170);
 			graphics.drawString("Pos: " + Vector2.round(debugBody.getPosition(), 0).toString(), 2, 185);
-			graphics.drawString("Velocity: " + Vector2.round(debugBody.getVelocity(), 0).toString(), 2, 200);
+			graphics.drawString("Velocity: " + Vector3.round(debugBody.getVelocity(), 0).toString(), 2, 200);
 			graphics.drawString("AS, Mass: " + Math.round(debugBody.getMass()), 2, 215);
 			graphics.drawString("NB, FrictionCoe: " + Math.round(debugBody.getFrictionCoefficient()), 2, 230);
 			graphics.drawString("Width: " + debugBody.getShape().getWidth(), 2, 245);
@@ -260,7 +261,7 @@ public class DebugManager
 		{
 			graphics.drawString("--- FPS", 0, 415);
 		}
-		
+
 		// Let the player know that the magic happens with ENTER.
 		graphics.drawString("Press ENTER to toggle", 2, 460);
 
