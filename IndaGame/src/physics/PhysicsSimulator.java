@@ -101,7 +101,7 @@ public class PhysicsSimulator
 						if (checkGroundCollision(b1, b2))
 						{
 							// Move body1 above body2.
-							b1.getShape().setPosition(new Vector3(b1.getPosition().x, b1.getPosition().y, b2.getShape().getPosition().z + 1));
+							b1.getShape().setPosition(new Vector3(b1.getLayeredPosition(), b2.getShape().getPosition().z + 1));
 						}
 					}
 				}
@@ -176,7 +176,7 @@ public class PhysicsSimulator
 	}
 
 	/**
-	 * Do a broad phase collision check.
+	 * Do a broad phase collision check. (Currently checks if the bodies might intersect on the XY-axis.
 	 * 
 	 * @param b1
 	 *            The first body to check.
@@ -190,8 +190,8 @@ public class PhysicsSimulator
 		try
 		{
 			// Check if the bodies are within range.
-			return Vector2.getDistance(b1.getPosition(), b2.getPosition()) < (Math.max(b1.getShape().getWidth(), b1.getShape().getHeight()) + Math.max(b2.getShape()
-					.getWidth(), b2.getShape().getHeight()));
+			return Vector2.getDistance(b1.getLayeredPosition(), b2.getLayeredPosition()) < (Math.max(b1.getShape().getWidth(), b1.getShape().getHeight()) + Math.max(b2
+					.getShape().getWidth(), b2.getShape().getHeight()));
 		}
 		// Catch the exception and display relevant information.
 		catch (Exception e)
@@ -272,18 +272,18 @@ public class PhysicsSimulator
 	private Vector2 checkLayerCollision(Body b1, Body b2)
 	{
 		// Get the min and max heights for both bodies.
-		Vector2 h1 = new Vector2(b1.getShape().getBottomHeight(), b1.getShape().getTopHeight());
-		Vector2 h2 = new Vector2(b2.getShape().getBottomHeight(), b2.getShape().getTopHeight());
+		Vector2 h1 = new Vector2(b1.getShape().getBottomDepth(), b1.getShape().getTopDepth());
+		Vector2 h2 = new Vector2(b2.getShape().getBottomDepth(), b2.getShape().getTopDepth());
 
 		// Get min and max heights for possible collisions between the bodies.
 		Vector2 heights = Vector2.getMiddleValues(h1, h2);
 
-		// If there were no heights found, no collision possible.
+		// If there were no matching heights found, no collision possible.
 		if (heights == null) { return null; }
 
 		// Check the bottom and top layer for collisions.
-		Vector2 bottom = narrowPhase(b1.getShape().getLayeredShape(heights.x), b2.getShape().getLayeredShape(heights.x));
-		Vector2 top = narrowPhase(b1.getShape().getLayeredShape(heights.y), b2.getShape().getLayeredShape(heights.y));
+		Vector2 bottom = narrowPhase(b1.getShape(), b2.getShape());
+		Vector2 top = narrowPhase(b1.getShape(), b2.getShape());
 
 		// The MTV to return.
 		Vector2 mtv = bottom;
@@ -318,18 +318,18 @@ public class PhysicsSimulator
 	 */
 	private boolean checkGroundCollision(Body b1, Body b2)
 	{
-		// Both bodies' height positions.
-		double h1 = b1.getShape().getBottomHeight();
-		double h2 = b2.getShape().getTopHeight();
+		// Both bodies' depth positions.
+		double h1 = b1.getShape().getBottomDepth();
+		double h2 = b2.getShape().getTopDepth();
 
 		// The difference in height.
 		double h = h1 - h2;
 
 		// If the distance between the bodies is not right, no collision. NOTE: Use velocity instead.
-		if (h > 2) { return false; }
+		if (Math.abs(h) > 2) { return false; }
 
 		// If there is no collision between the bodies, excluding height, no collision.
-		if (narrowPhase(b1.getShape().getLayeredShape(b1.getShape().getBottomHeight()), b2.getShape().getLayeredShape(b2.getShape().getTopHeight())) == null) { return false; }
+		if (narrowPhase(b1.getShape(), b2.getShape()) == null) { return false; }
 
 		// There must be a ground collision after all.
 		return true;
@@ -351,8 +351,8 @@ public class PhysicsSimulator
 		Vector2 collision = Helper.toCentroid(intersection);
 
 		// The direction from the collision point to the body centroid point.
-		Vector2 b1Pos = Vector2.getDirection(Vector2.getAngle(collision, b1.getPosition()));
-		Vector2 b2Pos = Vector2.getDirection(Vector2.getAngle(collision, b2.getPosition()));
+		Vector2 b1Pos = Vector2.getDirection(Vector2.getAngle(collision, b1.getLayeredPosition()));
+		Vector2 b2Pos = Vector2.getDirection(Vector2.getAngle(collision, b2.getLayeredPosition()));
 		// Multiply the direction with the absolute velocity of the body.
 		Vector2 b1Force = Vector3.multiply(Vector3.absolute(b1.getVelocity()), b1Pos).toVector2();
 		Vector2 b2Force = Vector3.multiply(Vector3.absolute(b2.getVelocity()), b2Pos).toVector2();
@@ -374,6 +374,9 @@ public class PhysicsSimulator
 	 */
 	private void clearIntersection(Body b1, Body b2, Vector2 mtv)
 	{
+		// If the MTV is null, stop here.
+		if (mtv == null) { return; }
+
 		// Add the MTV to the first body and subtract it from the second. Only move dynamic bodies!
 		if (!b1.getIsStatic())
 		{
@@ -415,7 +418,7 @@ public class PhysicsSimulator
 		Vector2 averageEnergy = Vector2.multiply(Vector2.multiply(Vector2.divide(energyBT, 2), energyDecrease), massRatio);
 
 		// Multiply the Average kinetic Energy with the collision vector direction relative to the body's position.
-		Vector2 impact = Vector2.multiply(averageEnergy, Vector2.getDirection(Vector2.getAngle(collision, b1.getPosition())));
+		Vector2 impact = Vector2.multiply(averageEnergy, Vector2.getDirection(Vector2.getAngle(collision, b1.getLayeredPosition())));
 
 		// Return the average vector.
 		return new Force(b1, impact);
@@ -447,7 +450,7 @@ public class PhysicsSimulator
 
 		// Multiply the Average Kinetic Energy with the collision vector
 		// direction relative to the body's position.
-		Vector2 impact = Vector2.multiply(averageEnergy, Vector2.getDirection(Vector2.getAngle(collision, b1.getPosition())));
+		Vector2 impact = Vector2.multiply(averageEnergy, Vector2.getDirection(Vector2.getAngle(collision, b1.getLayeredPosition())));
 
 		// Return the average vector.
 		return (new Force(b1, impact));

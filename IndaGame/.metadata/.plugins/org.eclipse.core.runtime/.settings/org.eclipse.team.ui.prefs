@@ -1,3 +1,6 @@
-#Mon Apr 16 12:55:57 CEST 2012
+#Fri Apr 20 01:56:52 CEST 2012
+org.eclipse.team.ui.sychronizing_default_participant_sec_id=1334878913757
+org.eclipse.team.ui.sychronizing_default_perspective_to_show=always
 eclipse.preferences.version=1
 org.eclipse.team.ui.first_time=false
+org.eclipse.team.ui.sychronizing_default_participant=org.eclipse.egit.ui.modelCompareParticipant

@@ -17,8 +17,26 @@ import physics.Shape;
  */
 public final class Helper
 {
+	// Colors.
 	public static final Color CornFlowerBlue = new Color(100, 149, 237);
 	public static final Color Mantis = new Color(116, 195, 101);
+
+	/**
+	 * The ratio between height (Y-coordinate) and depth (Z-coordinate). Used to simulate depth. Positive depth is 'upwards'.
+	 */
+	public static final double HeightPerDepthRatio = ((double) 1 / (double) 3);
+
+	/**
+	 * Get the 2D screen position from a 3D vector.
+	 * 
+	 * @param v
+	 *            The 3D vector.
+	 * @return The 3D vector projected into 2D.
+	 */
+	public static Vector2 getScreenPosition(Vector3 v)
+	{
+		return new Vector2(v.x, v.y - v.z * HeightPerDepthRatio);
+	}
 
 	/**
 	 * Clamp a value between a min and max.

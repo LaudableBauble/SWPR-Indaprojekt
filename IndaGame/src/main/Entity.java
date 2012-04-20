@@ -66,6 +66,9 @@ public class Entity
 		// Set the shape of the body.
 		_Body.getShape().setWidth(_Sprites.getSprite(0).getCurrentFrame().getWidth());
 		_Body.getShape().setHeight(_Sprites.getSprite(0).getCurrentFrame().getHeight() / 2);
+
+		// Update the sprite's position offset.
+		_Sprites.getSprite(0).setPositionOffset(new Vector2(0, -_Body.getShape().getHeight() / 2));
 	}
 
 	/**
@@ -80,10 +83,10 @@ public class Entity
 		if (input.isMouseButtonDown(1))
 		{
 			// Check if the Body has been clicked on.
-			if ((input.mouseEventPosition().x <= (_Body.getPosition().x + (_Body.getShape().getWidth() / 2)))
-					&& (input.mouseEventPosition().x >= (_Body.getPosition().x - (_Body.getShape().getWidth() / 2)))
-					&& (input.mouseEventPosition().y <= (_Body.getPosition().y + (_Body.getShape().getHeight() / 2)))
-					&& (input.mouseEventPosition().y >= (_Body.getPosition().y - (_Body.getShape().getHeight() / 2))))
+			if ((input.mouseEventPosition().x <= (_Body.getLayeredPosition().x + (_Body.getShape().getWidth() / 2)))
+					&& (input.mouseEventPosition().x >= (_Body.getLayeredPosition().x - (_Body.getShape().getWidth() / 2)))
+					&& (input.mouseEventPosition().y <= (_Body.getLayeredPosition().y + (_Body.getShape().getHeight() / 2)))
+					&& (input.mouseEventPosition().y >= (_Body.getLayeredPosition().y - (_Body.getShape().getHeight() / 2))))
 			{
 				// Turn the debug isClicked variable on.
 				_Body._IsClicked = !(_Body._IsClicked);
@@ -101,8 +104,8 @@ public class Entity
 	{
 		// Update the body and sprites.
 		_Body.update();
-		_Sprites.update(gameTime, Vector2.subtract(Helper.toTopLeft(_Body.getPosition(), _Body.getShape().getWidth(), _Body.getShape().getHeight()), new Vector2(0, _Body
-				.getShape().getHeight())));
+		_Sprites.update(gameTime, Helper.getScreenPosition(_Body.getPosition()));
+		// _Sprites.update(gameTime, _Body.getLayeredPosition());
 
 		// Update the entity's depth.
 		updateDepth();
@@ -125,7 +128,7 @@ public class Entity
 	 */
 	private void updateDepth()
 	{
-		_Depth = (int) _Body.getPosition().y;
+		_Depth = (int) _Body.getLayeredPosition().y;
 	}
 
 	/**

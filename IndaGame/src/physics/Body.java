@@ -47,16 +47,18 @@ public class Body
 	 */
 	public Body(PhysicsSimulator physics)
 	{
-		this(1, 1, 10, .25f, physics);
+		this(1, 1, 1, 10, .25f, physics);
 	}
 
 	/**
 	 * Constructor for a body.
 	 * 
 	 * @param width
-	 *            The width of the body.
+	 *            The width of the shape (x-coordinate).
 	 * @param height
-	 *            The height of the body.
+	 *            The height of the shape (y-coordinate).
+	 * @param depth
+	 *            The depth of the shape (z-coordinate).
 	 * @param mass
 	 *            The mass of the body.
 	 * @param friction
@@ -64,19 +66,21 @@ public class Body
 	 * @param physics
 	 *            The physics simulator that this body will be a part of.
 	 */
-	public Body(float width, float height, double mass, double friction, PhysicsSimulator physics)
+	public Body(float width, float height, float depth, double mass, double friction, PhysicsSimulator physics)
 	{
 		// Set the variables and create the shape.
-		initialize(width, height, mass, friction, physics);
+		initialize(width, height, depth, mass, friction, physics);
 	}
 
 	/**
 	 * Initialize the body.
 	 * 
 	 * @param width
-	 *            The width of the body.
+	 *            The width of the shape (x-coordinate).
 	 * @param height
-	 *            The height of the body.
+	 *            The height of the shape (y-coordinate).
+	 * @param depth
+	 *            The depth of the shape (z-coordinate).
 	 * @param mass
 	 *            The mass of the body.
 	 * @param friction
@@ -84,10 +88,10 @@ public class Body
 	 * @param physics
 	 *            The physics simulator that this body will be a part of.
 	 */
-	protected void initialize(float width, float height, double mass, double friction, PhysicsSimulator physics)
+	protected void initialize(float width, float height, float depth, double mass, double friction, PhysicsSimulator physics)
 	{
 		// Initialize a couple of variables.
-		_Shape = new Shape(width, height);
+		_Shape = new Shape(width, height, depth);
 		_IsStatic = false;
 		_MaxVelocity = 8;
 		_Mass = mass;
@@ -185,13 +189,33 @@ public class Body
 	}
 
 	/**
-	 * Get the body's position.
+	 * Get the body's layered position, ie. only the x and y-coordinates.
 	 * 
 	 * @return The position of the body.
 	 */
-	public Vector2 getPosition()
+	public Vector2 getLayeredPosition()
 	{
 		return _Shape.getLayeredPosition();
+	}
+
+	/**
+	 * Get the body's position, ie. all three dimensions.
+	 * 
+	 * @return The position of the body.
+	 */
+	public Vector3 getPosition()
+	{
+		return _Shape.getPosition();
+	}
+
+	/**
+	 * Set the body's position, ie. all three dimensions.
+	 * 
+	 * @position The new position of the body.
+	 */
+	public void setPosition(Vector3 position)
+	{
+		_Shape.setPosition(position);
 	}
 
 	/**

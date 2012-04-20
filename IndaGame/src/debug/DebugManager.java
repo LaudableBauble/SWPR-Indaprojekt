@@ -9,6 +9,7 @@ import java.awt.geom.AffineTransform;
 
 import physics.Body;
 import physics.PhysicsSimulator;
+import auxillary.Helper;
 import auxillary.Vector2;
 import auxillary.Vector3;
 
@@ -179,16 +180,19 @@ public class DebugManager
 				AffineTransform oldMatrix = graphics.getTransform();
 				graphics.setTransform(_Transform);
 
+				// The body's position on the screen.
+				Vector2 position = Helper.getScreenPosition(b.getPosition());
+
 				// Draw the body's shape.
-				graphics.drawRect((int) (b.getPosition().x - b.getShape().getWidth() / 2), (int) (b.getPosition().y - b.getShape().getHeight() / 2), (int) b.getShape()
-						.getWidth(), (int) b.getShape().getHeight());
+				graphics.drawRect((int) (position.x - b.getShape().getWidth() / 2), (int) (position.y - b.getShape().getHeight() / 2), (int) b.getShape().getWidth(), (int) b
+						.getShape().getHeight());
 
 				// Change the color for the debug window.
 				graphics.setColor(Color.black);
 
 				// Draw the body's position and velocity.
-				graphics.drawString("V: " + Vector3.round(b.getVelocity(), 2).toString() + " - P: " + Vector2.round(b.getPosition(), 2).toString(), (int) b.getPosition().x,
-						(int) b.getPosition().y - 2);
+				graphics.drawString("P: " + Vector3.round(b.getPosition(), 0).toString() + " - V: " + Vector3.round(b.getVelocity(), 0).toString(), (int) position.x,
+						(int) position.y - 2);
 
 				// Reinstate the old graphics matrix.
 				graphics.setTransform(oldMatrix);
@@ -249,7 +253,7 @@ public class DebugManager
 		{
 			// Draw the information.
 			graphics.drawString("------- Body -------", 2, 170);
-			graphics.drawString("Pos: " + Vector2.round(debugBody.getPosition(), 0).toString(), 2, 185);
+			graphics.drawString("Pos: " + Vector2.round(debugBody.getLayeredPosition(), 0).toString(), 2, 185);
 			graphics.drawString("Velocity: " + Vector3.round(debugBody.getVelocity(), 0).toString(), 2, 200);
 			graphics.drawString("AS, Mass: " + Math.round(debugBody.getMass()), 2, 215);
 			graphics.drawString("NB, FrictionCoe: " + Math.round(debugBody.getFrictionCoefficient()), 2, 230);

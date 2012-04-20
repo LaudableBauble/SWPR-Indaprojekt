@@ -223,6 +223,26 @@ public class Vector3
 	}
 
 	/**
+	 * Get the distance between two vectors.
+	 * 
+	 * @param v1
+	 *            The first vector.
+	 * @param v2
+	 *            The second vector.
+	 * @return The distance between the vectors.
+	 */
+	public static double distance(Vector3 v1, Vector3 v2)
+	{
+		// Calculate the distance between two vectors.
+		double dx = (v1.x - v2.x);
+		double dy = (v1.y - v2.y);
+		double dz = (v1.z - v2.z);
+
+		// Return the result.
+		return Math.sqrt(dx * dx + dy * dy + dz * dz);
+	}
+
+	/**
 	 * Check the vector for NaN values.
 	 * 
 	 * @param v

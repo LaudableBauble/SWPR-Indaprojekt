@@ -14,8 +14,8 @@ public class Shape
 {
 	// The width, height and position. Note that position is always where the origin of the shape is.
 	private float _Width;
-	private float _Depth;
 	private float _Height;
+	private float _Depth;
 	private Vector3 _Position;
 	private float _Rotation;
 	private Vector2 _Origin;
@@ -24,14 +24,16 @@ public class Shape
 	 * Constructor for a shape.
 	 * 
 	 * @param width
-	 *            The width of the shape.
+	 *            The width of the shape (x-coordinate).
 	 * @param height
-	 *            The height of the shape.
+	 *            The height of the shape (y-coordinate).
+	 * @param depth
+	 *            The depth of the shape (z-coordinate).
 	 */
-	public Shape(float width, float height)
+	public Shape(float width, float height, float depth)
 	{
 		// Continue down the chain of constructors.
-		this(new Vector2(0, 0), width, height);
+		this(new Vector2(0, 0), width, height, depth);
 	}
 
 	/**
@@ -40,14 +42,16 @@ public class Shape
 	 * @param position
 	 *            The position of the shape.
 	 * @param width
-	 *            The width of the shape.
+	 *            The width of the shape (x-coordinate).
 	 * @param height
-	 *            The height of the shape.
+	 *            The height of the shape (y-coordinate).
+	 * @param depth
+	 *            The depth of the shape (z-coordinate).
 	 */
-	public Shape(Vector2 position, float width, float height)
+	public Shape(Vector2 position, float width, float height, float depth)
 	{
 		// Initialize the shape.
-		initialize(position, width, height);
+		initialize(position, width, height, depth);
 	}
 
 	/**
@@ -56,17 +60,20 @@ public class Shape
 	 * @param position
 	 *            The position of the shape.
 	 * @param width
-	 *            The width of the shape.
+	 *            The width of the shape (x-coordinate).
 	 * @param height
-	 *            The height of the shape.
+	 *            The height of the shape (y-coordinate).
+	 * @param depth
+	 *            The depth of the shape (z-coordinate).
 	 */
-	protected void initialize(Vector2 position, float width, float height)
+	protected void initialize(Vector2 position, float width, float height, float depth)
 	{
 		// Initialize some variables.
 		_Position = new Vector3(position);
 		_Rotation = 0;
 		_Width = width;
 		_Height = height;
+		_Depth = depth;
 
 		// Update the origin.
 		_Origin = getCenter();
@@ -168,7 +175,7 @@ public class Shape
 	}
 
 	/**
-	 * Set the shape's position, ie. where the origin will be at.
+	 * Set the shape's position.
 	 * 
 	 * @param position
 	 *            The new position.
@@ -187,6 +194,17 @@ public class Shape
 	public void setLayeredPosition(Vector2 position)
 	{
 		_Position = new Vector3(position.x, position.y, _Position.z);
+	}
+
+	/**
+	 * Set the shape's rotation in radians.
+	 * 
+	 * @param rotation
+	 *            The new rotation.
+	 */
+	public void setRotation(float rotation)
+	{
+		_Rotation = rotation;
 	}
 
 	/**
@@ -254,18 +272,6 @@ public class Shape
 	}
 
 	/**
-	 * Get the shape's form at the given height value. Null is returned if the shape do not occupy a space at that height.
-	 * 
-	 * @param z
-	 *            The z-coordinate or height.
-	 * @return The shape's form at the given height.
-	 */
-	public Shape getLayeredShape(double z)
-	{
-		return this;
-	}
-
-	/**
 	 * Get the position of the top-left corner of the shape, acknowledging rotation.
 	 * 
 	 * @return The position of the top-left corner.
@@ -310,22 +316,22 @@ public class Shape
 	}
 
 	/**
-	 * Get the position (height) of the shape's top-edge, not acknowledging rotation.
+	 * Get the position (depth) of the shape's top-edge, not acknowledging rotation.
 	 * 
-	 * @return The position (height) of the shape's top-edge.
+	 * @return The position (depth) of the shape's top-edge.
 	 */
-	public double getTopHeight()
+	public double getTopDepth()
 	{
-		return (_Position.z + (_Height / 2));
+		return (_Position.z + (_Depth / 2));
 	}
 
 	/**
-	 * Get the position (height) of the shape's bottom-edge, not acknowledging rotation.
+	 * Get the position (depth) of the shape's bottom-edge, not acknowledging rotation.
 	 * 
-	 * @return The position (height) of the shape's bottom-edge.
+	 * @return The position (depth) of the shape's bottom-edge.
 	 */
-	public double getBottomHeight()
+	public double getBottomDepth()
 	{
-		return (_Position.z - (_Height / 2));
+		return (_Position.z - (_Depth / 2));
 	}
 }

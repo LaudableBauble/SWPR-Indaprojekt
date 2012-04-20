@@ -21,6 +21,7 @@ import main.Player;
 import physics.PhysicsSimulator;
 import auxillary.Helper;
 import auxillary.Vector2;
+import auxillary.Vector3;
 import debug.DebugManager;
 
 /**
@@ -41,8 +42,9 @@ public class GameplayScreen extends GameScreen
 	// The player.
 	private Player _Player;
 
-	// A bookshelf.
+	// Entities.
 	private Entity _Shelf;
+	private Entity _Block;
 
 	/**
 	 * Constructor for the game screen.
@@ -69,18 +71,23 @@ public class GameplayScreen extends GameScreen
 
 		// Create the player.
 		_Player = new Player(_Physics);
-		_Player.getBody().getShape().setLayeredPosition(new Vector2(1000, 1000));
-		// _Player.getBody().getShape().setPosition(new Vector3(300, 300, 28));
+		_Player.getBody().setPosition(new Vector3(1100, 1000, 0));
 
 		// Create the shelf.
 		_Shelf = new Entity(_Physics);
-		_Shelf.getBody().getShape().setLayeredPosition(new Vector2(1200, 1000));
+		_Shelf.getBody().setPosition(new Vector3(1200, 1000, 0));
 		_Shelf.getBody().setIsStatic(true);
+
+		// Create the block.
+		_Block = new Entity(_Physics);
+		_Block.getBody().setPosition(new Vector3(1000, 1000, 0));
+		_Block.getBody().setIsStatic(true);
 
 		// Add the entities to the list.
 		_Entities = new ArrayList<>();
 		_Entities.add(_Player);
 		_Entities.add(_Shelf);
+		_Entities.add(_Block);
 	}
 
 	/**
@@ -94,8 +101,9 @@ public class GameplayScreen extends GameScreen
 		// Load the player's content.
 		_Player.loadContent();
 		_Shelf.loadContent("Bookshelf[1].png");
-		//_Shelf.getSprites().getSprite(0).setRotation(1);
-		//_Shelf.getSprites().getSprite(0).setScale(2);
+		_Block.loadContent("ElevatedBlock[1].png");
+		// _Shelf.getSprites().getSprite(0).setRotation(1);
+		// _Shelf.getSprites().getSprite(0).setScale(2);
 
 		// Once the load has finished, we use ResetElapsedTime to tell the game's
 		// timing mechanism that we have just finished a very long frame, and that

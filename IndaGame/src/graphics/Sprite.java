@@ -23,6 +23,7 @@ public class Sprite
 	private SpriteManager _Manager;
 	private BufferedImage _Texture;
 	private Vector2 _Position;
+	private Vector2 _PositionOffset;
 	private String _Name;
 	private String _Tag;
 	private ArrayList<Frame> _Frames;
@@ -48,7 +49,7 @@ public class Sprite
 	 */
 	public Sprite(String name)
 	{
-		// Intialize the sprite.
+		// Initialize the sprite.
 		initialize(name);
 	}
 
@@ -68,6 +69,7 @@ public class Sprite
 		_Scale = 1;
 		_Depth = 0;
 		_Rotation = 0;
+		_PositionOffset = Vector2.empty();
 		_Tag = "";
 		_Transparence = 1;
 		_AnimationDirection = true;
@@ -122,7 +124,7 @@ public class Sprite
 		try
 		{
 			// Temporarily save the old matrix.
-			//AffineTransform old = graphics.getTransform();
+			// AffineTransform old = graphics.getTransform();
 			// Whip up a drawing matrix to enable scale and rotation and add it to the current matrix.
 			// graphics.transform(AffineTransform.getRotateInstance(_Rotation).getScaleInstance(_Scale, _Scale));
 
@@ -135,12 +137,15 @@ public class Sprite
 
 			BufferedImageOp bio = new AffineTransformOp(matrix, AffineTransformOp.TYPE_BILINEAR);
 
+			// The 'real' position, including the offset and origin.
+			Vector2 position = Vector2.subtract(Vector2.add(_Position, _PositionOffset), _Frames.get(_FrameIndex).getOrigin());
+
 			// Draw the sprite.
-			//graphics.drawImage(_Texture, (int) _Position.x, (int) _Position.y, null);
-			graphics.drawImage(bio.filter(_Texture, null), (int) _Position.x, (int) _Position.y, null);
+			// graphics.drawImage(_Texture, (int) _Position.x, (int) _Position.y, null);
+			graphics.drawImage(bio.filter(_Texture, null), (int) position.x, (int) position.y, null);
 
 			// Revert to the old matrix configuration.
-			//graphics.setTransform(old);
+			// graphics.setTransform(old);
 		}
 		// Catch
 		catch (Exception e)
@@ -320,7 +325,7 @@ public class Sprite
 	}
 
 	/**
-	 * Get the sprite's position.
+	 * Get the sprite's position. This is where the origin of the sprite will be drawn.
 	 * 
 	 * @return The position.
 	 */
@@ -330,14 +335,25 @@ public class Sprite
 	}
 
 	/**
-	 * Set the sprite's position.
+	 * Set the sprite's position. This is where the origin of the sprite will be drawn.
 	 * 
-	 * @param The
-	 *            new position.
+	 * @param position
+	 *            The new position.
 	 */
 	public void setPosition(Vector2 position)
 	{
 		_Position = position;
+	}
+
+	/**
+	 * Set the sprite's position offset, ie. the amount to add to the position during drawing.
+	 * 
+	 * @param offset
+	 *            The new position offset.
+	 */
+	public void setPositionOffset(Vector2 offset)
+	{
+		_PositionOffset = offset;
 	}
 
 	/**
