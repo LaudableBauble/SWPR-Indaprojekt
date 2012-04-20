@@ -66,6 +66,8 @@ public class Entity
 		// Set the shape of the body.
 		_Body.getShape().setWidth(_Sprites.getSprite(0).getCurrentFrame().getWidth());
 		_Body.getShape().setHeight(_Sprites.getSprite(0).getCurrentFrame().getHeight() / 2);
+		// _Body.getShape().setHeight(_Sprites.getSprite(0).getCurrentFrame().getHeight() * (float)Helper.HeightPerDepthRatio);
+		_Body.getShape().setDepth(_Sprites.getSprite(0).getCurrentFrame().getHeight());
 
 		// Update the sprite's position offset.
 		_Sprites.getSprite(0).setPositionOffset(new Vector2(0, -_Body.getShape().getHeight() / 2));
@@ -105,7 +107,6 @@ public class Entity
 		// Update the body and sprites.
 		_Body.update();
 		_Sprites.update(gameTime, Helper.getScreenPosition(_Body.getPosition()));
-		// _Sprites.update(gameTime, _Body.getLayeredPosition());
 
 		// Update the entity's depth.
 		updateDepth();
@@ -124,11 +125,11 @@ public class Entity
 	}
 
 	/**
-	 * Update the depth value for this entity. The further down the screen, the higher the depth.
+	 * Update the depth value for this entity. Not to be confused with the depth of the entity's body. The further down the screen, the higher the depth.
 	 */
 	private void updateDepth()
 	{
-		_Depth = (int) _Body.getLayeredPosition().y;
+		_Depth = (int) _Body.getPosition().y;
 	}
 
 	/**
@@ -142,7 +143,7 @@ public class Entity
 	}
 
 	/**
-	 * Get the entity's depth value. Entities with high depth values is drawn last.
+	 * Get the entity's depth value. Not to be confused with the depth of the entity's body. Entities with high depth values is drawn last.
 	 * 
 	 * @return The depth of the entity.
 	 */
@@ -152,7 +153,7 @@ public class Entity
 	}
 
 	/**
-	 * Set the entity's depth value. Entities with high depth values is drawn last.
+	 * Set the entity's depth value. Not to be confused with the depth of the entity's body. Entities with high depth values is drawn last.
 	 */
 	public void setDepth(int depth)
 	{

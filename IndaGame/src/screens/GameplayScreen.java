@@ -45,6 +45,7 @@ public class GameplayScreen extends GameScreen
 	// Entities.
 	private Entity _Shelf;
 	private Entity _Block;
+	private Entity _Floor;
 
 	/**
 	 * Constructor for the game screen.
@@ -71,23 +72,30 @@ public class GameplayScreen extends GameScreen
 
 		// Create the player.
 		_Player = new Player(_Physics);
-		_Player.getBody().setPosition(new Vector3(1100, 1000, 0));
+		_Player.getBody().setPosition(new Vector3(1000, 1000, 50));
 
 		// Create the shelf.
 		_Shelf = new Entity(_Physics);
-		_Shelf.getBody().setPosition(new Vector3(1200, 1000, 0));
+		_Shelf.getBody().setPosition(new Vector3(1200, 1000, 1));
 		_Shelf.getBody().setIsStatic(true);
 
 		// Create the block.
 		_Block = new Entity(_Physics);
-		_Block.getBody().setPosition(new Vector3(1000, 1000, 0));
+		_Block.getBody().setPosition(new Vector3(1000, 1000, 1));
 		_Block.getBody().setIsStatic(true);
+		
+		// Create the floor.
+		_Floor = new Entity(_Physics);
+		_Floor.getBody().setPosition(new Vector3(1000, 1000, 0));
+		_Floor.getBody().setIsStatic(true);
+		_Floor.getBody().getShape().setDepth(1);
 
 		// Add the entities to the list.
 		_Entities = new ArrayList<>();
 		_Entities.add(_Player);
 		_Entities.add(_Shelf);
 		_Entities.add(_Block);
+		_Entities.add(_Floor);
 	}
 
 	/**
@@ -102,6 +110,11 @@ public class GameplayScreen extends GameScreen
 		_Player.loadContent();
 		_Shelf.loadContent("Bookshelf[1].png");
 		_Block.loadContent("ElevatedBlock[1].png");
+		_Floor.loadContent("DarkTiledFloor[1].png");
+		
+		//Play with the entities.
+		_Floor.getBody().getShape().setHeight(_Floor.getSprites().getSprite(0).getCurrentFrame().getHeight());
+		_Floor.getSprites().getSprite(0).setPositionOffset(new Vector2(0, 0));
 		// _Shelf.getSprites().getSprite(0).setRotation(1);
 		// _Shelf.getSprites().getSprite(0).setScale(2);
 

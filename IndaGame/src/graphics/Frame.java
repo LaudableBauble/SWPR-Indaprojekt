@@ -11,8 +11,8 @@ import auxillary.Vector2;
 public class Frame
 {
 	private String _PathName;
-	private int _Width;
-	private int _Height;
+	private float _Width;
+	private float _Height;
 	private Vector2 _Origin;
 	private BufferedImage _Texture;
 
@@ -103,7 +103,7 @@ public class Frame
 	 * 
 	 * @return The height.
 	 */
-	public int getHeight()
+	public float getHeight()
 	{
 		return _Height;
 	}
@@ -113,7 +113,7 @@ public class Frame
 	 * 
 	 * @return The width.
 	 */
-	public int getWidth()
+	public float getWidth()
 	{
 		return _Width;
 	}

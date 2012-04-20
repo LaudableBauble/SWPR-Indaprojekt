@@ -73,6 +73,39 @@ public class Vector3
 	}
 
 	/**
+	 * Set the x-coordinate.
+	 * 
+	 * @param x
+	 *            The new x-coordinate.
+	 */
+	public void setX(double x)
+	{
+		this.x = x;
+	}
+
+	/**
+	 * Set the y-coordinate.
+	 * 
+	 * @param y
+	 *            The new y-coordinate.
+	 */
+	public void setY(double y)
+	{
+		this.y = y;
+	}
+
+	/**
+	 * Set the z-coordinate.
+	 * 
+	 * @param z
+	 *            The new z-coordinate.
+	 */
+	public void setZ(double z)
+	{
+		this.z = z;
+	}
+
+	/**
 	 * Add two vectors and return the sum.
 	 * 
 	 * @param v1

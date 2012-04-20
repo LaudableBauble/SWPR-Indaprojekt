@@ -73,8 +73,8 @@ public class PhysicsSimulator
 				// Loop through all bodies and check for collision.
 				for (Body b2 : _Bodies)
 				{
-					// Check so it's not the same body.
-					if (b1 == b2)
+					// Check so it's not the same body, or if both bodies are set to static.
+					if (b1 == b2 || (b1.getIsStatic() && b2.getIsStatic()))
 					{
 						continue;
 					}
@@ -97,11 +97,17 @@ public class PhysicsSimulator
 							clearIntersection(b1, b2, mtv);
 						}
 
-						// Check for ground collision.
+						// Check for ground collision and alter positions if necessary.
 						if (checkGroundCollision(b1, b2))
 						{
-							// Move body1 above body2.
+							// Move body1 above body2 and null the movement on the z-axis.
 							b1.getShape().setPosition(new Vector3(b1.getLayeredPosition(), b2.getShape().getPosition().z + 1));
+							b1.getVelocity().setZ(0);
+						}
+						// Otherwise apply gravity to the body's velocity.
+						else
+						{
+							b1.addGravity(_Gravity);
 						}
 					}
 				}
@@ -220,39 +226,46 @@ public class PhysicsSimulator
 		// The smallest axis found.
 		Vector2 smallest = null;
 
-		// Get the axes of both bodies.
-		Vector2[][] axes = new Vector2[][] { s1.getAxes(), s2.getAxes() };
-
-		// Iterate over the axes of both bodies.
-		for (Vector2[] v : axes)
+		try
 		{
-			// Iterate over both bodies' axes.
-			for (Vector2 a : v)
+			// Get the axes of both bodies.
+			Vector2[][] axes = new Vector2[][] { s1.getAxes(), s2.getAxes() };
+
+			// Iterate over the axes of both bodies.
+			for (Vector2[] v : axes)
 			{
-				// Project both bodies onto the axis.
-				Vector2 p1 = s1.project(a);
-				Vector2 p2 = s2.project(a);
-
-				// Get the overlap.
-				double o = Vector2.getOverlap(p1, p2);
-
-				// Do the projections overlap?
-				if (o == -1)
+				// Iterate over both bodies' axes.
+				for (Vector2 a : v)
 				{
-					// We can guarantee that the shapes do not overlap.
-					return null;
-				}
-				else
-				{
-					// Check for minimum.
-					if (o < overlap)
+					// Project both bodies onto the axis.
+					Vector2 p1 = s1.project(a);
+					Vector2 p2 = s2.project(a);
+
+					// Get the overlap.
+					double o = Vector2.getOverlap(p1, p2);
+
+					// Do the projections overlap?
+					if (o == -1)
 					{
-						// Store the minimum overlap and the axis it was projected upon. Make sure that the separation vector is pointing the right way.
-						overlap = o;
-						smallest = a;
+						// We can guarantee that the shapes do not overlap.
+						return null;
+					}
+					else
+					{
+						// Check for minimum.
+						if (o < overlap)
+						{
+							// Store the minimum overlap and the axis it was projected upon. Make sure that the separation vector is pointing the right way.
+							overlap = o;
+							smallest = a;
+						}
 					}
 				}
 			}
+		}
+		catch (Exception e)
+		{
+			System.out.println(this + ": Narrow Phase Error. (" + e + ")");
 		}
 
 		// We now know that every axis had an overlap on it, which means we can
@@ -271,36 +284,46 @@ public class PhysicsSimulator
 	 */
 	private Vector2 checkLayerCollision(Body b1, Body b2)
 	{
-		// Get the min and max heights for both bodies.
-		Vector2 h1 = new Vector2(b1.getShape().getBottomDepth(), b1.getShape().getTopDepth());
-		Vector2 h2 = new Vector2(b2.getShape().getBottomDepth(), b2.getShape().getTopDepth());
-
-		// Get min and max heights for possible collisions between the bodies.
-		Vector2 heights = Vector2.getMiddleValues(h1, h2);
-
-		// If there were no matching heights found, no collision possible.
-		if (heights == null) { return null; }
-
-		// Check the bottom and top layer for collisions.
-		Vector2 bottom = narrowPhase(b1.getShape(), b2.getShape());
-		Vector2 top = narrowPhase(b1.getShape(), b2.getShape());
-
 		// The MTV to return.
-		Vector2 mtv = bottom;
+		Vector2 mtv = null;
 
-		// If there was a collision at top.
-		if (top != null)
+		try
 		{
-			// If there was no collision at bottom, choose the top's MTV.
-			if (mtv == null)
+			// Get the min and max heights for both bodies.
+			Vector2 h1 = new Vector2(b1.getShape().getBottomDepth(), b1.getShape().getTopDepth());
+			Vector2 h2 = new Vector2(b2.getShape().getBottomDepth(), b2.getShape().getTopDepth());
+
+			// Get min and max heights for possible collisions between the bodies.
+			Vector2 heights = Vector2.getMiddleValues(h1, h2);
+
+			// If there were no matching heights found, no collision possible.
+			if (heights == null) { return null; }
+
+			// Check the bottom and top layer for collisions.
+			Vector2 bottom = narrowPhase(b1.getShape(), b2.getShape());
+			Vector2 top = narrowPhase(b1.getShape(), b2.getShape());
+
+			// Set the MTV.
+			mtv = bottom;
+
+			// If there was a collision at top.
+			if (top != null)
 			{
-				mtv = top;
+				// If there was no collision at bottom, choose the top's MTV.
+				if (mtv == null)
+				{
+					mtv = top;
+				}
+				// Otherwise choose the minimum of the two.
+				else
+				{
+					mtv = (mtv.getLength() > top.getLength()) ? top : mtv;
+				}
 			}
-			// Otherwise choose the minimum of the two.
-			else
-			{
-				mtv = (mtv.getLength() > top.getLength()) ? top : mtv;
-			}
+		}
+		catch (Exception e)
+		{
+			System.out.println(this + ": Narrow Phase Error. (" + e + ")");
 		}
 
 		// Return the MTV.
@@ -318,6 +341,9 @@ public class PhysicsSimulator
 	 */
 	private boolean checkGroundCollision(Body b1, Body b2)
 	{
+		// The first body has to be dynamic.
+		if (b1.getIsStatic()) { return false; }
+
 		// Both bodies' depth positions.
 		double h1 = b1.getShape().getBottomDepth();
 		double h2 = b2.getShape().getTopDepth();
@@ -325,8 +351,8 @@ public class PhysicsSimulator
 		// The difference in height.
 		double h = h1 - h2;
 
-		// If the distance between the bodies is not right, no collision. NOTE: Use velocity instead.
-		if (Math.abs(h) > 2) { return false; }
+		// If the distance between the bodies is not right, no collision.
+		if (h > Math.max(b1.getVelocity().z - _Gravity, 2) || h < 0) { return false; }
 
 		// If there is no collision between the bodies, excluding height, no collision.
 		if (narrowPhase(b1.getShape(), b2.getShape()) == null) { return false; }

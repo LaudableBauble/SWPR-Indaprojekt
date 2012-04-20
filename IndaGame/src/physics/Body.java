@@ -313,6 +313,17 @@ public class Body
 	}
 
 	/**
+	 * Add gravity (velocity on the z-axis) to the body's velocity.
+	 * 
+	 * @param gravity
+	 *            The gravity to apply.
+	 */
+	public void addGravity(double gravity)
+	{
+		_Velocity.setZ(_Velocity.z - gravity);
+	}
+
+	/**
 	 * Set the body's staticness.
 	 * 
 	 * @param isStatic

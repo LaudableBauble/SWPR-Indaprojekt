@@ -53,6 +53,28 @@ public class Vector2
 		y = rectangle.getY();
 	}
 
+	/**
+	 * Set the x-coordinate.
+	 * 
+	 * @param x
+	 *            The new x-coordinate.
+	 */
+	public void setX(double x)
+	{
+		this.x = x;
+	}
+
+	/**
+	 * Set the y-coordinate.
+	 * 
+	 * @param y
+	 *            The new y-coordinate.
+	 */
+	public void setY(double y)
+	{
+		this.y = y;
+	}
+
 	// Add two Vectors.
 	public static Vector2 add(Vector2 v1, Vector2 v2)
 	{

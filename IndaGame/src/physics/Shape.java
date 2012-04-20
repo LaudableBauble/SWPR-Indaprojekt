@@ -159,6 +159,25 @@ public class Shape
 	}
 
 	/**
+	 * Get the shape's depth.
+	 */
+	public float getDepth()
+	{
+		return _Depth;
+	}
+
+	/**
+	 * Set the shape's depth.
+	 * 
+	 * @param depth
+	 *            The new depth.
+	 */
+	public void setDepth(float depth)
+	{
+		_Depth = depth;
+	}
+
+	/**
 	 * Get the shape's position.
 	 */
 	public Vector3 getPosition()
@@ -316,7 +335,7 @@ public class Shape
 	}
 
 	/**
-	 * Get the position (depth) of the shape's top-edge, not acknowledging rotation.
+	 * Get the position (z + depth / 2) of the shape's top-edge, not acknowledging rotation.
 	 * 
 	 * @return The position (depth) of the shape's top-edge.
 	 */
@@ -326,7 +345,7 @@ public class Shape
 	}
 
 	/**
-	 * Get the position (depth) of the shape's bottom-edge, not acknowledging rotation.
+	 * Get the position (z - depth / 2) of the shape's bottom-edge, not acknowledging rotation.
 	 * 
 	 * @return The position (depth) of the shape's bottom-edge.
 	 */
