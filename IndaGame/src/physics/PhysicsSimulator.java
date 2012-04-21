@@ -367,33 +367,6 @@ public class PhysicsSimulator
 	}
 
 	/**
-	 * Pull two bodies that are intersecting apart by exerting forces. Old as of just now.
-	 * 
-	 * @param b1
-	 *            The first body.
-	 * @param b2
-	 *            The second body.
-	 */
-	private void clearIntersection(Body b1, Body b2)
-	{
-		// Get the intersection rectangle.
-		Rectangle intersection = b1.getShape().getIntersection(b2.getShape());
-		// Calculate the Collision point.
-		Vector2 collision = Helper.toCentroid(intersection);
-
-		// The direction from the collision point to the body centroid point.
-		Vector2 b1Pos = Vector2.getDirection(Vector2.getAngle(collision, b1.getLayeredPosition()));
-		Vector2 b2Pos = Vector2.getDirection(Vector2.getAngle(collision, b2.getLayeredPosition()));
-		// Multiply the direction with the absolute velocity of the body.
-		Vector2 b1Force = Vector3.multiply(Vector3.absolute(b1.getVelocity()), b1Pos).toVector2();
-		Vector2 b2Force = Vector3.multiply(Vector3.absolute(b2.getVelocity()), b2Pos).toVector2();
-
-		// Add the forces to the bodies.
-		addForce(new Force(b1, b1Force));
-		addForce(new Force(b2, b2Force));
-	}
-
-	/**
 	 * Pull two bodies that are intersecting apart by using the MTV.
 	 * 
 	 * @param b1

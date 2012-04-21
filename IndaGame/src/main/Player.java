@@ -95,13 +95,13 @@ public class Player extends Entity
 
 		// Set the shape of the body.
 		_Body.getShape().setWidth(_Sprites.getSprite(0).getCurrentFrame().getWidth());
-		_Body.getShape().setHeight(_Sprites.getSprite(0).getCurrentFrame().getHeight() / 2);
+		_Body.getShape().setHeight(_Sprites.getSprite(0).getCurrentFrame().getHeight() / 4);
 
 		// Update the sprites' position offset.
-		front.setPositionOffset(new Vector2(0, -_Body.getShape().getHeight() / 2));
-		back.setPositionOffset(new Vector2(0, -_Body.getShape().getHeight() / 2));
-		right.setPositionOffset(new Vector2(0, -_Body.getShape().getHeight() / 2));
-		left.setPositionOffset(new Vector2(0, -_Body.getShape().getHeight() / 2));
+		front.setPositionOffset(new Vector2(0, -front.getCurrentFrame().getOrigin().y + (_Body.getShape().getHeight() / 2)));
+		back.setPositionOffset(new Vector2(0, -back.getCurrentFrame().getOrigin().y + (_Body.getShape().getHeight() / 2)));
+		right.setPositionOffset(new Vector2(0, -right.getCurrentFrame().getOrigin().y + (_Body.getShape().getHeight() / 2)));
+		left.setPositionOffset(new Vector2(0, -left.getCurrentFrame().getOrigin().y + (_Body.getShape().getHeight() / 2)));
 	}
 
 	/**

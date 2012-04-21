@@ -56,7 +56,7 @@ public class Entity
 	 */
 	public void loadContent(String spritePath)
 	{
-		loadContent(spritePath, -1, -1);
+		loadContent(spritePath, -1);
 	}
 
 	/**
@@ -67,7 +67,7 @@ public class Entity
 	 * @param height
 	 *            The height of the shape as seen on picture. This is used for collision data. -1 results in the use of the full height of the sprite and a depth of 1.
 	 */
-	public void loadContent(String spritePath, float width, float height)
+	public void loadContent(String spritePath, float height)
 	{
 		// Add a sprite.
 		_Sprites.addSprite(new Sprite("Entity"));

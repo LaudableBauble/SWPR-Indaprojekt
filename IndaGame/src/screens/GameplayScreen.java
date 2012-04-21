@@ -44,7 +44,8 @@ public class GameplayScreen extends GameScreen
 
 	// Entities.
 	private Entity _Shelf;
-	private Entity _Block;
+	private Entity _Block1;
+	private Entity _Block2;
 	private Entity _Floor;
 
 	/**
@@ -72,30 +73,35 @@ public class GameplayScreen extends GameScreen
 
 		// Create the player.
 		_Player = new Player(_Physics);
-		_Player.getBody().setPosition(new Vector3(1000, 1000, 60));
+		_Player.getBody().setBottomPosition(new Vector3(950, 933.5, 100));
 		DebugManager.getInstance().setDebugBody(_Player.getBody());
 
 		// Create the shelf.
-		/*
-		 * _Shelf = new Entity(_Physics); _Shelf.getBody().setPosition(new Vector3(1200, 1000, 0)); _Shelf.getBody().setIsStatic(true);
-		 */
+		_Shelf = new Entity(_Physics);
+		_Shelf.getBody().setPosition(new Vector3(1100, 1100, 0));
+		_Shelf.getBody().setIsStatic(true);
 
-		// Create the block.
-		_Block = new Entity(_Physics);
-		_Block.getBody().setPosition(new Vector3(1000, 1000, 25));
-		_Block.getBody().setIsStatic(true);
+		// Create a block.
+		_Block1 = new Entity(_Physics);
+		_Block1.getBody().setPosition(new Vector3(950, 933.5, 0));
+		_Block1.getBody().setIsStatic(true);
+
+		// Create a block.
+		_Block2 = new Entity(_Physics);
+		_Block2.getBody().setPosition(new Vector3(1000, 1020, 0));
+		_Block2.getBody().setIsStatic(true);
 
 		// Create the floor.
 		_Floor = new Entity(_Physics);
 		_Floor.getBody().setPosition(new Vector3(1000, 1000, 0));
 		_Floor.getBody().setIsStatic(true);
-		_Floor.getBody().getShape().setDepth(1);
 
 		// Add the entities to the list.
 		_Entities = new ArrayList<>();
 		_Entities.add(_Player);
-		// _Entities.add(_Shelf);
-		_Entities.add(_Block);
+		_Entities.add(_Shelf);
+		_Entities.add(_Block1);
+		_Entities.add(_Block2);
 		_Entities.add(_Floor);
 	}
 
@@ -109,9 +115,16 @@ public class GameplayScreen extends GameScreen
 
 		// Load the player's content.
 		_Player.loadContent();
-		// _Shelf.loadContent("Bookshelf[1].png", 32, 12);
-		_Block.loadContent("ElevatedBlock[1].png", 146, 48);
+		_Shelf.loadContent("Bookshelf[1].png", 12);
+		_Block1.loadContent("ElevatedBlock[3].png", 48);
+		_Block2.loadContent("ElevatedBlock[2].png", 85);
 		_Floor.loadContent("DarkTiledFloor[1].png");
+
+		// Set their depths.
+		_Shelf.getBody().getShape().setBottomDepth(1);
+		_Block1.getBody().getShape().setBottomDepth(1);
+		_Block2.getBody().getShape().setBottomDepth(1);
+		_Floor.getBody().getShape().setBottomDepth(0);
 
 		// Once the load has finished, we use ResetElapsedTime to tell the game's
 		// timing mechanism that we have just finished a very long frame, and that

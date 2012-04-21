@@ -219,6 +219,16 @@ public class Body
 	}
 
 	/**
+	 * Set the body's bottom position, ie. all three dimensions.
+	 * 
+	 * @position The new bottom position of the body.
+	 */
+	public void setBottomPosition(Vector3 position)
+	{
+		_Shape.setBottomPosition(position);
+	}
+
+	/**
 	 * Get the body's velocity.
 	 * 
 	 * @return The velocity of the body.

@@ -132,7 +132,7 @@ public class Shape
 		Vector2 v2 = new Vector2(s2.getBottomDepth(), s2.getTopDepth());
 
 		// Compare the shapes to each other.
-		if (!v1.overlap(v2, true))
+		if (!v1.overlap(v2, false))
 		{
 			if (s1.getPosition().z < s2.getPosition().z)
 			{
@@ -231,6 +231,17 @@ public class Shape
 	public void setPosition(Vector3 position)
 	{
 		_Position = position;
+	}
+
+	/**
+	 * Set the shape's bottom position.
+	 * 
+	 * @param position
+	 *            The new bottom position.
+	 */
+	public void setBottomPosition(Vector3 position)
+	{
+		_Position = new Vector3(position.toVector2(), position.z + getDepth() / 2);
 	}
 
 	/**
@@ -384,7 +395,7 @@ public class Shape
 	}
 
 	/**
-	 * Set the position (z - depth / 2) of the shape's bottom-edge, not acknowledging rotation.
+	 * Set the position (z + depth / 2) of the shape's bottom-edge, not acknowledging rotation.
 	 * 
 	 * @param z
 	 *            The position (depth) of the shape's bottom-edge.

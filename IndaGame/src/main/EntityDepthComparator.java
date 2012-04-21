@@ -15,6 +15,9 @@ public class EntityDepthComparator implements Comparator<Entity>
 	@Override
 	public int compare(Entity e1, Entity e2)
 	{
+		double d1 = e1.getBody().getShape().getBottomDepth();
+		double d2 = e2.getBody().getShape().getBottomDepth();
+
 		// Whether the entities' shapes overlap.
 		int overlap = Shape.isOverlaping(e1.getBody().getShape(), e2.getBody().getShape());
 
