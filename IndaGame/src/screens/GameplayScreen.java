@@ -72,18 +72,19 @@ public class GameplayScreen extends GameScreen
 
 		// Create the player.
 		_Player = new Player(_Physics);
-		_Player.getBody().setPosition(new Vector3(1000, 1000, 50));
+		_Player.getBody().setPosition(new Vector3(1000, 1000, 60));
+		DebugManager.getInstance().setDebugBody(_Player.getBody());
 
 		// Create the shelf.
-		_Shelf = new Entity(_Physics);
-		_Shelf.getBody().setPosition(new Vector3(1200, 1000, 1));
-		_Shelf.getBody().setIsStatic(true);
+		/*
+		 * _Shelf = new Entity(_Physics); _Shelf.getBody().setPosition(new Vector3(1200, 1000, 0)); _Shelf.getBody().setIsStatic(true);
+		 */
 
 		// Create the block.
 		_Block = new Entity(_Physics);
-		_Block.getBody().setPosition(new Vector3(1000, 1000, 1));
+		_Block.getBody().setPosition(new Vector3(1000, 1000, 25));
 		_Block.getBody().setIsStatic(true);
-		
+
 		// Create the floor.
 		_Floor = new Entity(_Physics);
 		_Floor.getBody().setPosition(new Vector3(1000, 1000, 0));
@@ -93,7 +94,7 @@ public class GameplayScreen extends GameScreen
 		// Add the entities to the list.
 		_Entities = new ArrayList<>();
 		_Entities.add(_Player);
-		_Entities.add(_Shelf);
+		// _Entities.add(_Shelf);
 		_Entities.add(_Block);
 		_Entities.add(_Floor);
 	}
@@ -108,15 +109,9 @@ public class GameplayScreen extends GameScreen
 
 		// Load the player's content.
 		_Player.loadContent();
-		_Shelf.loadContent("Bookshelf[1].png");
-		_Block.loadContent("ElevatedBlock[1].png");
+		// _Shelf.loadContent("Bookshelf[1].png", 32, 12);
+		_Block.loadContent("ElevatedBlock[1].png", 146, 48);
 		_Floor.loadContent("DarkTiledFloor[1].png");
-		
-		//Play with the entities.
-		_Floor.getBody().getShape().setHeight(_Floor.getSprites().getSprite(0).getCurrentFrame().getHeight());
-		_Floor.getSprites().getSprite(0).setPositionOffset(new Vector2(0, 0));
-		// _Shelf.getSprites().getSprite(0).setRotation(1);
-		// _Shelf.getSprites().getSprite(0).setScale(2);
 
 		// Once the load has finished, we use ResetElapsedTime to tell the game's
 		// timing mechanism that we have just finished a very long frame, and that

@@ -101,7 +101,7 @@ public class PhysicsSimulator
 						if (checkGroundCollision(b1, b2))
 						{
 							// Move body1 above body2 and null the movement on the z-axis.
-							b1.getShape().setPosition(new Vector3(b1.getLayeredPosition(), b2.getShape().getPosition().z + 1));
+							b1.getShape().setBottomDepth(b2.getShape().getTopDepth() + 1);
 							b1.getVelocity().setZ(0);
 						}
 						// Otherwise apply gravity to the body's velocity.

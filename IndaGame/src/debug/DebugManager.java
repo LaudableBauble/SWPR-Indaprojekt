@@ -181,7 +181,7 @@ public class DebugManager
 				graphics.setTransform(_Transform);
 
 				// The body's position on the screen.
-				Vector2 position = Helper.getScreenPosition(b.getPosition());
+				Vector2 position = Helper.getScreenPosition(new Vector3(b.getLayeredPosition(), b.getShape().getBottomDepth()));
 
 				// Draw the body's shape.
 				graphics.drawRect((int) (position.x - b.getShape().getWidth() / 2), (int) (position.y - b.getShape().getHeight() / 2), (int) b.getShape().getWidth(), (int) b
@@ -353,5 +353,16 @@ public class DebugManager
 	public void setTransformMatrix(AffineTransform matrix)
 	{
 		_Transform = matrix;
+	}
+
+	/**
+	 * Set the debug body.
+	 * 
+	 * @param body
+	 *            The new debug body.
+	 */
+	public void setDebugBody(Body body)
+	{
+		debugBody = body;
 	}
 }

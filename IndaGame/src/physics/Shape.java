@@ -121,6 +121,31 @@ public class Shape
 	}
 
 	/**
+	 * Compare two shapes by their depth values. Allows margin overlap, ie. same end-point position.
+	 * 
+	 * @return 1 if the first shape is located 'higher', -1 if the second shape is 'located' higher and 0 if the shapes overlap.
+	 */
+	public static int isOverlaping(Shape s1, Shape s2)
+	{
+		// The entities' depth data.
+		Vector2 v1 = new Vector2(s1.getBottomDepth(), s1.getTopDepth());
+		Vector2 v2 = new Vector2(s2.getBottomDepth(), s2.getTopDepth());
+
+		// Compare the shapes to each other.
+		if (!v1.overlap(v2, true))
+		{
+			if (s1.getPosition().z < s2.getPosition().z)
+			{
+				return -1;
+			}
+			else if (s1.getPosition().z > s2.getPosition().z) { return 1; }
+		}
+
+		// The shapes' overlap, return 0.
+		return 0;
+	}
+
+	/**
 	 * Set the shape's width.
 	 * 
 	 * @param width
@@ -129,6 +154,8 @@ public class Shape
 	public void setWidth(float width)
 	{
 		_Width = width;
+		// Update the origin.
+		_Origin = getCenter();
 	}
 
 	/**
@@ -156,6 +183,8 @@ public class Shape
 	public void setHeight(float height)
 	{
 		_Height = height;
+		// Update the origin.
+		_Origin = getCenter();
 	}
 
 	/**
@@ -352,5 +381,16 @@ public class Shape
 	public double getBottomDepth()
 	{
 		return (_Position.z - (_Depth / 2));
+	}
+
+	/**
+	 * Set the position (z - depth / 2) of the shape's bottom-edge, not acknowledging rotation.
+	 * 
+	 * @param z
+	 *            The position (depth) of the shape's bottom-edge.
+	 */
+	public void setBottomDepth(double z)
+	{
+		_Position.setZ(z + (_Depth / 2));
 	}
 }

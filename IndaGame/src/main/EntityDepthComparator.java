@@ -2,7 +2,7 @@ package main;
 
 import java.util.Comparator;
 
-import auxillary.Vector2;
+import physics.Shape;
 
 /**
  * This comparator compares two Entity objects and sorts them by ascending depth.
@@ -15,29 +15,33 @@ public class EntityDepthComparator implements Comparator<Entity>
 	@Override
 	public int compare(Entity e1, Entity e2)
 	{
-		// The entities' depth data.
-		Vector2 v1 = new Vector2(e1.getBody().getShape().getTopDepth(), e1.getBody().getPosition().y);
-		Vector2 v2 = new Vector2(e2.getBody().getShape().getTopDepth(), e2.getBody().getPosition().y);
+		// Whether the entities' shapes overlap.
+		int overlap = Shape.isOverlaping(e1.getBody().getShape(), e2.getBody().getShape());
 
-		// Compare the entities to each other.
-		if (v1.x < v2.x)
+		// If the entities do not overlap, we are finished here.
+		if (overlap != 0)
 		{
-			return -1;
+			return overlap;
 		}
-		else if (v1.x > v2.x)
+		else
 		{
-			return 1;
-		}
-		else if (v1.x == v2.x)
-		{
-			if (v1.y < v2.y)
+			// The entities' bottom positions.
+			double y1 = e1.getBody().getShape().getBottomLeft().y;
+			double y2 = e2.getBody().getShape().getBottomLeft().y;
+
+			// If an overlap exists, go by their y-coordinates instead.
+			if (y1 < y2)
 			{
 				return -1;
 			}
-			else if (v1.y > v2.y) { return 1; }
+			else if (y1 > y2)
+			{
+				return 1;
+			}
+			else
+			{
+				return 0;
+			}
 		}
-
-		// The entities' depth values are equal, return 0.
-		return 0;
 	}
 }

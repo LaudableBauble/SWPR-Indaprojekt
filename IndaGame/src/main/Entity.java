@@ -12,6 +12,7 @@ import physics.Body;
 import physics.PhysicsSimulator;
 import auxillary.Helper;
 import auxillary.Vector2;
+import auxillary.Vector3;
 
 /**
  * An entity, sporting a body and a sprite, is the most basic building blocks of the physical game world.
@@ -21,7 +22,6 @@ public class Entity
 	// The Sprite and Body.
 	protected SpriteManager _Sprites;
 	protected Body _Body;
-	protected int _Depth;
 
 	/**
 	 * Constructor for an entity.
@@ -49,12 +49,25 @@ public class Entity
 	}
 
 	/**
-	 * Load content and add a sprite.
+	 * Load content and add a sprite. This uses default body shape values.
 	 * 
 	 * @param spritePath
 	 *            The path of the main sprite.
 	 */
 	public void loadContent(String spritePath)
+	{
+		loadContent(spritePath, -1, -1);
+	}
+
+	/**
+	 * Load content and add a sprite.
+	 * 
+	 * @param spritePath
+	 *            The path of the main sprite.
+	 * @param height
+	 *            The height of the shape as seen on picture. This is used for collision data. -1 results in the use of the full height of the sprite and a depth of 1.
+	 */
+	public void loadContent(String spritePath, float width, float height)
 	{
 		// Add a sprite.
 		_Sprites.addSprite(new Sprite("Entity"));
@@ -65,12 +78,11 @@ public class Entity
 
 		// Set the shape of the body.
 		_Body.getShape().setWidth(_Sprites.getSprite(0).getCurrentFrame().getWidth());
-		_Body.getShape().setHeight(_Sprites.getSprite(0).getCurrentFrame().getHeight() / 2);
-		// _Body.getShape().setHeight(_Sprites.getSprite(0).getCurrentFrame().getHeight() * (float)Helper.HeightPerDepthRatio);
-		_Body.getShape().setDepth(_Sprites.getSprite(0).getCurrentFrame().getHeight());
+		_Body.getShape().setHeight((height == -1) ? _Sprites.getSprite(0).getCurrentFrame().getHeight() : height);
+		_Body.getShape().setDepth((height == -1) ? 1 : _Sprites.getSprite(0).getCurrentFrame().getHeight() - height);
 
 		// Update the sprite's position offset.
-		_Sprites.getSprite(0).setPositionOffset(new Vector2(0, -_Body.getShape().getHeight() / 2));
+		_Sprites.getSprite(0).setPositionOffset(new Vector2(0, -_Sprites.getSprite(0).getCurrentFrame().getOrigin().y + (_Body.getShape().getHeight() / 2)));
 	}
 
 	/**
@@ -106,10 +118,7 @@ public class Entity
 	{
 		// Update the body and sprites.
 		_Body.update();
-		_Sprites.update(gameTime, Helper.getScreenPosition(_Body.getPosition()));
-
-		// Update the entity's depth.
-		updateDepth();
+		_Sprites.update(gameTime, Helper.getScreenPosition(new Vector3(_Body.getLayeredPosition(), _Body.getShape().getBottomDepth())));
 	}
 
 	/**
@@ -125,14 +134,6 @@ public class Entity
 	}
 
 	/**
-	 * Update the depth value for this entity. Not to be confused with the depth of the entity's body. The further down the screen, the higher the depth.
-	 */
-	private void updateDepth()
-	{
-		_Depth = (int) _Body.getPosition().y;
-	}
-
-	/**
 	 * Get the entity's body.
 	 * 
 	 * @return The body of the entity.
@@ -140,24 +141,6 @@ public class Entity
 	public Body getBody()
 	{
 		return _Body;
-	}
-
-	/**
-	 * Get the entity's depth value. Not to be confused with the depth of the entity's body. Entities with high depth values is drawn last.
-	 * 
-	 * @return The depth of the entity.
-	 */
-	public int getDepth()
-	{
-		return _Depth;
-	}
-
-	/**
-	 * Set the entity's depth value. Not to be confused with the depth of the entity's body. Entities with high depth values is drawn last.
-	 */
-	public void setDepth(int depth)
-	{
-		_Depth = depth;
 	}
 
 	/**

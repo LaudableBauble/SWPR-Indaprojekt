@@ -165,7 +165,7 @@ public class Player extends Entity
 		if (_Body.getVelocity().getLength() == 0)
 		{
 			// If the player stands still there should be no animation.
-			_CurrentSprite.setEnableAnimation((_Body.getVelocity().getLength() == 0) ? false : true);
+			_CurrentSprite.setEnableAnimation((_Body.getVelocity().toVector2().getLength() == 0) ? false : true);
 			return;
 		}
 

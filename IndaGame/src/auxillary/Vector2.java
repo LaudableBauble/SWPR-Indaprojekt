@@ -201,7 +201,21 @@ public class Vector2
 	 */
 	public boolean overlap(Vector2 v)
 	{
-		return (max(this) > min(v) && max(v) > min(this));
+		return overlap(v, false);
+	}
+
+	/**
+	 * See if this vector overlaps another. Note: Only works for one-dimensional vectors, ie. lines.
+	 * 
+	 * @param v
+	 *            The vector to check.
+	 * @param margin
+	 *            Whether to allow margin overlaps, ie. same end-point position.
+	 * @return Whether the two vectors overlap.
+	 */
+	public boolean overlap(Vector2 v, boolean margin)
+	{
+		return (margin) ? max(this) >= min(v) && max(v) >= min(this) : max(this) > min(v) && max(v) > min(this);
 	}
 
 	/**
