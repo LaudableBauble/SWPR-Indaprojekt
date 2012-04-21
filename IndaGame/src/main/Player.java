@@ -162,10 +162,10 @@ public class Player extends Entity
 	private void changeSprite()
 	{
 		// If the player is not moving, stop here.
-		if (_Body.getVelocity().getLength() == 0)
+		if (_Body.getVelocity().toVector2().getLength() == 0)
 		{
 			// If the player stands still there should be no animation.
-			_CurrentSprite.setEnableAnimation((_Body.getVelocity().toVector2().getLength() == 0) ? false : true);
+			_CurrentSprite.setEnableAnimation(false);
 			return;
 		}
 

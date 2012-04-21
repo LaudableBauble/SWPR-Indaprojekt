@@ -70,6 +70,9 @@ public class PhysicsSimulator
 			// Loop through all bodies.
 			for (Body b1 : _Bodies)
 			{
+				// Ground collision?
+				boolean ground = false;
+
 				// Loop through all bodies and check for collision.
 				for (Body b2 : _Bodies)
 				{
@@ -101,15 +104,17 @@ public class PhysicsSimulator
 						if (checkGroundCollision(b1, b2))
 						{
 							// Move body1 above body2 and null the movement on the z-axis.
-							b1.getShape().setBottomDepth(b2.getShape().getTopDepth() + 1);
+							b1.getShape().setBottomDepth(b2.getShape().getTopDepth() + _Gravity / 2);
 							b1.getVelocity().setZ(0);
-						}
-						// Otherwise apply gravity to the body's velocity.
-						else
-						{
-							b1.addGravity(_Gravity);
+							ground = true;
 						}
 					}
+				}
+
+				// If the entity is dynamic and not standing on the ground, apply gravity.
+				if (!ground && !b1.getIsStatic())
+				{
+					b1.addGravity(_Gravity);
 				}
 
 				// Add the friction.
@@ -352,7 +357,7 @@ public class PhysicsSimulator
 		double h = h1 - h2;
 
 		// If the distance between the bodies is not right, no collision.
-		if (h > Math.max(b1.getVelocity().z - _Gravity, 2) || h < 0) { return false; }
+		if (h > Math.max(-b1.getVelocity().z + _Gravity, 0) || h < 0) { return false; }
 
 		// If there is no collision between the bodies, excluding height, no collision.
 		if (narrowPhase(b1.getShape(), b2.getShape()) == null) { return false; }

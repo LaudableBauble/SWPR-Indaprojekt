@@ -24,7 +24,7 @@ public final class Helper
 	/**
 	 * The ratio between height (Y-coordinate) and depth (Z-coordinate). Used to simulate depth. Positive depth is 'upwards'.
 	 */
-	public static final double HeightPerDepthRatio = ((double) 1 / (double) 3);
+	public static final double HeightPerDepthRatio = ((double) 1 / (double) 1);
 
 	/**
 	 * Get the 2D screen position from a 3D vector.
