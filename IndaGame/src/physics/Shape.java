@@ -519,7 +519,7 @@ public class Shape
 			default:
 			{
 				// Uniform depth distribution.
-				return this;
+				return new Shape(new Vector3(_Position.toVector2(), z), _Width, _Height, 1f);
 			}
 		}
 	}
@@ -543,6 +543,16 @@ public class Shape
 	public void setBottomDepth(double z)
 	{
 		_Position.setZ(z + (_Depth / 2));
+	}
+
+	/**
+	 * Get the shape's depth distribution.
+	 * 
+	 * @return The shape's depth distribution model.
+	 */
+	public DepthDistribution getDepthDistribution()
+	{
+		return _DepthDistribution;
 	}
 
 	/**

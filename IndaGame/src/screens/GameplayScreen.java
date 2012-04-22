@@ -76,7 +76,7 @@ public class GameplayScreen extends GameScreen
 
 		// Create the player.
 		_Player = new Player(_Physics);
-		_Player.getBody().setBottomPosition(new Vector3(910, 1020, 100));
+		_Player.getBody().setBottomPosition(new Vector3(910, 1080, 100));
 		DebugManager.getInstance().setDebugBody(_Player.getBody());
 
 		// Create the shelf.
@@ -96,7 +96,7 @@ public class GameplayScreen extends GameScreen
 
 		// Create a staircase.
 		_Stairs = new Entity(_Physics);
-		_Stairs.getBody().setPosition(new Vector3(907, 1020, 0));
+		_Stairs.getBody().setPosition(new Vector3(920, 1080, 0));
 		_Stairs.getBody().setIsStatic(true);
 		_Stairs.getBody().getShape().setDepthDistribution(DepthDistribution.Right);
 
@@ -128,7 +128,7 @@ public class GameplayScreen extends GameScreen
 		_Shelf.loadContent("Bookshelf[1].png", 12);
 		_Block1.loadContent("ElevatedBlock[3].png", 48);
 		_Block2.loadContent("ElevatedBlock[2].png", 85);
-		_Stairs.loadContent("StoneStairsRight[1].png", 36);
+		_Stairs.loadContent("StoneStairsRight[2].png", 36);
 		_Floor.loadContent("DarkTiledFloor[1].png");
 
 		// Set their depths.

@@ -370,4 +370,14 @@ public class DebugManager
 	{
 		debugBody = body;
 	}
+
+	/**
+	 * Get the debug body.
+	 * 
+	 * @return The debug body.
+	 */
+	public Body getDebugBody()
+	{
+		return debugBody;
+	}
 }

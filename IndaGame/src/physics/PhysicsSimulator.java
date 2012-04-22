@@ -1,5 +1,7 @@
 package physics;
 
+import infrastructure.Enums.DepthDistribution;
+
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
@@ -34,7 +36,7 @@ public class PhysicsSimulator
 	/**
 	 * Initialize the physics simulator.
 	 */
-	public void initialize()
+	private void initialize()
 	{
 		// Initialize the Body array.
 		_Bodies = new ArrayList<Body>();
@@ -78,29 +80,36 @@ public class PhysicsSimulator
 						// Check for ground collision and alter bodies if necessary.
 						if (checkGroundCollision(b1, b2, mtv))
 						{
-							// Move body1 above body2 and null the movement on the z-axis.
+							if (b1.getIsStatic())
+							{
+								continue;
+							}
+
+							// Move body1 above body2 and null the movement on the z-axis (otherwise the body gets stuck).
 							b1.getShape().setBottomDepth(b2.getShape().getTopDepth(b1.getLayeredPosition()) + _Gravity / 2);
 							b1.getVelocity().setZ(0);
-							b1.setVelocity(Vector3.empty());
-
-							Vector3 p = b1.getPosition();
-							// b1.setPosition(new Vector3(b1.getPosition().x - 1, b1.getPosition().y, b1.getPosition().z));
-
+							if (b2.getShape().getDepthDistribution() != DepthDistribution.Uniform)
+							{
+								b1.setVelocity(Vector3.empty());
+							}
 							ground = true;
 						}
-
-						// Ensure that the would-be collision occurred in allowed height space.
-						mtv = getLayeredCollision(b1, b2, mtv);
-
-						// Check if the bodies intersect.
-						if (mtv != null)
+						else
 						{
-							// Calculate the Impact force and vector for both
-							// bodies.
-							// addForce(impactForce(b1, b2));
-							// addForce(impactForce(b2, b1));
-							// Move the bodies so that they don't intersect each other anymore.
-							clearIntersection(b1, b2, mtv);
+
+							// Ensure that the would-be collision occurred in allowed height space.
+							mtv = getLayeredCollision(b1, b2, mtv);
+
+							// Check if the bodies intersect.
+							if (mtv != null)
+							{
+								// Calculate the Impact force and vector for both
+								// bodies.
+								// addForce(impactForce(b1, b2));
+								// addForce(impactForce(b2, b1));
+								// Move the bodies so that they don't intersect each other anymore.
+								clearIntersection(b1, b2, mtv);
+							}
 						}
 					}
 				}
@@ -288,20 +297,19 @@ public class PhysicsSimulator
 		// If there is no layered collision between the bodies, stop here.
 		if (mtv == null) { return null; }
 
+		// Get the dynamic and static body.
+		Body a = b1.getIsStatic() ? b2 : b1;
+		Body b = (a == b1) ? b2 : b1;
+
 		// Get the min and max heights for both bodies.
-		//Vector2 h1 = new Vector2(b1.getShape().getBottomDepth(), b1.getShape().getTopDepth(Vector2.add(b1.getLayeredPosition(), mtv)));
-		//Vector2 h2 = new Vector2(b2.getShape().getBottomDepth(), b2.getShape().getTopDepth(Vector2.add(b1.getLayeredPosition(), mtv)));
-		Vector2 h1 = new Vector2(b1.getShape().getBottomDepth(), b1.getShape().getTopDepth(b1.getLayeredPosition()));
-		Vector2 h2 = new Vector2(b2.getShape().getBottomDepth(), b2.getShape().getTopDepth(b1.getLayeredPosition()));
+		Vector2 h1 = new Vector2(a.getShape().getBottomDepth(), a.getShape().getTopDepth(a.getLayeredPosition()));
+		Vector2 h2 = new Vector2(b.getShape().getBottomDepth(), b.getShape().getTopDepth(a.getLayeredPosition()));
 
 		// Get min and max heights for possible collisions between the bodies.
 		Vector2 heights = Vector2.getMiddleValues(h1, h2);
 
 		// If there were no matching heights found, no collision possible.
-		if (heights == null /*|| Math.abs(h2.y - h1.x) > 2*/) { return null; }
-
-		// Perform another narrow phase check, this time with depth in mind.
-		//mtv = narrowPhase(b1.getShape().getLayeredShape(h1.x), b2.getShape().getLayeredShape(h2.y));
+		if (heights == null) { return null; }
 
 		// Return the MTV.
 		return mtv;
@@ -321,17 +329,23 @@ public class PhysicsSimulator
 	private boolean checkGroundCollision(Body b1, Body b2, Vector2 mtv)
 	{
 		// The first body has to be dynamic or if there is no layered collision between the bodies, stop here.
-		if (b1.getIsStatic() || mtv == null) { return false; }
+		if (mtv == null) { return false; }
+
+		// Get the dynamic and static body.
+		Body a = b1.getIsStatic() ? b2 : b1;
+		Body b = (a == b1) ? b2 : b1;
 
 		// Both bodies' depth positions.
-		Vector2 h1 = new Vector2(b1.getShape().getBottomDepth(), b1.getShape().getTopDepth());
-		Vector2 h2 = new Vector2(b2.getShape().getBottomDepth(), b2.getShape().getTopDepth(b1.getLayeredPosition()));
+		Vector2 h1 = new Vector2(a.getShape().getBottomDepth(), a.getShape().getTopDepth());
+		Vector2 h2 = new Vector2(b.getShape().getBottomDepth(), b.getShape().getTopDepth(a.getLayeredPosition()));
 
 		// The difference in height.
 		double diff = h1.x - h2.y;
 
-		// If the distance between the bodies is either greater than the threshold or less than velocity needed to collide, no collision.
-		if (diff > Math.max(-b1.getVelocity().z + _Gravity, 0) || (h2.y - h1.x) > 1) { return false; }
+		// If the distance between the bodies is either greater than the threshold or less than the velocity needed to collide, no collision.
+		if (diff > Math.max(-a.getVelocity().z + _Gravity, 0) || (h2.y - h1.x) > 2) {
+
+		return false; }
 
 		// There must be a ground collision after all.
 		return true;
