@@ -1,7 +1,5 @@
 package physics;
 
-import input.InputManager;
-
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
@@ -49,17 +47,6 @@ public class PhysicsSimulator
 	}
 
 	/**
-	 * Handle input.
-	 * 
-	 * @param input
-	 *            The input manager.
-	 */
-	public void handleInput(InputManager input)
-	{
-
-	}
-
-	/**
 	 * Update the physics manager.
 	 */
 	public void update()
@@ -85,8 +72,25 @@ public class PhysicsSimulator
 					// Check if the bodies are within range. If so, continue to the narrow phase part.
 					if (broadPhase(b1, b2))
 					{
-						// Get the MTV by doing a narrow phase collision check.
-						Vector2 mtv = checkLayerCollision(b1, b2);
+						// Get the layered MTV by doing a narrow phase collision check.
+						Vector2 mtv = narrowPhase(b1.getShape(), b2.getShape());
+
+						// Check for ground collision and alter bodies if necessary.
+						if (checkGroundCollision(b1, b2, mtv))
+						{
+							// Move body1 above body2 and null the movement on the z-axis.
+							b1.getShape().setBottomDepth(b2.getShape().getTopDepth(b1.getLayeredPosition()) + _Gravity / 2);
+							b1.getVelocity().setZ(0);
+							b1.setVelocity(Vector3.empty());
+
+							Vector3 p = b1.getPosition();
+							// b1.setPosition(new Vector3(b1.getPosition().x - 1, b1.getPosition().y, b1.getPosition().z));
+
+							ground = true;
+						}
+
+						// Ensure that the would-be collision occurred in allowed height space.
+						mtv = getLayeredCollision(b1, b2, mtv);
 
 						// Check if the bodies intersect.
 						if (mtv != null)
@@ -95,18 +99,8 @@ public class PhysicsSimulator
 							// bodies.
 							// addForce(impactForce(b1, b2));
 							// addForce(impactForce(b2, b1));
-							// Move the bodies so that they don't intersect each
-							// other anymore.
+							// Move the bodies so that they don't intersect each other anymore.
 							clearIntersection(b1, b2, mtv);
-						}
-
-						// Check for ground collision and alter positions if necessary.
-						if (checkGroundCollision(b1, b2))
-						{
-							// Move body1 above body2 and null the movement on the z-axis.
-							b1.getShape().setBottomDepth(b2.getShape().getTopDepth() + _Gravity / 2);
-							b1.getVelocity().setZ(0);
-							ground = true;
 						}
 					}
 				}
@@ -285,51 +279,29 @@ public class PhysicsSimulator
 	 *            The first body to check.
 	 * @param b2
 	 *            The second body to check.
+	 * @param mtv
+	 *            The MTV of the layered collision.
 	 * @return The MTV of the intersection or null if the collision was negative.
 	 */
-	private Vector2 checkLayerCollision(Body b1, Body b2)
+	private Vector2 getLayeredCollision(Body b1, Body b2, Vector2 mtv)
 	{
-		// The MTV to return.
-		Vector2 mtv = null;
+		// If there is no layered collision between the bodies, stop here.
+		if (mtv == null) { return null; }
 
-		try
-		{
-			// Get the min and max heights for both bodies.
-			Vector2 h1 = new Vector2(b1.getShape().getBottomDepth(), b1.getShape().getTopDepth());
-			Vector2 h2 = new Vector2(b2.getShape().getBottomDepth(), b2.getShape().getTopDepth());
+		// Get the min and max heights for both bodies.
+		//Vector2 h1 = new Vector2(b1.getShape().getBottomDepth(), b1.getShape().getTopDepth(Vector2.add(b1.getLayeredPosition(), mtv)));
+		//Vector2 h2 = new Vector2(b2.getShape().getBottomDepth(), b2.getShape().getTopDepth(Vector2.add(b1.getLayeredPosition(), mtv)));
+		Vector2 h1 = new Vector2(b1.getShape().getBottomDepth(), b1.getShape().getTopDepth(b1.getLayeredPosition()));
+		Vector2 h2 = new Vector2(b2.getShape().getBottomDepth(), b2.getShape().getTopDepth(b1.getLayeredPosition()));
 
-			// Get min and max heights for possible collisions between the bodies.
-			Vector2 heights = Vector2.getMiddleValues(h1, h2);
+		// Get min and max heights for possible collisions between the bodies.
+		Vector2 heights = Vector2.getMiddleValues(h1, h2);
 
-			// If there were no matching heights found, no collision possible.
-			if (heights == null) { return null; }
+		// If there were no matching heights found, no collision possible.
+		if (heights == null /*|| Math.abs(h2.y - h1.x) > 2*/) { return null; }
 
-			// Check the bottom and top layer for collisions.
-			Vector2 bottom = narrowPhase(b1.getShape(), b2.getShape());
-			Vector2 top = narrowPhase(b1.getShape(), b2.getShape());
-
-			// Set the MTV.
-			mtv = bottom;
-
-			// If there was a collision at top.
-			if (top != null)
-			{
-				// If there was no collision at bottom, choose the top's MTV.
-				if (mtv == null)
-				{
-					mtv = top;
-				}
-				// Otherwise choose the minimum of the two.
-				else
-				{
-					mtv = (mtv.getLength() > top.getLength()) ? top : mtv;
-				}
-			}
-		}
-		catch (Exception e)
-		{
-			System.out.println(this + ": Narrow Phase Error. (" + e + ")");
-		}
+		// Perform another narrow phase check, this time with depth in mind.
+		//mtv = narrowPhase(b1.getShape().getLayeredShape(h1.x), b2.getShape().getLayeredShape(h2.y));
 
 		// Return the MTV.
 		return mtv;
@@ -342,25 +314,24 @@ public class PhysicsSimulator
 	 *            The first body to check.
 	 * @param b2
 	 *            The second body to check.
-	 * @return Whether there was a collision or not, from the first body's perspective.
+	 * @param mtv
+	 *            The MTV of the collision.
+	 * @return Whether there was a ground collision or not, from the first body's perspective.
 	 */
-	private boolean checkGroundCollision(Body b1, Body b2)
+	private boolean checkGroundCollision(Body b1, Body b2, Vector2 mtv)
 	{
-		// The first body has to be dynamic.
-		if (b1.getIsStatic()) { return false; }
+		// The first body has to be dynamic or if there is no layered collision between the bodies, stop here.
+		if (b1.getIsStatic() || mtv == null) { return false; }
 
 		// Both bodies' depth positions.
-		double h1 = b1.getShape().getBottomDepth();
-		double h2 = b2.getShape().getTopDepth();
+		Vector2 h1 = new Vector2(b1.getShape().getBottomDepth(), b1.getShape().getTopDepth());
+		Vector2 h2 = new Vector2(b2.getShape().getBottomDepth(), b2.getShape().getTopDepth(b1.getLayeredPosition()));
 
 		// The difference in height.
-		double h = h1 - h2;
+		double diff = h1.x - h2.y;
 
-		// If the distance between the bodies is not right, no collision.
-		if (h > Math.max(-b1.getVelocity().z + _Gravity, 0) || h < 0) { return false; }
-
-		// If there is no collision between the bodies, excluding height, no collision.
-		if (narrowPhase(b1.getShape(), b2.getShape()) == null) { return false; }
+		// If the distance between the bodies is either greater than the threshold or less than velocity needed to collide, no collision.
+		if (diff > Math.max(-b1.getVelocity().z + _Gravity, 0) || (h2.y - h1.x) > 1) { return false; }
 
 		// There must be a ground collision after all.
 		return true;

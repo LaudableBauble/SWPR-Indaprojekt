@@ -47,7 +47,7 @@ public class Player extends Entity
 
 		// Initialize the variables.
 		_CanBeControlled = true;
-		_MaxSpeed = 3;
+		_MaxSpeed = 2;
 	}
 
 	/**
@@ -94,7 +94,7 @@ public class Player extends Entity
 		_Sprites.loadContent();
 
 		// Set the shape of the body.
-		_Body.getShape().setWidth(_Sprites.getSprite(0).getCurrentFrame().getWidth());
+		_Body.getShape().setWidth(_Sprites.getSprite(0).getCurrentFrame().getWidth() / 2);
 		_Body.getShape().setHeight(_Sprites.getSprite(0).getCurrentFrame().getHeight() / 4);
 
 		// Update the sprites' position offset.

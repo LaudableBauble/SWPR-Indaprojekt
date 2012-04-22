@@ -20,4 +20,12 @@ public final class Enums
 	{
 		Invisible, Visible
 	}
+
+	/**
+	 * The depth distribution in for example a shape. Uniform means that the depth is equal all over the shape, whereas right means that the depth is at its highest at right and at its lowest at left.
+	 */
+	public static enum DepthDistribution
+	{
+		Uniform, Top, Bottom, Right, Left
+	}
 }

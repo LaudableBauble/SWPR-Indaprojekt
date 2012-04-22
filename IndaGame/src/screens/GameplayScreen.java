@@ -1,6 +1,7 @@
 package screens;
 
 import infrastructure.Camera2D;
+import infrastructure.Enums.DepthDistribution;
 import infrastructure.GameScreen;
 import infrastructure.GameTimer;
 import infrastructure.ScreenManager;
@@ -46,6 +47,7 @@ public class GameplayScreen extends GameScreen
 	private Entity _Shelf;
 	private Entity _Block1;
 	private Entity _Block2;
+	private Entity _Stairs;
 	private Entity _Floor;
 
 	/**
@@ -67,13 +69,14 @@ public class GameplayScreen extends GameScreen
 		// Set up the camera.
 		_Camera = new Camera2D(new Rectangle(0, 0, (int) screenManager.getWindowBounds().x, (int) screenManager.getWindowBounds().y), new Rectangle(0, 0, 3000, 3000));
 		_Camera.setPosition(new Vector2(1000, 1000));
+		_Camera.zoom(2);
 
 		// Enable debug.
 		DebugManager.getInstance().debug = true;
 
 		// Create the player.
 		_Player = new Player(_Physics);
-		_Player.getBody().setBottomPosition(new Vector3(950, 933.5, 100));
+		_Player.getBody().setBottomPosition(new Vector3(910, 1020, 100));
 		DebugManager.getInstance().setDebugBody(_Player.getBody());
 
 		// Create the shelf.
@@ -91,6 +94,12 @@ public class GameplayScreen extends GameScreen
 		_Block2.getBody().setPosition(new Vector3(1000, 1020, 0));
 		_Block2.getBody().setIsStatic(true);
 
+		// Create a staircase.
+		_Stairs = new Entity(_Physics);
+		_Stairs.getBody().setPosition(new Vector3(907, 1020, 0));
+		_Stairs.getBody().setIsStatic(true);
+		_Stairs.getBody().getShape().setDepthDistribution(DepthDistribution.Right);
+
 		// Create the floor.
 		_Floor = new Entity(_Physics);
 		_Floor.getBody().setPosition(new Vector3(1000, 1000, 0));
@@ -102,6 +111,7 @@ public class GameplayScreen extends GameScreen
 		_Entities.add(_Shelf);
 		_Entities.add(_Block1);
 		_Entities.add(_Block2);
+		_Entities.add(_Stairs);
 		_Entities.add(_Floor);
 	}
 
@@ -118,12 +128,14 @@ public class GameplayScreen extends GameScreen
 		_Shelf.loadContent("Bookshelf[1].png", 12);
 		_Block1.loadContent("ElevatedBlock[3].png", 48);
 		_Block2.loadContent("ElevatedBlock[2].png", 85);
+		_Stairs.loadContent("StoneStairsRight[1].png", 36);
 		_Floor.loadContent("DarkTiledFloor[1].png");
 
 		// Set their depths.
 		_Shelf.getBody().getShape().setBottomDepth(1);
 		_Block1.getBody().getShape().setBottomDepth(1);
 		_Block2.getBody().getShape().setBottomDepth(1);
+		_Stairs.getBody().getShape().setBottomDepth(1);
 		_Floor.getBody().getShape().setBottomDepth(0);
 
 		// Once the load has finished, we use ResetElapsedTime to tell the game's

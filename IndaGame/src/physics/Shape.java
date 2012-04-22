@@ -1,5 +1,7 @@
 package physics;
 
+import infrastructure.Enums.DepthDistribution;
+
 import java.awt.Rectangle;
 
 import auxillary.Helper;
@@ -7,8 +9,8 @@ import auxillary.Vector2;
 import auxillary.Vector3;
 
 /**
- * A shape is a geometrical form (rectangle) used primarily for collision detection. When used by a body it can interact with the world around it, otherwise it is nothing more than a ghost in the eyes
- * of the engine.
+ * A shape is a geometrical form used primarily for collision detection. When used by a body it can interact with the world around it, otherwise it is nothing more than a ghost in the eyes of the
+ * engine. Currently only supports rectangular boxes and triangles with rectangular bases.
  */
 public class Shape
 {
@@ -19,6 +21,7 @@ public class Shape
 	private Vector3 _Position;
 	private float _Rotation;
 	private Vector2 _Origin;
+	private DepthDistribution _DepthDistribution;
 
 	/**
 	 * Constructor for a shape.
@@ -33,7 +36,7 @@ public class Shape
 	public Shape(float width, float height, float depth)
 	{
 		// Continue down the chain of constructors.
-		this(new Vector2(0, 0), width, height, depth);
+		this(Vector3.empty(), width, height, depth);
 	}
 
 	/**
@@ -48,7 +51,7 @@ public class Shape
 	 * @param depth
 	 *            The depth of the shape (z-coordinate).
 	 */
-	public Shape(Vector2 position, float width, float height, float depth)
+	public Shape(Vector3 position, float width, float height, float depth)
 	{
 		// Initialize the shape.
 		initialize(position, width, height, depth);
@@ -66,14 +69,15 @@ public class Shape
 	 * @param depth
 	 *            The depth of the shape (z-coordinate).
 	 */
-	protected void initialize(Vector2 position, float width, float height, float depth)
+	protected void initialize(Vector3 position, float width, float height, float depth)
 	{
 		// Initialize some variables.
-		_Position = new Vector3(position);
+		_Position = position;
 		_Rotation = 0;
 		_Width = width;
 		_Height = height;
 		_Depth = depth;
+		_DepthDistribution = DepthDistribution.Uniform;
 
 		// Update the origin.
 		_Origin = getCenter();
@@ -128,8 +132,8 @@ public class Shape
 	public static int isOverlaping(Shape s1, Shape s2)
 	{
 		// The entities' depth data.
-		Vector2 v1 = new Vector2(s1.getBottomDepth(), s1.getTopDepth());
-		Vector2 v2 = new Vector2(s2.getBottomDepth(), s2.getTopDepth());
+		Vector2 v1 = new Vector2(s1.getBottomDepth(), s1.getTopDepth(s1.getLayeredPosition()));
+		Vector2 v2 = new Vector2(s2.getBottomDepth(), s2.getTopDepth(s1.getLayeredPosition()));
 
 		// Compare the shapes to each other.
 		if (!v1.overlap(v2, false))
@@ -275,12 +279,23 @@ public class Shape
 	}
 
 	/**
+	 * Get the axes of this layered shape, ie. the normals of each edge, given a certain depth. Uses clockwise ordering.
+	 * 
+	 * @return An array of axes.
+	 */
+	public Vector2[] getAxes(double z)
+	{
+		return getLayeredShape(z).getAxes();
+	}
+
+	/**
 	 * Get the axes of this shape, ie. the normals of each edge. Uses clockwise ordering.
 	 * 
 	 * @return An array of axes.
 	 */
 	public Vector2[] getAxes()
 	{
+
 		// Note that because of parallel edges in a rectangle only two edges have to be returned.
 		return new Vector2[] { Vector2.subtract(getTopRight(), getTopLeft()).perpendicular().normalize(),
 				Vector2.subtract(getBottomRight(), getTopRight()).perpendicular().normalize() };
@@ -385,7 +400,132 @@ public class Shape
 	}
 
 	/**
-	 * Get the position (z - depth / 2) of the shape's bottom-edge, not acknowledging rotation.
+	 * Get the position (z + depth / 2) of the shape's top-edge, not acknowledging rotation, at a given layered position.
+	 * 
+	 * @param layeredPosition
+	 *            The layered position to find the depth for.
+	 * 
+	 * @return The position (depth) of the shape's top-edge. Either the top depth or bottom depth if the shape does not occupy the space at the given position, depending on direction.
+	 */
+	public double getTopDepth(Vector2 layeredPosition)
+	{
+		// The depth to add.
+		double depth;
+
+		// Check the depth distribution.
+		switch (_DepthDistribution)
+		{
+			case Top:
+			{
+				// Calculate the depth.
+				depth = (layeredPosition.y - _Position.y - (_Height / 2)) * (_Depth / _Height);
+				break;
+			}
+			case Bottom:
+			{
+				// Calculate the depth.
+				depth = (_Position.y + (_Height / 2) - layeredPosition.y) * (_Depth / _Height);
+				break;
+			}
+			case Right:
+			{
+				// Calculate the depth.
+				depth = (layeredPosition.x - (_Position.x - (_Width / 2))) * (_Depth / _Width);
+				break;
+			}
+			case Left:
+			{
+				// Calculate the depth.
+				depth = (layeredPosition.x - _Position.x - (_Width / 2)) * (_Depth / _Width);
+				break;
+			}
+			default:
+			{
+				// Calculate the depth.
+				depth = _Depth;
+				break;
+			}
+		}
+
+		return (_Position.z - (_Depth / 2) + Math.min(Math.max(depth, 0), _Depth));
+	}
+
+	/**
+	 * Get a layer from this shape given a z-coordinate.
+	 * 
+	 * @param z
+	 *            The z-coordinate to get a layered shape from.
+	 * @return The layered shape.
+	 */
+	public Shape getLayeredShape(double z)
+	{
+		// The depth.
+		double depth = z - getBottomDepth();
+
+		// If the depth provided does not stay within the shape's bounds, stop here.
+		if (depth < 0 || depth > getTopDepth()) { throw new IllegalArgumentException(); }
+
+		// Check the depth distribution.
+		switch (_DepthDistribution)
+		{
+			case Top:
+			{
+				// Get the ratio between height and depth.
+				double ratio = _Height / _Depth;
+
+				// Get the amount of height to remove and calculate the new position.
+				double height = depth * ratio;
+				double y = _Position.y + (_Width / 2) - height - ((_Height - height) / 2);
+
+				// Return the layered shape.
+				return new Shape(new Vector3(_Position.x, y, z), _Width, _Height - (float) height, 1f);
+			}
+			case Bottom:
+			{
+				// Get the ratio between height and depth.
+				double ratio = _Height / _Depth;
+
+				// Get the amount of height to remove and calculate the new position.
+				double height = depth * ratio;
+				double y = _Position.y - (_Width / 2) + height + ((_Height - height) / 2);
+
+				// Return the layered shape.
+				return new Shape(new Vector3(_Position.x, y, z), _Width, _Height - (float) height, 1f);
+			}
+			case Right:
+			{
+				// Get the ratio between width and depth.
+				double ratio = _Width / _Depth;
+
+				// Get the amount of width to remove and calculate the new position.
+				double width = depth * ratio;
+				double x = _Position.x - (_Width / 2) + width + ((_Width - width) / 2);
+
+				// Return the layered shape.
+				return new Shape(new Vector3(x, _Position.y, z), _Width - (float) width, _Height, 1f);
+			}
+			case Left:
+			{
+				// Get the ratio between width and depth.
+				double ratio = _Width / _Depth;
+
+				// Get the amount of width to remove and calculate the new position.
+				double width = depth * ratio;
+				double x = _Position.x + (_Width / 2) - width - ((_Width - width) / 2);
+
+				// Return the layered shape.
+				return new Shape(new Vector3(x, _Position.y, z), _Width - (float) width, _Height, 1f);
+			}
+			default:
+			{
+				// Uniform depth distribution.
+				return this;
+			}
+		}
+	}
+
+	/**
+	 * Get the position (z - depth / 2) of the shape's bottom-edge, not acknowledging rotation. Assumes the shape is rectangular.
 	 * 
 	 * @return The position (depth) of the shape's bottom-edge.
 	 */
@@ -403,5 +543,16 @@ public class Shape
 	public void setBottomDepth(double z)
 	{
 		_Position.setZ(z + (_Depth / 2));
+	}
+
+	/**
+	 * Set the shape's depth distribution.
+	 * 
+	 * @param distribution
+	 *            The new depth distribution model.
+	 */
+	public void setDepthDistribution(DepthDistribution distribution)
+	{
+		_DepthDistribution = distribution;
 	}
 }

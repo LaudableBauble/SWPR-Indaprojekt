@@ -9,6 +9,7 @@ import java.awt.geom.AffineTransform;
 
 import physics.Body;
 import physics.PhysicsSimulator;
+import physics.Shape;
 import auxillary.Helper;
 import auxillary.Vector2;
 import auxillary.Vector3;
@@ -180,12 +181,12 @@ public class DebugManager
 				AffineTransform oldMatrix = graphics.getTransform();
 				graphics.setTransform(_Transform);
 
-				// The body's position on the screen.
-				Vector2 position = Helper.getScreenPosition(new Vector3(b.getLayeredPosition(), b.getShape().getBottomDepth()));
+				// The body's shape and position on screen.
+				Shape shape = b.getShape().getLayeredShape(debugBody.getShape().getBottomDepth());
+				Vector2 position = Helper.getScreenPosition(shape.getPosition());
 
 				// Draw the body's shape.
-				graphics.drawRect((int) (position.x - b.getShape().getWidth() / 2), (int) (position.y - b.getShape().getHeight() / 2), (int) b.getShape().getWidth(), (int) b
-						.getShape().getHeight());
+				graphics.drawRect((int) (position.x - shape.getWidth() / 2), (int) (position.y - shape.getHeight() / 2), (int) shape.getWidth(), (int) shape.getHeight());
 
 				// Change the color for the debug window.
 				graphics.setColor(Color.black);
@@ -200,7 +201,11 @@ public class DebugManager
 			// Catch the exception.
 			catch (Exception e)
 			{
-				System.out.println(this + ": Draw Error. (" + e + ")");
+				// If there was a argument exception error, do not bother.
+				if (e.getClass() != IllegalArgumentException.class)
+				{
+					System.out.println(this + ": Draw Error. (" + e + ")");
+				}
 			}
 
 			// If the body's debug variable is true.

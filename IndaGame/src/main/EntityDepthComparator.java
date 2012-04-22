@@ -17,6 +17,8 @@ public class EntityDepthComparator implements Comparator<Entity>
 	{
 		double d1 = e1.getBody().getShape().getBottomDepth();
 		double d2 = e2.getBody().getShape().getBottomDepth();
+		String s1 = e1.getSprites().getSprite(0).getCurrentFrame().getPathName();
+		String s2 = e2.getSprites().getSprite(0).getCurrentFrame().getPathName();
 
 		// Whether the entities' shapes overlap.
 		int overlap = Shape.isOverlaping(e1.getBody().getShape(), e2.getBody().getShape());
