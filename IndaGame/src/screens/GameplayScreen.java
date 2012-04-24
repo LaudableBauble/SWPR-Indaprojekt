@@ -12,14 +12,11 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
-import java.awt.geom.AffineTransform;
-import java.util.ArrayList;
-import java.util.Collections;
 
 import main.Entity;
-import main.EntityDepthComparator;
 import main.Player;
-import physics.PhysicsSimulator;
+import main.Scene;
+import main.SceneManager;
 import auxillary.Helper;
 import auxillary.Vector2;
 import auxillary.Vector3;
@@ -32,13 +29,13 @@ public class GameplayScreen extends GameScreen
 {
 	// The GameFont, the main font of the game.
 	private Font _GameFont;
-	// The PhysicsSimulator.
-	private PhysicsSimulator _Physics;
+	// The scene manager.
+	private SceneManager _SceneManager;
 	// The camera.
 	private Camera2D _Camera;
 
-	// List of entities.
-	private ArrayList<Entity> _Entities;
+	// The scene.
+	private Scene _Scene;
 
 	// The player.
 	private Player _Player;
@@ -62,57 +59,57 @@ public class GameplayScreen extends GameScreen
 		_TransitionOnTime = TimeSpan.FromSeconds(1.5);
 		_TransitionOffTime = TimeSpan.FromSeconds(0.5);
 
-		// Set up the physics simulator and let the debug manager know about it.
-		_Physics = new PhysicsSimulator();
-		DebugManager.getInstance().setPhysicsSimulator(_Physics);
-
 		// Set up the camera.
 		_Camera = new Camera2D(new Rectangle(0, 0, (int) screenManager.getWindowBounds().x, (int) screenManager.getWindowBounds().y), new Rectangle(0, 0, 3000, 3000));
 		_Camera.setPosition(new Vector2(1000, 1000));
-		_Camera.zoom(2);
+
+		// Create the scene manager.
+		_SceneManager = new SceneManager(_Camera);
 
 		// Enable debug.
 		DebugManager.getInstance().debug = true;
 
+		// Create the scene.
+		_Scene = _SceneManager.addScene(new Scene());
+
 		// Create the player.
-		_Player = new Player(_Physics);
+		_Player = new Player(_Scene.getPhysicsSimulator());
 		_Player.getBody().setBottomPosition(new Vector3(910, 1080, 100));
 		DebugManager.getInstance().setDebugBody(_Player.getBody());
 
 		// Create the shelf.
-		_Shelf = new Entity(_Physics);
+		_Shelf = new Entity(_Scene.getPhysicsSimulator());
 		_Shelf.getBody().setPosition(new Vector3(1100, 1100, 0));
 		_Shelf.getBody().setIsStatic(true);
 
 		// Create a block.
-		_Block1 = new Entity(_Physics);
+		_Block1 = new Entity(_Scene.getPhysicsSimulator());
 		_Block1.getBody().setPosition(new Vector3(950, 933.5, 0));
 		_Block1.getBody().setIsStatic(true);
 
 		// Create a block.
-		_Block2 = new Entity(_Physics);
+		_Block2 = new Entity(_Scene.getPhysicsSimulator());
 		_Block2.getBody().setPosition(new Vector3(1000, 1020, 0));
 		_Block2.getBody().setIsStatic(true);
 
 		// Create a staircase.
-		_Stairs = new Entity(_Physics);
-		_Stairs.getBody().setPosition(new Vector3(920, 1080, 0));
+		_Stairs = new Entity(_Scene.getPhysicsSimulator());
+		_Stairs.getBody().setPosition(new Vector3(930, 1080, 0));
 		_Stairs.getBody().setIsStatic(true);
 		_Stairs.getBody().getShape().setDepthDistribution(DepthDistribution.Right);
 
 		// Create the floor.
-		_Floor = new Entity(_Physics);
+		_Floor = new Entity(_Scene.getPhysicsSimulator());
 		_Floor.getBody().setPosition(new Vector3(1000, 1000, 0));
 		_Floor.getBody().setIsStatic(true);
 
-		// Add the entities to the list.
-		_Entities = new ArrayList<>();
-		_Entities.add(_Player);
-		_Entities.add(_Shelf);
-		_Entities.add(_Block1);
-		_Entities.add(_Block2);
-		_Entities.add(_Stairs);
-		_Entities.add(_Floor);
+		// Add all entities to the scene.
+		_Scene.addEntity(_Player);
+		_Scene.addEntity(_Shelf);
+		_Scene.addEntity(_Block1);
+		_Scene.addEntity(_Block2);
+		_Scene.addEntity(_Stairs);
+		_Scene.addEntity(_Floor);
 	}
 
 	/**
@@ -123,12 +120,15 @@ public class GameplayScreen extends GameScreen
 		// Set the background color to blue.
 		_ScreenManager.getGame().getWindow().setBackBufferColor(Helper.CornFlowerBlue);
 
+		// Load the scene manager's content.
+		_SceneManager.loadContent();
+
 		// Load the player's content.
 		_Player.loadContent();
 		_Shelf.loadContent("Bookshelf[1].png", 12);
 		_Block1.loadContent("ElevatedBlock[3].png", 48);
 		_Block2.loadContent("ElevatedBlock[2].png", 85);
-		_Stairs.loadContent("StoneStairsRight[2].png", 36);
+		_Stairs.loadContent("StoneStairsRight[2].png", 33);
 		_Floor.loadContent("DarkTiledFloor[1].png");
 
 		// Set their depths.
@@ -163,11 +163,8 @@ public class GameplayScreen extends GameScreen
 		// Otherwise let the game instance handle input as usual.
 		else
 		{
-			// Let all entities respond to input.
-			for (Entity entity : _Entities)
-			{
-				entity.handleInput(input);
-			}
+			// Let the scene manager respond to input.
+			_SceneManager.handleInput(input);
 
 			// If to zoom in.
 			if (input.isKeyDown(KeyEvent.VK_O))
@@ -217,22 +214,8 @@ public class GameplayScreen extends GameScreen
 		// Update the game by updating this screen.
 		super.update(gameTime, otherScreenHasFocus, coveredByOtherScreen);
 
-		// Update the physics simulator.
-		_Physics.update();
-
-		// Sort the list of entities by descending depth.
-		Collections.sort(_Entities, new EntityDepthComparator());
-
-		// Update all entities.
-		for (Entity entity : _Entities)
-		{
-			entity.update(gameTime);
-		}
-
-		// Update the camera.
-		_Camera.update(gameTime);
-		// Share the camera matrix with the debug manager.
-		DebugManager.getInstance().setTransformMatrix(_Camera.getTransformMatrix());
+		// Update the scene manager.
+		_SceneManager.update(gameTime);
 	}
 
 	/**
@@ -251,17 +234,7 @@ public class GameplayScreen extends GameScreen
 			_ScreenManager.fadeBackBufferToBlack(255 - getTransitionAlpha());
 		}
 
-		// Save the old graphics matrix and insert the camera matrix in its place.
-		AffineTransform old = graphics.getTransform();
-		graphics.setTransform(_Camera.getTransformMatrix());
-
-		// Draw all entities.
-		for (Entity entity : _Entities)
-		{
-			entity.draw(graphics);
-		}
-
-		// Reinstate the old graphics matrix.
-		graphics.setTransform(old);
+		// Let the scene manager draw the current scene.
+		_SceneManager.draw(graphics);
 	}
 }

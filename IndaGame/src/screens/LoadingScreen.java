@@ -4,7 +4,7 @@ import infrastructure.GameScreen;
 import infrastructure.GameTimer;
 import infrastructure.ScreenManager;
 import infrastructure.TimeSpan;
-import infrastructure.WindowPanel;
+import infrastructure.WindowFrame;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -131,7 +131,7 @@ public class LoadingScreen extends GameScreen
 
 			// Create a transformation for the text.
 			AffineTransform transform = new AffineTransform();
-			transform.translate(WindowPanel.WIDTH / 2, WindowPanel.HEIGHT / 2);
+			transform.translate(WindowFrame.WIDTH / 2, WindowFrame.HEIGHT / 2);
 
 			// Draw the text.
 			Helper.drawString(message, font, transform, color, graphics);

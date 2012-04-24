@@ -43,7 +43,7 @@ public class PhysicsSimulator
 		// Initialize the Forces list.
 		_Forces = new ArrayList<Force>();
 		// Set up the Gravity.
-		_Gravity = 0.1;
+		_Gravity = 0.3;
 		// The energy decrease.
 		energyDecrease = 0.05;
 	}

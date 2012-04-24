@@ -418,13 +418,13 @@ public class Shape
 			case Top:
 			{
 				// Calculate the depth.
-				depth = (layeredPosition.y - _Position.y - (_Height / 2)) * (_Depth / _Height);
+				depth = (_Position.y + (_Height / 2) - layeredPosition.y) * (_Depth / _Height);
 				break;
 			}
 			case Bottom:
 			{
 				// Calculate the depth.
-				depth = (_Position.y + (_Height / 2) - layeredPosition.y) * (_Depth / _Height);
+				depth = (layeredPosition.y - _Position.y - (_Height / 2)) * (_Depth / _Height);
 				break;
 			}
 			case Right:
@@ -475,7 +475,7 @@ public class Shape
 
 				// Get the amount of height to remove and calculate the new position.
 				double height = depth * ratio;
-				double y = _Position.y + (_Width / 2) - height - ((_Height - height) / 2);
+				double y = _Position.y - (_Width / 2) + height + ((_Height - height) / 2);
 
 				// Return the layered shape.
 				return new Shape(new Vector3(_Position.x, y, z), _Width, _Height - (float) height, 1f);
@@ -487,7 +487,7 @@ public class Shape
 
 				// Get the amount of height to remove and calculate the new position.
 				double height = depth * ratio;
-				double y = _Position.y - (_Width / 2) + height + ((_Height - height) / 2);
+				double y = _Position.y + (_Width / 2) - height - ((_Height - height) / 2);
 
 				// Return the layered shape.
 				return new Shape(new Vector3(_Position.x, y, z), _Width, _Height - (float) height, 1f);

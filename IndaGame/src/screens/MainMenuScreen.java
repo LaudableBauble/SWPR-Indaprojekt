@@ -20,6 +20,7 @@ public class MainMenuScreen extends MenuScreen
 
 		// Create our menu entries.
 		MenuEntry playGameMenuEntry = new MenuEntry("Play Game");
+		MenuEntry mapEditorMenuEntry = new MenuEntry("Map Editor");
 		MenuEntry optionsMenuEntry = new MenuEntry("Options");
 		MenuEntry exitMenuEntry = new MenuEntry("Exit");
 
@@ -29,6 +30,14 @@ public class MainMenuScreen extends MenuScreen
 			public void handleEvent(EntrySelectEvent e)
 			{
 				playGameMenuEntrySelected();
+			}
+		});
+		// Hook up menu event handlers.
+		mapEditorMenuEntry.addEntrySelectEventListener(new EntrySelectEventListener()
+		{
+			public void handleEvent(EntrySelectEvent e)
+			{
+				mapEditorMenuEntrySelected();
 			}
 		});
 		// optionsMenuEntry.Selected += OptionsMenuEntrySelected;
@@ -42,6 +51,7 @@ public class MainMenuScreen extends MenuScreen
 
 		// Add entries to the menu.
 		_MenuEntries.add(playGameMenuEntry);
+		_MenuEntries.add(mapEditorMenuEntry);
 		_MenuEntries.add(optionsMenuEntry);
 		_MenuEntries.add(exitMenuEntry);
 	}
@@ -52,6 +62,14 @@ public class MainMenuScreen extends MenuScreen
 	void playGameMenuEntrySelected()
 	{
 		LoadingScreen.load(_ScreenManager, true, new GameplayScreen(_ScreenManager));
+	}
+
+	/**
+	 * Event handler for when the Map Editor menu entry is selected.
+	 */
+	void mapEditorMenuEntrySelected()
+	{
+		LoadingScreen.load(_ScreenManager, true, new MapEditorScreen(_ScreenManager));
 	}
 
 	/**

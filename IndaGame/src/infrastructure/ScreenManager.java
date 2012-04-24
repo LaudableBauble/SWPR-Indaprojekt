@@ -19,7 +19,7 @@ public class ScreenManager
 {
 	// The data fields.
 	private Game _Game;
-	private WindowPanel _Window;
+	private WindowFrame _Window;
 	private ArrayList<GameScreen> _Screens;
 	private ArrayList<GameScreen> _ScreensToUpdate;
 	private InputManager _Input;
@@ -150,7 +150,7 @@ public class ScreenManager
 			}
 
 			// Draw the screen.
-			screen.draw(gameTime, _Window.getGraphics());
+			screen.draw(gameTime, _Window.getBufferGraphics());
 		}
 	}
 
@@ -255,7 +255,7 @@ public class ScreenManager
 	 */
 	public Graphics2D getGraphics()
 	{
-		return _Window.getGraphics();
+		return _Window.getBufferGraphics();
 	}
 
 	/**

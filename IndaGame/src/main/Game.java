@@ -3,21 +3,18 @@ package main;
 import infrastructure.GameTimer;
 import infrastructure.ScreenManager;
 import infrastructure.TimeSpan;
-import infrastructure.WindowPanel;
-
-import java.awt.Canvas;
-
+import infrastructure.WindowFrame;
 import screens.BackgroundScreen;
 import screens.MainMenuScreen;
 import debug.DebugManager;
 
-public class Game extends Canvas
+public class Game
 {
 	// The time per frame in milliseconds. FPS = 25.
 	public static final int TimePerFrame = 40;
 
 	// The Window that displays everything.
-	public WindowPanel window;
+	public WindowFrame window;
 
 	// The game timer.
 	private GameTimer timer;
@@ -26,9 +23,6 @@ public class Game extends Canvas
 	private ScreenManager _ScreenManager;
 
 	private boolean exit;
-
-	// The background.
-	// public Sprite background;
 
 	/**
 	 * The static main method of the game. This is where the game starts.
@@ -49,13 +43,10 @@ public class Game extends Canvas
 	public Game()
 	{
 		// The window panel.
-		window = new WindowPanel();
+		window = new WindowFrame();
 		timer = new GameTimer();
 		_ScreenManager = new ScreenManager(this);
 		exit = false;
-
-		// The background.
-		// background = new Sprite();
 
 		// Initialize.
 		initialize();
@@ -72,8 +63,6 @@ public class Game extends Canvas
 	{
 		// Load all content.
 		_ScreenManager.loadContent();
-		// Load the Sprite.
-		// background.loadContent("Grass[0].jpg");
 	}
 
 	public void handleInput()
@@ -93,11 +82,8 @@ public class Game extends Canvas
 		// Let the screen manager distribute the drawing.
 		_ScreenManager.draw(timer);
 
-		// Draw the Background.
-		// background.draw(window.getGraphics(), new Vector(0,0), this);
-
 		// Debug Draw.
-		DebugManager.getInstance().draw(window.getGraphics());
+		DebugManager.getInstance().draw(window.getBufferGraphics());
 
 		// End drawing.
 		window.drawEnd();
@@ -170,6 +156,16 @@ public class Game extends Canvas
 	}
 
 	/**
+	 * Whether the game is visible.
+	 * 
+	 * @return Whether the game is visible.
+	 */
+	public boolean isVisible()
+	{
+		return true;
+	}
+
+	/**
 	 * Exit the game.
 	 */
 	public void exit()
@@ -182,7 +178,7 @@ public class Game extends Canvas
 	 * 
 	 * @return The window that displays the game.
 	 */
-	public WindowPanel getWindow()
+	public WindowFrame getWindow()
 	{
 		return window;
 	}

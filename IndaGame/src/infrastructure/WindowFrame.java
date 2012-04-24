@@ -6,16 +6,21 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferStrategy;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-public class WindowPanel extends Canvas
+/**
+ * A window frame is the window where the game will be drawn. Think of the game as the background of the frame and all other GUI components as layers on top.
+ */
+public class WindowFrame extends JFrame
 {
 	// The Bounds of the window.
 	public static final int WIDTH = 1280;
@@ -32,42 +37,33 @@ public class WindowPanel extends Canvas
 	// The back-buffer color.
 	private Color _BackBufferColor;
 
-	// The Constructor.
-	public WindowPanel()
+	/**
+	 * Constructor for a window frame.
+	 */
+	public WindowFrame()
 	{
 		// Create a JFrame as window.
-		JFrame window = new JFrame("Test");
+		super("Inda11");
+
+		// Set the window's bounds, make the window visible and make the window unable to resize.
+		setSize(WIDTH, HEIGHT);
+		setVisible(true);
+		setResizable(false);
+
+		// Fix the size.
+		// setSize(getWidth() + this.getInsets().left + this.getInsets().right, getHeight() + this.getInsets().top + this.getInsets().bottom);
+
 		// Create a JPanel to display everything on.
-		JPanel panel = (JPanel) window.getContentPane();
-
-		// Set the Canvas' bounds.
-		setBounds(0, 0, WIDTH, HEIGHT);
-
-		// Set the panel's bounds, layout style and finally add this instance to the panel.
+		JPanel panel = (JPanel) getContentPane();
+		// Set the panel's bounds and transparance.
 		panel.setPreferredSize(new Dimension(WIDTH, HEIGHT));
-		panel.setLayout(null);
-		panel.add(this);
-
-		// Set the window's bounds and make the window visible.
-		window.setBounds(0, 0, WIDTH, HEIGHT);
-		window.setVisible(true);
+		panel.setOpaque(false);
 
 		// Set the back-buffer color to gray.
 		_BackBufferColor = Color.gray;
 
 		// Listen for Windows trying to close the window.
-		window.addWindowListener(new WindowAdapter()
-		{
-			// The closing method.
-			public void windowClosing(WindowEvent e)
-			{
-				// Turn off the program.
-				System.exit(0);
-			}
-		});
-
-		// Make the window unable to resize.
-		window.setResizable(false);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		// Create the buffer strategy and save it.
 		createBufferStrategy(2);
@@ -94,12 +90,13 @@ public class WindowPanel extends Canvas
 	 */
 	public void drawBegin()
 	{
-		// Get the Graphics instance.
+		// Get the Graphics instance and translate it to the right position.
 		_Graphics = (Graphics2D) strategy.getDrawGraphics();
+		// _Graphics.setTransform(AffineTransform.getTranslateInstance(this.getInsets().left, this.getInsets().top));
 		// Clear the back-buffer.
 		_Graphics.setColor(_BackBufferColor);
 		_Graphics.fillRect(0, 0, getWidth(), getHeight());
-		
+
 		// Set some graphics flags.
 		_Graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		_Graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
@@ -114,6 +111,8 @@ public class WindowPanel extends Canvas
 	public void drawEnd()
 	{
 		// Show the frame.
+		// _Graphics.setTransform(AffineTransform.getTranslateInstance(getInsets().left, getInsets().top));
+		getLayeredPane().paintComponents(_Graphics);
 		strategy.show();
 		_Graphics.dispose();
 
@@ -126,7 +125,7 @@ public class WindowPanel extends Canvas
 	 * 
 	 * @return The graphics component.
 	 */
-	public Graphics2D getGraphics()
+	public Graphics2D getBufferGraphics()
 	{
 		// Create the Graphics Object.
 		Graphics2D g = null;
