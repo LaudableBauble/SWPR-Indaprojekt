@@ -10,6 +10,8 @@
  */
 package input;
 
+import java.awt.MouseInfo;
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -288,6 +290,17 @@ public final class InputManager extends MouseInputAdapter implements KeyListener
 	{
 		// Return the event vector.
 		return (eventPosition);
+	}
+
+	/**
+	 * Returns the position of the mouse.
+	 * 
+	 * @return The mouse's position.
+	 */
+	public Vector2 mousePosition()
+	{
+		// Return the mouse position.
+		return new Vector2(MouseInfo.getPointerInfo().getLocation());
 	}
 
 	/**

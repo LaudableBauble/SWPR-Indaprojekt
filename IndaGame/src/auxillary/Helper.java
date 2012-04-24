@@ -239,16 +239,38 @@ public final class Helper
 	 * Load an image.
 	 * 
 	 * @param path
-	 *            Where to look for the image. The image is expected to be located in the images folder. Be sure to include the file suffix in the path.
+	 *            Where to look for the image relative to this game. The image is expected to be located in the images folder. Be sure to include the file suffix in the path.
+	 * @param pathHelp
+	 *            If you need help with setting up the path, ie. positioning you in the images folder.
+	 * @return The loaded image.
+	 */
+	public static BufferedImage loadImage(String path, boolean pathHelp)
+	{
+		// If path help is enabled.
+		if (pathHelp)
+		{
+			return loadImage("src/images/" + path);
+		}
+		else
+		{
+			return loadImage(path);
+		}
+	}
+
+	/**
+	 * Load an image.
+	 * 
+	 * @param path
+	 *            Where to look for the image relative to this game. Be sure to include the file suffix in the path.
 	 * @return The loaded image.
 	 */
 	public static BufferedImage loadImage(String path)
 	{
-		// Try to load the image and deal with the eventual exceptions.
+		// Try to load the image and deal with the probable exceptions.
 		try
 		{
 			// Load the image and return it.
-			return ImageIO.read(new File("src/images/" + path));
+			return ImageIO.read(new File(path));
 		}
 		// Catch.
 		catch (Exception e)

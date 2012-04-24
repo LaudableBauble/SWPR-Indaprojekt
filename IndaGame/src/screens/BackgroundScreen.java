@@ -33,7 +33,7 @@ public class BackgroundScreen extends GameScreen
 	 */
 	public void loadContent()
 	{
-		_BackgroundTexture = Helper.loadImage("Distant_City.png");
+		_BackgroundTexture = Helper.loadImage("Distant_City.png", true);
 	}
 
 	/**

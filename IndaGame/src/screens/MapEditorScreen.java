@@ -1,8 +1,9 @@
 package screens;
 
 import infrastructure.Camera2D;
+import infrastructure.EntityInfoPanel;
 import infrastructure.Enums.DepthDistribution;
-import infrastructure.FileTreePanel;
+import infrastructure.FileTree;
 import infrastructure.GameScreen;
 import infrastructure.GameTimer;
 import infrastructure.ScreenManager;
@@ -14,10 +15,13 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
+import java.io.File;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import main.Entity;
 import main.Player;
@@ -39,9 +43,17 @@ public class MapEditorScreen extends GameScreen
 	private SceneManager _SceneManager;
 	// The camera.
 	private Camera2D _Camera;
-
 	// The scene.
 	private Scene _Scene;
+
+	// The GUI.
+	private JTabbedPane _Tabs;
+	private FileTree _ImageTree;
+	private FileTree _EntityTree;
+	private EntityInfoPanel _InfoPanel;
+
+	// The currently selected node.
+	private DefaultMutableTreeNode _SelectedNode;
 
 	// The player.
 	private Player _Player;
@@ -65,9 +77,18 @@ public class MapEditorScreen extends GameScreen
 		_TransitionOnTime = TimeSpan.FromSeconds(1.5);
 		_TransitionOffTime = TimeSpan.FromSeconds(0.5);
 
-		// Get the window's root panel and remove the window from it.
-		JFrame root = screenManager.getGame().getWindow();
-		root.add(new FileTreePanel(), BorderLayout.CENTER);
+		// Create the GUI components.
+		_Tabs = new JTabbedPane();
+		_Tabs.setFocusable(false);
+		_ImageTree = new FileTree(new File("src/images"));
+		_EntityTree = new FileTree(new File("src/images"));
+		_InfoPanel = new EntityInfoPanel();
+
+		// Add the GUI components to the frame.
+		_Tabs.add("Images", _ImageTree);
+		_Tabs.add("Entities", _EntityTree);
+		screenManager.getGame().getWindow().add(_Tabs, BorderLayout.WEST);
+		screenManager.getGame().getWindow().add(_InfoPanel, BorderLayout.EAST);
 
 		// Set up the camera.
 		_Camera = new Camera2D(new Rectangle(0, 0, (int) screenManager.getWindowBounds().x, (int) screenManager.getWindowBounds().y), new Rectangle(0, 0, 3000, 3000));
@@ -148,6 +169,9 @@ public class MapEditorScreen extends GameScreen
 		_Stairs.getBody().getShape().setBottomDepth(1);
 		_Floor.getBody().getShape().setBottomDepth(0);
 
+		// Set the info panel's entity.
+		_InfoPanel.setEntity(_Player);
+
 		// Once the load has finished, we use ResetElapsedTime to tell the game's
 		// timing mechanism that we have just finished a very long frame, and that
 		// it should not try to catch up.
@@ -227,6 +251,9 @@ public class MapEditorScreen extends GameScreen
 
 		// Update the scene manager.
 		_SceneManager.update(gameTime);
+
+		// Update the selected node.
+		updateSelectedNode();
 	}
 
 	/**
@@ -247,5 +274,24 @@ public class MapEditorScreen extends GameScreen
 
 		// Let the scene manager draw the current scene.
 		_SceneManager.draw(graphics);
+	}
+
+	/**
+	 * Update the currently selected node.
+	 */
+	private void updateSelectedNode()
+	{
+		// If the tree's selected node does not match the one stored, change 'em.
+		if (_SelectedNode != ((FileTree) _Tabs.getSelectedComponent()).getSelectedNode())
+		{
+			_SelectedNode = ((FileTree) _Tabs.getSelectedComponent()).getSelectedNode();
+
+			// Create an entity from the selected node. Remove the first 10 characters from parent (src/images).
+			Entity entity = new Entity(_Scene.getPhysicsSimulator());
+			entity.loadContent(_SelectedNode.getParent().toString().substring(10) + "\\" + _SelectedNode.toString());
+
+			// Add the entity to the info panel.
+			_InfoPanel.setEntity(entity);
+		}
 	}
 }

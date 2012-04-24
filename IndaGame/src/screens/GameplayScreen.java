@@ -15,6 +15,7 @@ import java.awt.event.KeyEvent;
 
 import main.Entity;
 import main.Player;
+import main.Character;
 import main.Scene;
 import main.SceneManager;
 import auxillary.Helper;
@@ -40,11 +41,15 @@ public class GameplayScreen extends GameScreen
 	// The player.
 	private Player _Player;
 
+	// Character.
+	private Character _Character;
+
 	// Entities.
 	private Entity _Shelf;
 	private Entity _Block1;
 	private Entity _Block2;
-	private Entity _Stairs;
+	private Entity _Stairs1;
+	private Entity _Stairs2;
 	private Entity _Floor;
 
 	/**
@@ -77,6 +82,10 @@ public class GameplayScreen extends GameScreen
 		_Player.getBody().setBottomPosition(new Vector3(910, 1080, 100));
 		DebugManager.getInstance().setDebugBody(_Player.getBody());
 
+		// Create a character.
+		_Character = new main.Character(_Scene.getPhysicsSimulator(), "hydra", 3);
+		_Character.getBody().setPosition(new Vector3(1040, 1010, 50));
+
 		// Create the shelf.
 		_Shelf = new Entity(_Scene.getPhysicsSimulator());
 		_Shelf.getBody().setPosition(new Vector3(1100, 1100, 0));
@@ -93,10 +102,16 @@ public class GameplayScreen extends GameScreen
 		_Block2.getBody().setIsStatic(true);
 
 		// Create a staircase.
-		_Stairs = new Entity(_Scene.getPhysicsSimulator());
-		_Stairs.getBody().setPosition(new Vector3(930, 1080, 0));
-		_Stairs.getBody().setIsStatic(true);
-		_Stairs.getBody().getShape().setDepthDistribution(DepthDistribution.Right);
+		_Stairs1 = new Entity(_Scene.getPhysicsSimulator());
+		_Stairs1.getBody().setPosition(new Vector3(930, 1080, 0));
+		_Stairs1.getBody().setIsStatic(true);
+		_Stairs1.getBody().getShape().setDepthDistribution(DepthDistribution.Right);
+		
+		// Create a staircase.
+		_Stairs2 = new Entity(_Scene.getPhysicsSimulator());
+		_Stairs2.getBody().setPosition(new Vector3(903, 1000, 0));
+		_Stairs2.getBody().setIsStatic(true);
+		_Stairs2.getBody().getShape().setDepthDistribution(DepthDistribution.Right);
 
 		// Create the floor.
 		_Floor = new Entity(_Scene.getPhysicsSimulator());
@@ -105,10 +120,12 @@ public class GameplayScreen extends GameScreen
 
 		// Add all entities to the scene.
 		_Scene.addEntity(_Player);
+		_Scene.addEntity(_Character);
 		_Scene.addEntity(_Shelf);
 		_Scene.addEntity(_Block1);
 		_Scene.addEntity(_Block2);
-		_Scene.addEntity(_Stairs);
+		_Scene.addEntity(_Stairs1);
+		_Scene.addEntity(_Stairs2);
 		_Scene.addEntity(_Floor);
 	}
 
@@ -125,17 +142,20 @@ public class GameplayScreen extends GameScreen
 
 		// Load the player's content.
 		_Player.loadContent();
+		_Character.loadContent();
 		_Shelf.loadContent("Bookshelf[1].png", 12);
 		_Block1.loadContent("ElevatedBlock[3].png", 48);
 		_Block2.loadContent("ElevatedBlock[2].png", 85);
-		_Stairs.loadContent("StoneStairsRight[2].png", 33);
+		_Stairs1.loadContent("StoneStairsRight[2].png", 33);
+		_Stairs2.loadContent("StoneStairsRight[3].png", 33);
 		_Floor.loadContent("DarkTiledFloor[1].png");
 
 		// Set their depths.
 		_Shelf.getBody().getShape().setBottomDepth(1);
 		_Block1.getBody().getShape().setBottomDepth(1);
 		_Block2.getBody().getShape().setBottomDepth(1);
-		_Stairs.getBody().getShape().setBottomDepth(1);
+		_Stairs1.getBody().getShape().setBottomDepth(1);
+		_Stairs2.getBody().getShape().setBottomDepth(1);
 		_Floor.getBody().getShape().setBottomDepth(0);
 
 		// Once the load has finished, we use ResetElapsedTime to tell the game's

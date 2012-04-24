@@ -116,8 +116,7 @@ public class Entity
 	 */
 	public void update(GameTimer gameTime)
 	{
-		// Update the body and sprites.
-		_Body.update();
+		// Update the sprites.
 		_Sprites.update(gameTime, Helper.getScreenPosition(new Vector3(_Body.getLayeredPosition(), _Body.getShape().getBottomDepth())));
 	}
 

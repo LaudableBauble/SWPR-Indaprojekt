@@ -218,7 +218,7 @@ public class Sprite
 			// Otherwise load one by using the name of the frame.
 			else
 			{
-				_Texture = Helper.loadImage(_Frames.get(_FrameIndex).getPathName());
+				_Texture = Helper.loadImage(_Frames.get(_FrameIndex).getPathName(), true);
 			}
 		}
 		// Catch

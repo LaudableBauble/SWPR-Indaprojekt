@@ -72,7 +72,7 @@ public class Frame
 		}
 		else
 		{
-			BufferedImage texture = Helper.loadImage(_PathName);
+			BufferedImage texture = Helper.loadImage(_PathName, true);
 			_Height = texture.getHeight();
 			_Width = texture.getWidth();
 		}

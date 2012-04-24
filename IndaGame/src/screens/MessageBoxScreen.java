@@ -79,7 +79,7 @@ public class MessageBoxScreen extends GameScreen
 	public void loadContent()
 	{
 		// Load the texture.
-		_Texture = Helper.loadImage("Gradient[1].png");
+		_Texture = Helper.loadImage("Gradient[1].png", true);
 	}
 
 	/**

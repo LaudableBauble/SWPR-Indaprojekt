@@ -124,6 +124,8 @@ public class PhysicsSimulator
 				addFrictionForce(getBodyFriction(b1));
 				// Add all forces to the body.
 				addForcesToBody(getForces(b1));
+				// Update the body.
+				b1.update();
 			}
 
 			// Clear the List of all Forces.

@@ -43,15 +43,12 @@ public class WindowFrame extends JFrame
 	public WindowFrame()
 	{
 		// Create a JFrame as window.
-		//super("Inda11");
+		super("Inda11");
 
 		// Set the window's bounds, make the window visible and make the window unable to resize.
 		setVisible(true);
 		setSize(WIDTH, HEIGHT);
 		setResizable(false);
-
-		// Fix the size.
-		// setSize(getWidth() + this.getInsets().left + this.getInsets().right, getHeight() + this.getInsets().top + this.getInsets().bottom);
 
 		// Create a JPanel to display everything on.
 		JPanel panel = (JPanel) getContentPane();
@@ -92,7 +89,6 @@ public class WindowFrame extends JFrame
 	{
 		// Get the Graphics instance and translate it to the right position.
 		_Graphics = (Graphics2D) strategy.getDrawGraphics();
-		// _Graphics.setTransform(AffineTransform.getTranslateInstance(this.getInsets().left, this.getInsets().top));
 		// Clear the back-buffer.
 		_Graphics.setColor(_BackBufferColor);
 		_Graphics.fillRect(0, 0, getWidth(), getHeight());
@@ -111,7 +107,7 @@ public class WindowFrame extends JFrame
 	public void drawEnd()
 	{
 		// Show the frame.
-		// _Graphics.setTransform(AffineTransform.getTranslateInstance(getInsets().left, getInsets().top));
+		_Graphics.setTransform(AffineTransform.getTranslateInstance(getInsets().left, getInsets().top));
 		getLayeredPane().paintComponents(_Graphics);
 		strategy.show();
 		_Graphics.dispose();
