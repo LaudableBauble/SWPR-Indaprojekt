@@ -24,7 +24,7 @@ public class WindowFrame extends JFrame
 {
 	// The Bounds of the window.
 	public static final int WIDTH = 1280;
-	public static final int HEIGHT = 960;
+	public static final int HEIGHT = 804;
 
 	// The Keyboard and Mouse input handlers.
 	public InputManager inputManager = InputManager.getInstance();
@@ -43,11 +43,11 @@ public class WindowFrame extends JFrame
 	public WindowFrame()
 	{
 		// Create a JFrame as window.
-		super("Inda11");
+		//super("Inda11");
 
 		// Set the window's bounds, make the window visible and make the window unable to resize.
-		setSize(WIDTH, HEIGHT);
 		setVisible(true);
+		setSize(WIDTH, HEIGHT);
 		setResizable(false);
 
 		// Fix the size.
