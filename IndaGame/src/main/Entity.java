@@ -103,7 +103,7 @@ public class Entity
 					&& (input.mouseEventPosition().y >= (_Body.getLayeredPosition().y - (_Body.getShape().getHeight() / 2))))
 			{
 				// Turn the debug isClicked variable on.
-				_Body._IsClicked = !(_Body._IsClicked);
+				_Body._IsClicked = !_Body._IsClicked;
 			}
 		}
 	}

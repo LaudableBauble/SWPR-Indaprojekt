@@ -1,5 +1,7 @@
 package physics;
 
+import java.util.HashSet;
+
 import auxillary.Vector2;
 import auxillary.Vector3;
 
@@ -26,7 +28,12 @@ public class Body
 	private double _MaxVelocity;
 
 	// If the body is static, in other words immovable.
-	private boolean _IsStatic = false;
+	private boolean _IsStatic;
+	// If the body is immaterial, in other words incapable of colliding.
+	private boolean _IsImmaterial;
+
+	// The bodies with which this body has collided with.
+	private HashSet<Body> _Collisions;
 
 	// Debug Variable!!!
 	public boolean _IsClicked = false;
@@ -93,12 +100,14 @@ public class Body
 		// Initialize a couple of variables.
 		_Shape = new Shape(width, height, depth);
 		_IsStatic = false;
+		_IsImmaterial = false;
 		_MaxVelocity = 8;
 		_Mass = mass;
 		_Velocity = new Vector3(0, 0, 0);
 		_FrictionCoefficient = friction;
 		_AccelerationValue = 1;
 		_Physics = physics;
+		_Collisions = new HashSet<>();
 	}
 
 	/**
@@ -174,8 +183,37 @@ public class Body
 		// Print out the error.
 		else
 		{
-			System.out.println(this + ": Error reaching PhysicsSimulator.");
+			System.out.println(this + ": Error with null physics simulator.");
 		}
+	}
+
+	/**
+	 * Add a body with which this body has collided with.
+	 * 
+	 * @param body
+	 *            The other body in the collision.
+	 */
+	public void addCollision(Body body)
+	{
+		_Collisions.add(body);
+	}
+
+	/**
+	 * Get this body's collisions this update cycle.
+	 * 
+	 * @return All collisions this update cycle.
+	 */
+	public HashSet<Body> getCollisions()
+	{
+		return _Collisions;
+	}
+
+	/**
+	 * Clear all saved collisions. Usually done by the physics simulator each update.
+	 */
+	public void clearCollisions()
+	{
+		_Collisions.clear();
 	}
 
 	/**
@@ -352,6 +390,27 @@ public class Body
 	public boolean getIsStatic()
 	{
 		return _IsStatic;
+	}
+
+	/**
+	 * Set whether the body will be immaterial.
+	 * 
+	 * @param isImmaterial
+	 *            Whether the body is immaterial or not.
+	 */
+	public void setIsImmaterial(boolean isImmaterial)
+	{
+		_IsImmaterial = isImmaterial;
+	}
+
+	/**
+	 * Get whether the body is immaterial.
+	 * 
+	 * @return Whether the body is immaterial or not.
+	 */
+	public boolean getIsImmaterial()
+	{
+		return _IsImmaterial;
 	}
 
 	/**

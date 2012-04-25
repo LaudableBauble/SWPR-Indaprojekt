@@ -43,6 +43,8 @@ public final class InputManager extends MouseInputAdapter implements KeyListener
 
 	// Variable that indicates when a mouse button is pressed. 0 = none, 1 = button1, 2 = button2, 3 = button3.
 	private boolean[] mouseButtonPressed = new boolean[4];
+	// Variable that indicates when a mouse button is clicked (pressed and released).
+	private boolean[] mouseButtonClicked = new boolean[4];
 	// Variable that indicates when a mouse button is dragged.
 	private boolean[] mouseButtonDragged = new boolean[4];
 	// Variable that indicates when a mouse button is released.
@@ -69,6 +71,27 @@ public final class InputManager extends MouseInputAdapter implements KeyListener
 	public static InputManager getInstance()
 	{
 		return instance;
+	}
+
+	/**
+	 * Only resets the key state up because you don't want keys to be showing as up forever which is what will happen unless the array is cleared.
+	 */
+	public void update()
+	{
+		// Clear out the key states.
+		key_state_up = new boolean[256];
+		key_state_pressed = new boolean[256];
+		keyReleased = false;
+
+		// Clear the mouse clicked state.
+		mouseButtonClicked = new boolean[4];
+
+		// If the keyCache is greater than 1024 characters, clear the buffer.
+		if (keyCache.length() > 1024)
+		{
+			// Clear the buffer.
+			keyCache = "";
+		}
 	}
 
 	/**
@@ -138,10 +161,26 @@ public final class InputManager extends MouseInputAdapter implements KeyListener
 	 */
 	public void mousePressed(MouseEvent e)
 	{
-		// The Mouse Button is Pressed.
+		// Set the mouse states.
 		mouseButtonPressed[e.getButton()] = true;
-		// The Mouse Button isn't Released.
 		mouseButtonReleased[e.getButton()] = false;
+
+		// The Mouse position.
+		eventPosition.x = e.getX();
+		eventPosition.y = e.getY();
+	}
+
+	/**
+	 * This function is specified in the MouseListener interface. It sets the state elements for whatever mouse button was clicked.
+	 * 
+	 * @param e
+	 *            The MouseEvent fired by the awt Toolkit
+	 */
+	public void mouseClicked(MouseEvent e)
+	{
+		// Set the mouse states.
+		mouseButtonClicked[e.getButton()] = true;
+
 		// The Mouse position.
 		eventPosition.x = e.getX();
 		eventPosition.y = e.getY();
@@ -170,12 +209,11 @@ public final class InputManager extends MouseInputAdapter implements KeyListener
 	 */
 	public void mouseReleased(MouseEvent e)
 	{
-		// The Mouse Button is Released.
+		// Set the mouse states.
 		mouseButtonReleased[e.getButton()] = true;
-		// The Mouse Button isn't Dragged.
 		mouseButtonDragged[e.getButton()] = false;
-		// The Mouse Button isn't Pressed.
 		mouseButtonPressed[e.getButton()] = false;
+
 		// The Mouse position.
 		eventPosition.x = e.getX();
 		eventPosition.y = e.getY();
@@ -190,8 +228,7 @@ public final class InputManager extends MouseInputAdapter implements KeyListener
 	 */
 	public boolean isKeyDown(int key)
 	{
-		// Return a true/false.
-		return (key_state_down[key]);
+		return key_state_down[key];
 	}
 
 	/**
@@ -203,8 +240,7 @@ public final class InputManager extends MouseInputAdapter implements KeyListener
 	 */
 	public boolean isKeyUp(int key)
 	{
-		// Return a true/false.
-		return (key_state_up[key]);
+		return key_state_up[key];
 	}
 
 	/**
@@ -216,7 +252,6 @@ public final class InputManager extends MouseInputAdapter implements KeyListener
 	 */
 	public boolean isNewKeyPress(int key)
 	{
-		// If the key is newly pressed.
 		return (key_state_down[key] && key_state_pressed[key]);
 	}
 
@@ -227,7 +262,6 @@ public final class InputManager extends MouseInputAdapter implements KeyListener
 	 */
 	public boolean isAnyKeyDown()
 	{
-		// Return a true/false.
 		return keyPressed;
 	}
 
@@ -247,12 +281,23 @@ public final class InputManager extends MouseInputAdapter implements KeyListener
 	 * 
 	 * @param button
 	 *            The value of the mouse button being checked
-	 * @return true is that mouse button is currently being pressed.
+	 * @return True if that mouse button is currently being pressed.
 	 */
 	public boolean isMouseButtonDown(int button)
 	{
-		// Return a true/false.
-		return (mouseButtonPressed[button]);
+		return mouseButtonPressed[button];
+	}
+
+	/**
+	 * Returns true if the mouse button (0-3) has been clicked.
+	 * 
+	 * @param button
+	 *            The value of the mouse button being checked.
+	 * @return True if that mouse button has just been clicked.
+	 */
+	public boolean isMouseButtonClicked(int button)
+	{
+		return mouseButtonClicked[button];
 	}
 
 	/**
@@ -260,12 +305,11 @@ public final class InputManager extends MouseInputAdapter implements KeyListener
 	 * 
 	 * @param button
 	 *            The value of the mouse button being checked
-	 * @return true is that mouse button is currently being dragged.
+	 * @return True if that mouse button is currently being dragged.
 	 */
 	public boolean isMouseButtonDragged(int button)
 	{
-		// Return a true/false.
-		return (mouseButtonDragged[button]);
+		return mouseButtonDragged[button];
 	}
 
 	/**
@@ -273,12 +317,11 @@ public final class InputManager extends MouseInputAdapter implements KeyListener
 	 * 
 	 * @param button
 	 *            The value of the mouse button being checked
-	 * @return true is that mouse button is currently being released.
+	 * @return True if that mouse button is currently being released.
 	 */
 	public boolean isMouseButtonUp(int button)
 	{
-		// Return a true/false.
-		return (mouseButtonReleased[button]);
+		return mouseButtonReleased[button];
 	}
 
 	/**
@@ -288,8 +331,7 @@ public final class InputManager extends MouseInputAdapter implements KeyListener
 	 */
 	public Vector2 mouseEventPosition()
 	{
-		// Return the event vector.
-		return (eventPosition);
+		return eventPosition;
 	}
 
 	/**
@@ -299,27 +341,7 @@ public final class InputManager extends MouseInputAdapter implements KeyListener
 	 */
 	public Vector2 mousePosition()
 	{
-		// Return the mouse position.
 		return new Vector2(MouseInfo.getPointerInfo().getLocation());
-	}
-
-	/**
-	 * Only resets the key state up because you don't want keys to be showing as up forever which is what will happen unless the array is cleared.
-	 */
-	public void update()
-	{
-		// Clear out the key up states.
-		key_state_up = new boolean[256];
-		key_state_pressed = new boolean[256];
-		// Clear the Key Released State.
-		keyReleased = false;
-
-		// If the keyCache is greater than 1024 characters, clear the buffer.
-		if (keyCache.length() > 1024)
-		{
-			// Clear the buffer.
-			keyCache = "";
-		}
 	}
 
 	/**

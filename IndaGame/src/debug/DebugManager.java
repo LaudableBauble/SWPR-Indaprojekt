@@ -177,6 +177,12 @@ public class DebugManager
 				// Change the color for the debug window.
 				graphics.setColor(Color.red);
 
+				// If the body is in a collision, use a blue color instead.
+				if (b.getCollisions().size() > 0)
+				{
+					graphics.setColor(Color.blue);
+				}
+
 				// Save the old graphics matrix and insert the camera matrix in its place.
 				AffineTransform oldMatrix = graphics.getTransform();
 				graphics.setTransform(_Transform);

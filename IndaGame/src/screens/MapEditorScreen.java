@@ -10,10 +10,12 @@ import infrastructure.ScreenManager;
 import infrastructure.TimeSpan;
 import input.InputManager;
 
+import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.io.File;
 
@@ -54,6 +56,12 @@ public class MapEditorScreen extends GameScreen
 
 	// The currently selected node.
 	private DefaultMutableTreeNode _SelectedNode;
+	// The selected entity.
+	private Entity _SelectedEntity;
+	// Whether to move entities on the y-axis.
+	private boolean _MoveYAxis;
+	// The x-coordinate to lock the mouse to.
+	private int _LockX;
 
 	// The player.
 	private Player _Player;
@@ -76,6 +84,10 @@ public class MapEditorScreen extends GameScreen
 		// Set the time it takes for the Screen to transition on and off.
 		_TransitionOnTime = TimeSpan.FromSeconds(1.5);
 		_TransitionOffTime = TimeSpan.FromSeconds(0.5);
+
+		// Set up some variables.
+		_LockX = -1;
+		_MoveYAxis = false;
 
 		// Create the GUI components.
 		_Tabs = new JTabbedPane();
@@ -200,6 +212,25 @@ public class MapEditorScreen extends GameScreen
 			// Let the scene manager respond to input.
 			_SceneManager.handleInput(input);
 
+			// Update the selected entity's position.
+			if (!_MoveYAxis)
+			{
+				_SelectedEntity.getBody().getShape().setLayeredPosition(_Camera.convertScreenToWorld(input.mousePosition()));
+			}
+			else
+			{
+				_SelectedEntity.getBody().getShape().setBottomDepth(_SelectedEntity.getBody().getPosition().y - _Camera.convertScreenToWorld(input.mousePosition()).y);
+			}
+
+			// If the user has pressed the left mouse button, try to add the entity to the scene.
+			if (input.isMouseButtonClicked(1))
+			{
+				addSelectedEntityToScene();
+			}
+
+			// If the user holds down the shift button, move the entity on the z-axis only.
+			_MoveYAxis = input.isKeyDown(KeyEvent.VK_SHIFT);
+
 			// If to zoom in.
 			if (input.isKeyDown(KeyEvent.VK_O))
 			{
@@ -251,9 +282,11 @@ public class MapEditorScreen extends GameScreen
 
 		// Update the scene manager.
 		_SceneManager.update(gameTime);
+		// Update the selected entity.
+		_SelectedEntity = _InfoPanel.getEntity();
 
 		// Update the selected node.
-		updateSelectedNode();
+		updateSelectedNode(false);
 	}
 
 	/**
@@ -277,21 +310,88 @@ public class MapEditorScreen extends GameScreen
 	}
 
 	/**
-	 * Update the currently selected node.
+	 * Add the selected entity to the scene.
 	 */
-	private void updateSelectedNode()
+	private void addSelectedEntityToScene()
+	{
+		// If the entity is not currently colliding with anything, add it.
+		if (_SelectedEntity.getBody().getCollisions().size() == 0)
+		{
+			// Because the entity has already been added to the scene, all we do is not remove him from it.
+			_SelectedEntity.getBody().setIsImmaterial(false);
+			_SelectedEntity = null;
+
+			// Get a new entity to add.
+			updateSelectedNode(true);
+		}
+	}
+
+	/**
+	 * Update the currently selected node and consequently the info panel's entity.
+	 * 
+	 * @param force
+	 *            Force an update regardless if the node has changed or not.
+	 */
+	private void updateSelectedNode(boolean force)
 	{
 		// If the tree's selected node does not match the one stored, change 'em.
-		if (_SelectedNode != ((FileTree) _Tabs.getSelectedComponent()).getSelectedNode())
+		if (_SelectedNode != ((FileTree) _Tabs.getSelectedComponent()).getSelectedNode() || force)
 		{
+			// Switch selected node.
 			_SelectedNode = ((FileTree) _Tabs.getSelectedComponent()).getSelectedNode();
 
-			// Create an entity from the selected node. Remove the first 10 characters from parent (src/images).
+			// Remove the old entity from the scene and physics simulator.
+			if (_SelectedEntity != null)
+			{
+				_Scene.removeEntity(_SelectedEntity);
+			}
+
+			// Create an entity from the selected node.
 			Entity entity = new Entity(_Scene.getPhysicsSimulator());
-			entity.loadContent(_SelectedNode.getParent().toString().substring(10) + "\\" + _SelectedNode.toString());
+
+			// If the node is not null, continue.
+			if (_SelectedNode != null)
+			{
+				// Load the entity's content. Remove the first 10 characters from parent (src/images).
+				entity.loadContent(_SelectedNode.getParent().toString().substring(10) + "\\" + _SelectedNode.toString());
+				// Add the entity to the scene.
+				_Scene.addEntity(entity);
+			}
 
 			// Add the entity to the info panel.
 			_InfoPanel.setEntity(entity);
+		}
+	}
+
+	/**
+	 * Lock the mouse axis to the z-axis. Obsolete?
+	 * 
+	 * @param lock
+	 *            Whether to lock or unlock the mouse axis.
+	 */
+	private void lockAxis(boolean lock)
+	{
+		// If to unlock, do so and then end.
+		if (!lock)
+		{
+			_LockX = -1;
+			return;
+		}
+
+		// If the saved x-coordinate is -1, then overwrite it.
+		if (_LockX == -1)
+		{
+			_LockX = (int) InputManager.getInstance().mousePosition().x;
+		}
+
+		// Lock the mouse to this x-coordinate.
+		try
+		{
+			(new Robot()).mouseMove(_LockX, (int) InputManager.getInstance().mousePosition().y);
+		}
+		catch (AWTException e)
+		{
+
 		}
 	}
 }

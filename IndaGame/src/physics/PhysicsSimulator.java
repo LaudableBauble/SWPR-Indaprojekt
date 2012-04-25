@@ -59,6 +59,8 @@ public class PhysicsSimulator
 			// Loop through all bodies.
 			for (Body b1 : _Bodies)
 			{
+				// Clear all previous collisions.
+				b1.clearCollisions();
 				// Ground collision?
 				boolean ground = false;
 
@@ -80,7 +82,10 @@ public class PhysicsSimulator
 						// Check for ground collision and alter bodies if necessary.
 						if (checkGroundCollision(b1, b2, mtv))
 						{
-							if (b1.getIsStatic())
+							// Add the collision to the body.
+							b1.addCollision(b2);
+
+							if (b1.getIsStatic() || b1.getIsImmaterial() || b2.getIsImmaterial())
 							{
 								continue;
 							}
@@ -103,19 +108,25 @@ public class PhysicsSimulator
 							// Check if the bodies intersect.
 							if (mtv != null)
 							{
-								// Calculate the Impact force and vector for both
-								// bodies.
-								// addForce(impactForce(b1, b2));
-								// addForce(impactForce(b2, b1));
-								// Move the bodies so that they don't intersect each other anymore.
-								clearIntersection(b1, b2, mtv);
+								if (!b1.getIsImmaterial() && !b2.getIsImmaterial())
+								{
+									// Calculate the Impact force and vector for both
+									// bodies.
+									// addForce(impactForce(b1, b2));
+									// addForce(impactForce(b2, b1));
+									// Move the bodies so that they don't intersect each other anymore.
+									clearIntersection(b1, b2, mtv);
+								}
+
+								// Add the collision to the body.
+								b1.addCollision(b2);
 							}
 						}
 					}
 				}
 
 				// If the entity is dynamic and not standing on the ground, apply gravity.
-				if (!ground && !b1.getIsStatic())
+				if (!ground && !b1.getIsStatic() && !b1.getIsImmaterial())
 				{
 					b1.addGravity(_Gravity);
 				}
@@ -152,8 +163,7 @@ public class PhysicsSimulator
 			// Try to add the body at the end of the array.
 			try
 			{
-				// If the body isn't already in the folds of the physics
-				// simulator.
+				// If the body isn't already in the folds of the physics simulator.
 				if (!_Bodies.contains(body))
 				{
 					_Bodies.add(body);
@@ -165,6 +175,17 @@ public class PhysicsSimulator
 				System.out.println(this + ": Error adding body. (" + e + ")");
 			}
 		}
+	}
+
+	/**
+	 * Remove a body from the physics simulator.
+	 * 
+	 * @param body
+	 *            The body to remove.
+	 */
+	public void removeBody(Body body)
+	{
+		_Bodies.remove(body);
 	}
 
 	/**

@@ -132,6 +132,18 @@ public class Scene
 	}
 
 	/**
+	 * Remove an entity from the scene. This also removes the entity's body from the physics simulator.
+	 * 
+	 * @param entity
+	 *            The entity to remove.
+	 */
+	public void removeEntity(Entity entity)
+	{
+		_Entities.remove(entity);
+		_Physics.removeBody(entity.getBody());
+	}
+
+	/**
 	 * Get the scene's physics simulator.
 	 * 
 	 * @return The scene's physics simulator.
