@@ -166,6 +166,17 @@ public class Body
 	 */
 	public void addForce(Vector2 force)
 	{
+		addForce(new Vector3(force));
+	}
+
+	/**
+	 * Add a force to the physics simulator.
+	 * 
+	 * @param force
+	 *            The force to add.
+	 */
+	public void addForce(Vector3 force)
+	{
 		// Check if the PhysicsSimultor isn't null.
 		if (_Physics != null)
 		{

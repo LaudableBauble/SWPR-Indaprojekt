@@ -151,4 +151,36 @@ public class Entity
 	{
 		return _Sprites;
 	}
+
+	/**
+	 * Set the entity's depth. This also modifies its height as well as updates the main sprite.
+	 * 
+	 * @param depth
+	 *            The new depth.
+	 */
+	public void setDepth(float depth)
+	{
+		// Set the body's height and depth.
+		_Body.getShape().setHeight((depth < 1) ? _Sprites.getSprite(0).getCurrentFrame().getHeight() : _Sprites.getSprite(0).getCurrentFrame().getHeight() - depth);
+		_Body.getShape().setDepth((depth < 1) ? 1 : depth);
+
+		// Update the sprite's position offset.
+		_Sprites.getSprite(0).setPositionOffset(new Vector2(0, -_Sprites.getSprite(0).getCurrentFrame().getOrigin().y + (_Body.getShape().getHeight() / 2)));
+	}
+	
+	/**
+	 * Set the entity's height. This also modifies its depth as well as updates the main sprite.
+	 * 
+	 * @param height
+	 *            The new height.
+	 */
+	public void setHeight(float height)
+	{
+		// Set the body's height and depth.
+		_Body.getShape().setHeight((height == -1) ? _Sprites.getSprite(0).getCurrentFrame().getHeight() : height);
+		_Body.getShape().setDepth((height == -1) ? 1 : _Sprites.getSprite(0).getCurrentFrame().getHeight() - height);
+
+		// Update the sprite's position offset.
+		_Sprites.getSprite(0).setPositionOffset(new Vector2(0, -_Sprites.getSprite(0).getCurrentFrame().getOrigin().y + (_Body.getShape().getHeight() / 2)));
+	}
 }

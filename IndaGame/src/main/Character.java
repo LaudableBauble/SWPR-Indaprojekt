@@ -14,13 +14,14 @@ import input.InputManager;
 //import java.awt.event.KeyEvent;
 
 import physics.PhysicsSimulator;
+import auxillary.Helper;
 import auxillary.Vector2;
 import auxillary.Vector3;
 
 /**
  * A player is an entity that can be controlled by a user.
  */
-public class Character extends Entity implements ActionListener
+public class Character extends Entity
 {
 	// If the Character can be controlled by the player.
 	// private boolean _CanBeControlled;
@@ -28,10 +29,18 @@ public class Character extends Entity implements ActionListener
 	private double _MaxSpeed;
 	// The currently active sprite.
 	private Sprite _CurrentSprite;
+	// Whether the character wants to move.
+	private boolean _WantToMove;
 	// filename of char
 	private String character;
 	private int nrPics;
-	Timer time = new Timer(500, this);
+	// The elapsed time since last random amble.
+	private float _ElapsedTime;
+	// The time to wait between moving randomly and the time to walk.
+	private float _TimeToWait;
+	private float _TimeToWalk;
+	// The character's speed.
+	private float _Speed;
 
 	/**
 	 * Constructor for a Character.
@@ -58,11 +67,15 @@ public class Character extends Entity implements ActionListener
 
 		// Initialize the variables.
 		// _CanBeControlled = true;
-		_MaxSpeed = 2;
+		_MaxSpeed = 1;
 		character = chara;
 		_Body.setAccelerationValue(3);
 		nrPics = nrOfPics;
-		time.start();
+		_WantToMove = false;
+		_ElapsedTime = 0;
+		_TimeToWalk = 2;
+		_TimeToWait = 4;
+		_Speed = 1;
 	}
 
 	/**
@@ -105,71 +118,6 @@ public class Character extends Entity implements ActionListener
 	}
 
 	/**
-	 * Handle input.
-	 * 
-	 * @param input
-	 *            The input manager.
-	 */
-	public void actionPerformed(ActionEvent e)
-	{
-		boolean move = false;
-		int acc = 4;
-		Random rand = new Random();
-		Object source = e.getSource();
-
-		// // If the Character can't be controlled, end here.
-		// if (!_CanBeControlled) { return; }
-		// if(true){
-		if (source == time)
-		{
-			// Whether to move or not.
-			move = !move;
-
-			// Get the the random direction.
-			int direction = rand.nextInt(4);
-
-			if (move && direction == 0)
-			{
-				_Body.addForce(new Vector2(-acc, 0));
-			}
-			if (move && direction == 1)
-			{
-				_Body.addForce(new Vector2(acc, 0));
-			}
-			if (move && direction == 2)
-			{
-				_Body.addForce(new Vector2(0, -acc));
-			}
-			if (move && direction == 3)
-			{
-				_Body.addForce(new Vector2(0, acc));
-			}
-		}
-		// }
-		// If an arrow key is pressed.
-		// if (input.isKeyDown(KeyEvent.VK_LEFT) && (_Body.getVelocity().x > -_MaxSpeed))
-		// {
-		// // Left.
-		// _Body.addForce(new Vector2(-_Body.getAccelerationValue(), 0));
-		// }
-		// if (input.isKeyDown(KeyEvent.VK_RIGHT) && (_Body.getVelocity().x < _MaxSpeed))
-		// {
-		// // Right.
-		// _Body.addForce(new Vector2(_Body.getAccelerationValue(), 0));
-		// }
-		// if (input.isKeyDown(KeyEvent.VK_UP) && (_Body.getVelocity().y > -_MaxSpeed))
-		// {
-		// // Up.
-		// _Body.addForce(new Vector2(0, -_Body.getAccelerationValue()));
-		// }
-		// if (input.isKeyDown(KeyEvent.VK_DOWN) && (_Body.getVelocity().y < _MaxSpeed))
-		// {
-		// // Down.
-		// _Body.addForce(new Vector2(0, _Body.getAccelerationValue()));
-		// }
-	}
-
-	/**
 	 * Update the Character.
 	 * 
 	 * @param gameTime
@@ -180,8 +128,41 @@ public class Character extends Entity implements ActionListener
 		// Call the base method.
 		super.update(gameTime);
 
+		// Move randomly.
+		moveRandomly(gameTime);
+
 		// Determine which sprite should be drawn.
 		changeSprite();
+	}
+
+	/**
+	 * Allow the character to move randomly about.
+	 * 
+	 * @param gameTime
+	 *            The game timer.
+	 */
+	private void moveRandomly(GameTimer gameTime)
+	{
+		// Get the time since the last Update.
+		_ElapsedTime += (float) gameTime.getElapsedTime().TotalSeconds();
+
+		// Get a random direction and move, but only if there is some time left on the timer.
+		if (_ElapsedTime < _TimeToWalk && _Body.getVelocity().toVector2().getLength() < _MaxSpeed)
+		{
+			_Body.addForce(Vector2.multiply(_Body.getVelocity().toVector2(), _Speed));
+		}
+
+		// If it's not time to move in a new direction yet, stop here.
+		if (_ElapsedTime < (_TimeToWalk + _TimeToWait)) { return; }
+
+		// Pick a walking direction.
+		_Body.addForce(Vector2.multiply(Helper.getRandomDirection(), _Speed));
+
+		// Subtract the time to walk and wait, effectively resetting the timer.
+		_ElapsedTime -= _TimeToWalk + _TimeToWait;
+		// Generate a new time to walk and wait.
+		_TimeToWalk = 1 + (int)( Math.random() * 2);
+		_TimeToWait = 1 + (int) (Math.random() * 2);
 	}
 
 	/**

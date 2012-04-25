@@ -87,7 +87,7 @@ public final class Helper
 	 */
 	public static int clamp(int i, int low, int high)
 	{
-		return java.lang.Math.max(java.lang.Math.min(i, high), low);
+		return Math.max(java.lang.Math.min(i, high), low);
 	}
 
 	/**
@@ -103,7 +103,17 @@ public final class Helper
 	 */
 	public static long clamp(long i, long low, long high)
 	{
-		return java.lang.Math.max(java.lang.Math.min(i, high), low);
+		return Math.max(java.lang.Math.min(i, high), low);
+	}
+
+	/**
+	 * Get a random direction vector.
+	 * 
+	 * @return The random direction.
+	 */
+	public static Vector2 getRandomDirection()
+	{
+		return new Vector2(Math.random() * ((Math.random() > .5) ? 1 : -1), Math.random() * ((Math.random() > .5) ? 1 : -1));
 	}
 
 	/**

@@ -15,9 +15,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import auxillary.Helper;
 import auxillary.Vector2;
+import auxillary.Vector3;
 
 import main.Entity;
 
@@ -35,9 +38,11 @@ public class EntityInfoPanel extends JPanel
 
 	// The entity name.
 	private JLabel _Name;
+	// The entity position.
+	private JLabel _Position;
 	// The depth explanation.
 	private JLabel _DepthDescription;
-	// The depth spinner.
+	// The depth spinner. (From the user's perspective, not the game.)
 	private JSpinner _DepthSpinner;
 	// The isStatic checkbox.
 	private JCheckBox _StaticState;
@@ -56,6 +61,7 @@ public class EntityInfoPanel extends JPanel
 
 		// Create the labels.
 		_Name = new JLabel("Entity");
+		_Position = new JLabel("Position: ");
 		_DepthDescription = new JLabel("Depth:");
 
 		// Create the checkbox.
@@ -66,27 +72,38 @@ public class EntityInfoPanel extends JPanel
 			public void itemStateChanged(ItemEvent e)
 			{
 				// Set the entity to be static or dynamic.
-				_Entity.getBody().setIsStatic((e.getStateChange() == ItemEvent.SELECTED));
+				_Entity.getBody().setIsStatic(e.getStateChange() == ItemEvent.SELECTED);
 			}
 		});
 
 		// Create the spinner.
-		_DepthSpinner = new JSpinner(new SpinnerNumberModel());
+		_DepthSpinner = new JSpinner(new SpinnerNumberModel(0, -1, 1000, 1));
 		_DepthSpinner.setFocusable(false);
 		for (Component component : _DepthSpinner.getEditor().getComponents())
 		{
 			component.setFocusable(false);
 		}
+		_DepthSpinner.addChangeListener(new ChangeListener()
+		{
+			public void stateChanged(ChangeEvent e)
+			{
+				// Set the entity's depth (height).
+				_Entity.setHeight(Float.parseFloat(_DepthSpinner.getValue().toString()));
+			}
+		});
 
 		// Add all components to the panel.
 		add(_Name);
+		add(_Position);
 		add(_DepthDescription);
 		add(_DepthSpinner);
 		add(_StaticState);
 
 		// Set all components' position and size.
-		_Name.setLocation(10, 50);
+		_Name.setLocation(10, 40);
 		_Name.setSize(100, 20);
+		_Position.setLocation(10, 60);
+		_Position.setSize(150, 20);
 		_DepthDescription.setLocation(10, 300);
 		_DepthDescription.setSize(50, 20);
 		_DepthSpinner.setLocation(60, 300);
@@ -105,6 +122,12 @@ public class EntityInfoPanel extends JPanel
 	{
 		// Call the base method.
 		super.paintComponents(g);
+
+		// Update the entity's position.
+		if (_Entity != null)
+		{
+			_Position.setText(Vector3.round(_Entity.getBody().getPosition(), 0).toString());
+		}
 
 		// Draw a blank rectangle as base.
 		g.setColor(Color.white);
@@ -137,11 +160,19 @@ public class EntityInfoPanel extends JPanel
 		// Expect exceptions.
 		try
 		{
-			// Set the entity and load its main image.
+			// Set the entity.
 			_Entity = entity;
+
+			// Pass along the entity's data.
+			_DepthSpinner.setValue((_Entity.getBody().getShape().getDepth() != 1) ? _Entity.getBody().getShape().getHeight() : _DepthSpinner.getValue());
+			_StaticState.setSelected(_Entity.getBody().getIsStatic() ? true : _StaticState.isSelected());
+
+			// Initialize the entity to the state of this info panel.
 			_Entity.getBody().setIsImmaterial(true);
+			_Entity.getBody().setIsStatic(_StaticState.isSelected());
+			_Entity.setHeight(Float.parseFloat(_DepthSpinner.getValue().toString()));
 			_Image = Helper.loadImage(entity.getSprites().getSprite(0).getCurrentFrame().getPathName(), true);
-			_ImagePosition = new Vector2((getWidth() / 2) - (_Image.getWidth() / 2), 100);
+			_ImagePosition = new Vector2((getWidth() / 2) - (_Image.getWidth() / 2), 200);
 		}
 		catch (Exception e)
 		{

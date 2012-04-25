@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 
 import physics.PhysicsSimulator;
 import auxillary.Vector2;
+import auxillary.Vector3;
 
 /**
  * A player is an entity that can be controlled by a user.
@@ -96,8 +97,8 @@ public class Player extends Entity
 		// Set the shape of the body.
 		_Body.getShape().setWidth(_Sprites.getSprite(0).getCurrentFrame().getWidth() / 2);
 		_Body.getShape().setHeight(_Sprites.getSprite(0).getCurrentFrame().getHeight() / 4);
-		
-		//Set the depth.
+
+		// Set the depth.
 		_Body.getShape().setDepth(5);
 
 		// Update the sprites' position offset.
@@ -141,6 +142,12 @@ public class Player extends Entity
 		{
 			// Down.
 			_Body.addForce(new Vector2(0, _Body.getAccelerationValue()));
+		}
+		// If the space key is pressed.
+		if (input.isKeyDown(KeyEvent.VK_SPACE) && Math.abs(_Body.getVelocity().z) < 1)
+		{
+			// Up in the air.
+			_Body.addForce(new Vector3(0, 0, _Body.getAccelerationValue()));
 		}
 	}
 
@@ -200,25 +207,25 @@ public class Player extends Entity
 	private Sprite getCurrentSprite(double dir)
 	{
 		// If facing down.
-		if (dir >= 45 && dir <= 135)
+		if (dir >= 60 && dir <= 120)
 		{
 			return _Sprites.getSprite(0);
 		}
 		// If facing up.
-		else if (dir >= -135 && dir <= -45)
+		else if (dir >= -120 && dir <= -30)
 		{
 			return _Sprites.getSprite(1);
 		}
 		// If facing right.
-		else if (dir >= -45 && dir <= 45)
+		else if (dir >= -30 && dir <= 30)
 		{
 			return _Sprites.getSprite(2);
 		}
 		// If facing left.
-		else if ((dir >= 135 && dir <= 180) || (dir >= -180 && dir <= -135)) { return _Sprites.getSprite(3); }
+		else if ((dir >= 150 && dir <= 180) || (dir >= -180 && dir <= -120)) { return _Sprites.getSprite(3); }
 
 		// No sprite matched.
-		return null;
+		return _CurrentSprite;
 	}
 
 	/**

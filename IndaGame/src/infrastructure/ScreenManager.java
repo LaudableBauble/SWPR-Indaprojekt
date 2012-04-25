@@ -122,8 +122,7 @@ public class ScreenManager
 					otherScreenHasFocus = true;
 				}
 
-				// If this is an active non-popup, inform any subsequent
-				// screens that they are covered by it.
+				// If this is an active non-popup, inform any subsequent screens that they are covered by it.
 				if (!screen.getIsPopup())
 				{
 					coveredByOtherScreen = true;
@@ -215,12 +214,12 @@ public class ScreenManager
 		try
 		{
 			// Save the current color.
-			Color old = _Window.getGraphics().getColor();
+			Color old = _Window.getBufferGraphics().getColor();
 
 			// Set the background color and fill the screen with it. Switch back to the old color.
-			_Window.getGraphics().setColor(new Color(0, 0, 0, alpha));
-			_Window.getGraphics().fillRect(0, 0, _Window.getWidth(), _Window.getHeight());
-			_Window.getGraphics().setColor(old);
+			_Window.getBufferGraphics().setColor(new Color(0, 0, 0, alpha));
+			_Window.getBufferGraphics().fillRect(0, 0, _Window.getWidth(), _Window.getHeight());
+			_Window.getBufferGraphics().setColor(old);
 		}
 		catch (Exception e)
 		{

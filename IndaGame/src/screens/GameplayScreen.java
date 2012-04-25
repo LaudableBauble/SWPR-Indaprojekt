@@ -48,8 +48,18 @@ public class GameplayScreen extends GameScreen
 	private Entity _Shelf;
 	private Entity _Block1;
 	private Entity _Block2;
+	private Entity _DarkBlock1;
+	private Entity _DarkBlock2;
+	private Entity _DarkBlock3;
 	private Entity _Stairs1;
 	private Entity _Stairs2;
+	private Entity _Stairs3;
+	private Entity _Pathway1;
+	private Entity _Pathway2;
+	private Entity _Pathway3;
+	private Entity _Pathway4;
+	private Entity _PathwayArch1;
+	private Entity _PathwayPlatform1;
 	private Entity _Floor;
 
 	/**
@@ -93,29 +103,72 @@ public class GameplayScreen extends GameScreen
 
 		// Create a block.
 		_Block1 = new Entity(_Scene.getPhysicsSimulator());
-		_Block1.getBody().setPosition(new Vector3(950, 933.5, 0));
+		_Block1.getBody().setPosition(new Vector3(950, 700, 0));
 		_Block1.getBody().setIsStatic(true);
 
 		// Create a block.
 		_Block2 = new Entity(_Scene.getPhysicsSimulator());
-		_Block2.getBody().setPosition(new Vector3(1000, 1020, 0));
+		_Block2.getBody().setPosition(new Vector3(1100, 700, 0));
 		_Block2.getBody().setIsStatic(true);
+		
+		// Create a dark block (left of pathway arch).
+		_DarkBlock1 = new Entity(_Scene.getPhysicsSimulator());
+		_DarkBlock1.getBody().setPosition(new Vector3(852, 1000, 0));
+		_DarkBlock1.getBody().setIsStatic(true);
+		
+		// Create a dark block (right of pathway arch).
+		_DarkBlock2 = new Entity(_Scene.getPhysicsSimulator());
+		_DarkBlock2.getBody().setPosition(new Vector3(1149, 1000, 0));
+		_DarkBlock2.getBody().setIsStatic(true);
+		
+		// Create a dark block (south of pathway platform 1).
+		_DarkBlock3 = new Entity(_Scene.getPhysicsSimulator());
+		_DarkBlock3.getBody().setPosition(new Vector3(900, 1183, 0));
+		_DarkBlock3.getBody().setIsStatic(true);
 
 		// Create a staircase.
 		_Stairs1 = new Entity(_Scene.getPhysicsSimulator());
-		_Stairs1.getBody().setPosition(new Vector3(930, 1080, 0));
+		_Stairs1.getBody().setPosition(new Vector3(650, 1100, 0));
 		_Stairs1.getBody().setIsStatic(true);
 		_Stairs1.getBody().getShape().setDepthDistribution(DepthDistribution.Right);
-		
+
 		// Create a staircase.
 		_Stairs2 = new Entity(_Scene.getPhysicsSimulator());
-		_Stairs2.getBody().setPosition(new Vector3(903, 1000, 0));
+		_Stairs2.getBody().setPosition(new Vector3(770, 920, 0));
 		_Stairs2.getBody().setIsStatic(true);
 		_Stairs2.getBody().getShape().setDepthDistribution(DepthDistribution.Right);
+		
+		// Create a staircase (left of dark block 2).
+		_Stairs3 = new Entity(_Scene.getPhysicsSimulator());
+		_Stairs3.getBody().setPosition(new Vector3(1056.5, 1033, 0));
+		_Stairs3.getBody().setIsStatic(true);
+		_Stairs3.getBody().getShape().setDepthDistribution(DepthDistribution.Right);
+
+		// Create a pathway.
+		_Pathway1 = new Entity(_Scene.getPhysicsSimulator());
+		_Pathway2 = new Entity(_Scene.getPhysicsSimulator());
+		_Pathway3 = new Entity(_Scene.getPhysicsSimulator());
+		_Pathway4 = new Entity(_Scene.getPhysicsSimulator());
+		_PathwayArch1 = new Entity(_Scene.getPhysicsSimulator());
+		_Pathway1.getBody().setPosition(new Vector3(936.5, 1000, 0));
+		_Pathway2.getBody().setPosition(new Vector3(968.5, 1000, 0));
+		_PathwayArch1.getBody().setPosition(new Vector3(1000, 1000, 0));
+		_Pathway3.getBody().setPosition(new Vector3(1032.5, 1000, 0));
+		_Pathway4.getBody().setPosition(new Vector3(1064.5, 1000, 0));
+		_Pathway1.getBody().setIsStatic(true);
+		_Pathway2.getBody().setIsStatic(true);
+		_Pathway3.getBody().setIsStatic(true);
+		_Pathway4.getBody().setIsStatic(true);
+		_PathwayArch1.getBody().setIsStatic(true);
+		
+		//Create a pathway platform (south of dark block 1).
+		_PathwayPlatform1 = new Entity(_Scene.getPhysicsSimulator());
+		_PathwayPlatform1.getBody().setPosition(new Vector3(852, 1107.5, 0));
+		_PathwayPlatform1.getBody().setIsStatic(true);
 
 		// Create the floor.
 		_Floor = new Entity(_Scene.getPhysicsSimulator());
-		_Floor.getBody().setPosition(new Vector3(1000, 1000, 0));
+		_Floor.getBody().setPosition(new Vector3(1000, 1050, 0));
 		_Floor.getBody().setIsStatic(true);
 
 		// Add all entities to the scene.
@@ -124,8 +177,18 @@ public class GameplayScreen extends GameScreen
 		_Scene.addEntity(_Shelf);
 		_Scene.addEntity(_Block1);
 		_Scene.addEntity(_Block2);
+		_Scene.addEntity(_DarkBlock1);
+		_Scene.addEntity(_DarkBlock2);
+		_Scene.addEntity(_DarkBlock3);
 		_Scene.addEntity(_Stairs1);
 		_Scene.addEntity(_Stairs2);
+		_Scene.addEntity(_Stairs3);
+		_Scene.addEntity(_Pathway1);
+		_Scene.addEntity(_Pathway2);
+		_Scene.addEntity(_Pathway3);
+		_Scene.addEntity(_Pathway4);
+		_Scene.addEntity(_PathwayArch1);
+		_Scene.addEntity(_PathwayPlatform1);
 		_Scene.addEntity(_Floor);
 	}
 
@@ -146,16 +209,36 @@ public class GameplayScreen extends GameScreen
 		_Shelf.loadContent("Bookshelf[1].png", 12);
 		_Block1.loadContent("ElevatedBlock[3].png", 48);
 		_Block2.loadContent("ElevatedBlock[2].png", 85);
+		_DarkBlock1.loadContent("DarkTiledBlock[2].png", 134);
+		_DarkBlock2.loadContent("DarkTiledBlock[2].png", 134);
+		_DarkBlock3.loadContent("DarkTiledBlock[1].png", 70);
 		_Stairs1.loadContent("StoneStairsRight[2].png", 33);
 		_Stairs2.loadContent("StoneStairsRight[3].png", 33);
-		_Floor.loadContent("DarkTiledFloor[1].png");
+		_Stairs3.loadContent("StoneStairsRight[3].png", 33);
+		_Pathway1.loadContent("StonePathwayBlock[1].png", 33);
+		_Pathway2.loadContent("StonePathwayBlock[1].png", 33);
+		_Pathway3.loadContent("StonePathwayBlock[1].png", 33);
+		_Pathway4.loadContent("StonePathwayBlock[1].png", 33);
+		_PathwayArch1.loadContent("StonePathwayArch[1].png", 33);
+		_PathwayPlatform1.loadContent("StonePathwayBlock[2].png", 81);
+		_Floor.loadContent("WoodTiledFloor[1].png");
 
 		// Set their depths.
 		_Shelf.getBody().getShape().setBottomDepth(1);
 		_Block1.getBody().getShape().setBottomDepth(1);
 		_Block2.getBody().getShape().setBottomDepth(1);
+		_DarkBlock1.getBody().getShape().setBottomDepth(1);
+		_DarkBlock2.getBody().getShape().setBottomDepth(1);
+		_DarkBlock3.getBody().getShape().setBottomDepth(1);
 		_Stairs1.getBody().getShape().setBottomDepth(1);
 		_Stairs2.getBody().getShape().setBottomDepth(1);
+		_Stairs3.getBody().getShape().setBottomDepth(1);
+		_Pathway1.getBody().getShape().setBottomDepth(1);
+		_Pathway2.getBody().getShape().setBottomDepth(1);
+		_Pathway3.getBody().getShape().setBottomDepth(1);
+		_Pathway4.getBody().getShape().setBottomDepth(1);
+		_PathwayArch1.getBody().getShape().setBottomDepth(22);
+		_PathwayPlatform1.getBody().getShape().setBottomDepth(37);
 		_Floor.getBody().getShape().setBottomDepth(0);
 
 		// Once the load has finished, we use ResetElapsedTime to tell the game's

@@ -1,22 +1,38 @@
 package physics;
 
 import auxillary.Vector2;
+import auxillary.Vector3;
 
 /**
  * A force instance is interpreted by the physics engine and is the only way unconnected bodies can communicate with each other in the game, ie. through collisions.
  */
 public class Force
-{	
+{
 	// The target body, force direction and magnitude.
 	private Body _Body;
-	private Vector2 _Force;
+	private Vector3 _Force;
 
 	/**
 	 * Constructor for a force instance.
 	 */
 	public Force()
 	{
-		this(new Body(), new Vector2(0, 0));
+		this(new Body(), Vector3.empty());
+	}
+
+	/**
+	 * Constructor for a force instance.
+	 * 
+	 * @param body
+	 *            The target body.
+	 * @param force
+	 *            The velocity of the force.
+	 */
+	public Force(Body body, Vector3 force)
+	{
+		// Set the variables.
+		_Body = body;
+		_Force = force;
 	}
 
 	/**
@@ -31,7 +47,7 @@ public class Force
 	{
 		// Set the variables.
 		_Body = body;
-		_Force = force;
+		_Force = new Vector3(force);
 	}
 
 	/**
@@ -41,7 +57,7 @@ public class Force
 	 */
 	public static Force blank()
 	{
-		return (new Force());
+		return new Force();
 	}
 
 	/**
@@ -55,7 +71,7 @@ public class Force
 	/**
 	 * Get the force's velocity.
 	 */
-	public Vector2 getForce()
+	public Vector3 getForce()
 	{
 		return _Force;
 	}

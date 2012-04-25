@@ -274,7 +274,7 @@ public class Sprite
 		// Load the new frame's texture into memory.
 		loadFrame();
 
-		// Substract the time per frame, to be certain the next frame is drawn in time.
+		// Subtract the time per frame, to be certain the next frame is drawn in time.
 		_TotalElapsedTime -= _TimePerFrame;
 	}
 

@@ -58,10 +58,6 @@ public class MapEditorScreen extends GameScreen
 	private DefaultMutableTreeNode _SelectedNode;
 	// The selected entity.
 	private Entity _SelectedEntity;
-	// Whether to move entities on the y-axis.
-	private boolean _MoveYAxis;
-	// The x-coordinate to lock the mouse to.
-	private int _LockX;
 
 	// The player.
 	private Player _Player;
@@ -84,10 +80,6 @@ public class MapEditorScreen extends GameScreen
 		// Set the time it takes for the Screen to transition on and off.
 		_TransitionOnTime = TimeSpan.FromSeconds(1.5);
 		_TransitionOffTime = TimeSpan.FromSeconds(0.5);
-
-		// Set up some variables.
-		_LockX = -1;
-		_MoveYAxis = false;
 
 		// Create the GUI components.
 		_Tabs = new JTabbedPane();
@@ -213,14 +205,11 @@ public class MapEditorScreen extends GameScreen
 			_SceneManager.handleInput(input);
 
 			// Update the selected entity's position.
-			if (!_MoveYAxis)
-			{
-				_SelectedEntity.getBody().getShape().setLayeredPosition(_Camera.convertScreenToWorld(input.mousePosition()));
-			}
-			else
-			{
-				_SelectedEntity.getBody().getShape().setBottomDepth(_SelectedEntity.getBody().getPosition().y - _Camera.convertScreenToWorld(input.mousePosition()).y);
-			}
+			// The mouse position in the world.
+			Vector2 mouse = _Camera.convertScreenToWorld(input.mousePosition());
+
+			// Due to unknown error getting an accurate mouse position, subtract a bit.
+			_SelectedEntity.getBody().getShape().setLayeredPosition(new Vector2(mouse.x - 145, mouse.y));
 
 			// If the user has pressed the left mouse button, try to add the entity to the scene.
 			if (input.isMouseButtonClicked(1))
@@ -228,8 +217,18 @@ public class MapEditorScreen extends GameScreen
 				addSelectedEntityToScene();
 			}
 
-			// If the user holds down the shift button, move the entity on the z-axis only.
-			_MoveYAxis = input.isKeyDown(KeyEvent.VK_SHIFT);
+			// If to increase the entity's depth.
+			if (input.isKeyDown(KeyEvent.VK_2))
+			{
+				// The entity's bottom depth position.
+				_SelectedEntity.getBody().getShape().setBottomDepth(_SelectedEntity.getBody().getShape().getBottomDepth() + .8);
+			}
+			// If to decrease the entity's depth.
+			else if (input.isKeyDown(KeyEvent.VK_1))
+			{
+				// The entity's bottom depth position.
+				_SelectedEntity.getBody().getShape().setBottomDepth(_SelectedEntity.getBody().getShape().getBottomDepth() - .8);
+			}
 
 			// If to zoom in.
 			if (input.isKeyDown(KeyEvent.VK_O))
@@ -360,38 +359,6 @@ public class MapEditorScreen extends GameScreen
 
 			// Add the entity to the info panel.
 			_InfoPanel.setEntity(entity);
-		}
-	}
-
-	/**
-	 * Lock the mouse axis to the z-axis. Obsolete?
-	 * 
-	 * @param lock
-	 *            Whether to lock or unlock the mouse axis.
-	 */
-	private void lockAxis(boolean lock)
-	{
-		// If to unlock, do so and then end.
-		if (!lock)
-		{
-			_LockX = -1;
-			return;
-		}
-
-		// If the saved x-coordinate is -1, then overwrite it.
-		if (_LockX == -1)
-		{
-			_LockX = (int) InputManager.getInstance().mousePosition().x;
-		}
-
-		// Lock the mouse to this x-coordinate.
-		try
-		{
-			(new Robot()).mouseMove(_LockX, (int) InputManager.getInstance().mousePosition().y);
-		}
-		catch (AWTException e)
-		{
-
 		}
 	}
 }
