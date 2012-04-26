@@ -411,32 +411,34 @@ public class Shape
 	{
 		// The depth to add.
 		double depth;
+		// The amount of the top step. Used to enable characters to reach the top of the slope without colliding with adjacent bodies.
+		double amount = 5;
 
-		// Check the depth distribution.
+		// Check the depth distribution. Shorten the sloped shape to fix the issue with characters not reaching the top height of the slope due to collisions with adjacent bodies.
 		switch (_DepthDistribution)
 		{
 			case Top:
 			{
 				// Calculate the depth.
-				depth = (_Position.y + (_Height / 2) - layeredPosition.y) * (_Depth / _Height);
+				depth = (_Position.y + (_Height / 2) - layeredPosition.y) * (_Depth / (_Height - amount));
 				break;
 			}
 			case Bottom:
 			{
 				// Calculate the depth.
-				depth = (layeredPosition.y - _Position.y - (_Height / 2)) * (_Depth / _Height);
+				depth = (layeredPosition.y - _Position.y - (_Height / 2)) * (_Depth / (_Height - amount));
 				break;
 			}
 			case Right:
 			{
 				// Calculate the depth.
-				depth = (layeredPosition.x - (_Position.x - (_Width / 2))) * (_Depth / _Width);
+				depth = (layeredPosition.x - (_Position.x - (_Width / 2))) * (_Depth / (_Width - amount));
 				break;
 			}
 			case Left:
 			{
 				// Calculate the depth.
-				depth = (layeredPosition.x - _Position.x - (_Width / 2)) * (_Depth / _Width);
+				depth = (layeredPosition.x - _Position.x - (_Width / 2)) * (_Depth / (_Width - amount));
 				break;
 			}
 			default:
@@ -475,7 +477,7 @@ public class Shape
 
 				// Get the amount of height to remove and calculate the new position.
 				double height = depth * ratio;
-				double y = _Position.y - (_Width / 2) + height + ((_Height - height) / 2);
+				double y = _Position.y - (_Height / 2) + height + ((_Height - height) / 2);
 
 				// Return the layered shape.
 				return new Shape(new Vector3(_Position.x, y, z), _Width, _Height - (float) height, 1f);
@@ -487,7 +489,7 @@ public class Shape
 
 				// Get the amount of height to remove and calculate the new position.
 				double height = depth * ratio;
-				double y = _Position.y + (_Width / 2) - height - ((_Height - height) / 2);
+				double y = _Position.y + (_Height / 2) - height - ((_Height - height) / 2);
 
 				// Return the layered shape.
 				return new Shape(new Vector3(_Position.x, y, z), _Width, _Height - (float) height, 1f);

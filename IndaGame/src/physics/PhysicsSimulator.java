@@ -332,7 +332,7 @@ public class PhysicsSimulator
 		Vector2 heights = Vector2.getMiddleValues(h1, h2);
 
 		// If there were no matching heights found, no collision possible.
-		if (heights == null) { return null; }
+		if (heights == null || (h2.y - h1.x) < 3) { return null; }
 
 		// Return the MTV.
 		return mtv;
