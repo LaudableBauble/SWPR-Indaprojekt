@@ -136,4 +136,14 @@ public class SceneManager
 		scene.setSceneManager(this);
 		return scene;
 	}
+
+	/**
+	 * Get the the camera.
+	 * 
+	 * @return The camera.
+	 */
+	public Camera2D getCamera()
+	{
+		return _Camera;
+	}
 }

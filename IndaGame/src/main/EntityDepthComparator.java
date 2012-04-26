@@ -16,6 +16,31 @@ public class EntityDepthComparator implements Comparator<Entity>
 	/**
 	 * Compare two Entity objects to each other by their depth values.
 	 */
+	//@Override
+	public int compareOld2(Entity e1, Entity e2)
+	{
+		// The entities' bottom positions on screen.
+		double d1 = e1.getBody().getShape().getBottomLeft().y + e1.getBody().getShape().getBottomDepth();
+		double d2 = e2.getBody().getShape().getBottomLeft().y + e2.getBody().getShape().getBottomDepth();
+
+		// Go by their screen y-coordinates instead.
+		if (d1 < d2)
+		{
+			return -1;
+		}
+		else if (d1 > d2)
+		{
+			return 1;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+	
+	/**
+	 * Compare two Entity objects to each other by their depth values.
+	 */
 	public int compareOld(Entity e1, Entity e2)
 	{
 		// The entities' bottom positions on screen.

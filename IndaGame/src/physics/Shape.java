@@ -92,12 +92,9 @@ public class Shape
 	 */
 	public boolean intersects(Shape shape)
 	{
-		// First check collisions for ground box, ie. ignore height/depth dimension for now.
-		// If there exists a collision, continue to see if the height/depth position of the two shapes also match.
-		// If that is also true, then we have a collision.
-
 		// Create the two base rectangles.
-		Rectangle rect1 = new Rectangle((int) shape.getPosition().x, (int) shape.getPosition().y, (int) shape.getWidth(), (int) shape.getHeight());
+		Rectangle rect1 = new Rectangle((int) (shape.getPosition().x - shape.getWidth() / 2), (int) (shape.getPosition().y - shape.getHeight() / 2), (int) shape.getWidth(),
+				(int) shape.getHeight());
 		Rectangle rect2 = new Rectangle((int) _Position.x, (int) _Position.y, (int) _Width, (int) _Height);
 
 		// If they intersect, continue.
@@ -524,6 +521,44 @@ public class Shape
 				return new Shape(new Vector3(_Position.toVector2(), z), _Width, _Height, 1f);
 			}
 		}
+	}
+
+	/**
+	 * Get the height of this shape at the given local x and y-coordinates, ie. as seen from its image.
+	 * 
+	 * @param x
+	 *            The local x-coordinate.
+	 * @param y
+	 *            The local y-coordinate.
+	 * @return The height of this shape.
+	 */
+	public double getDepthSort(double x, double y)
+	{
+		// Remember that the top-left corner is (0, 0) in an image, but not in the shape.
+
+		// The coordinates in world space.
+		double dy = _Position.y;
+		double dz = _Position.z;
+
+		// If the coordinates is within bounds on the x-axis.
+		if (x >= 0 && x <= _Width)
+		{
+			// If the coordinates match the front 'face' of the shape.
+			if (y >= _Height && y <= _Depth + _Height)
+			{
+				dy = _Position.y + _Height / 2;
+				dz = _Position.z + _Depth / 2 - y - _Height;
+			}
+			// If the coordinates match the top 'face' of the shape.
+			else if (y >= 0 && y <= _Depth)
+			{
+				dy = _Position.y - _Height / 2 + y;
+				dz = _Position.z + _Depth / 2;
+			}
+		}
+
+		// Return the depth sorting value.
+		return dy + dz;
 	}
 
 	/**

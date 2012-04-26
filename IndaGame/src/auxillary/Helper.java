@@ -413,11 +413,11 @@ public final class Helper
 	{
 		if (xpoints.length < 3) { throw new IllegalArgumentException("Polygon must have >2 points"); }
 
+		// Create a new z plane resolver.
 		return new ZPlaneResolver(xpoints[0], xpoints[1], xpoints[2], ypoints[0], ypoints[1], ypoints[2], z1, z2, z3)
 		{
-
+			// Create a general path instance.
 			protected GeneralPath generalPath;
-
 			{
 				generalPath = new GeneralPath();
 				generalPath.moveTo(xpoints[0], ypoints[0]);
@@ -428,6 +428,7 @@ public final class Helper
 				generalPath.closePath();
 			}
 
+			// Resolve the x and y-coordinates into depth.
 			public double resolve(double x, double y)
 			{
 				if (isAntialiasingEnabled())

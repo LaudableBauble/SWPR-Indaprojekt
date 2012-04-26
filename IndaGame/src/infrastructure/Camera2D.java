@@ -257,4 +257,14 @@ public class Camera2D
 	{
 		updateCamera(position, _ZoomValue, _Rotation);
 	}
+
+	/**
+	 * Get the camera's viewport.
+	 * 
+	 * @return The viewport.
+	 */
+	public Vector2 getViewportSize()
+	{
+		return new Vector2(_Viewport.width, _Viewport.height);
+	}
 }

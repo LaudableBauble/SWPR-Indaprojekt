@@ -4,6 +4,7 @@ import graphics.Frame;
 import graphics.Sprite;
 import graphics.SpriteManager;
 import infrastructure.GameTimer;
+import infrastructure.zBuffer.DepthComposite;
 import input.InputManager;
 
 import java.awt.Graphics2D;
@@ -167,7 +168,7 @@ public class Entity
 		// Update the sprite's position offset.
 		_Sprites.getSprite(0).setPositionOffset(new Vector2(0, -_Sprites.getSprite(0).getCurrentFrame().getOrigin().y + (_Body.getShape().getHeight() / 2)));
 	}
-	
+
 	/**
 	 * Set the entity's height. This also modifies its depth as well as updates the main sprite.
 	 * 

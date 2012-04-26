@@ -5,22 +5,19 @@ import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 
 /**
- * A z-composite context emulates a Z-buffer and thus simulates depth in 2D-drawing.
- * 
- * @author caiiiycuk
+ * A z-composite context that emulates a Z-buffer and thus simulates depth in 2D-drawing.
  */
-public class ZCompositeContext implements CompositeContext
+public class DepthCompositeContext implements CompositeContext
 {
-
 	protected final static byte R_BAND = 0;
 	protected final static byte G_BAND = 1;
 	protected final static byte B_BAND = 2;
 
-	protected ZComposite zComposite;
+	protected DepthComposite _Composite;
 
-	ZCompositeContext(ZComposite zComposite)
+	DepthCompositeContext(DepthComposite composite)
 	{
-		this.zComposite = zComposite;
+		_Composite = composite;
 	}
 
 	/**
@@ -28,10 +25,7 @@ public class ZCompositeContext implements CompositeContext
 	 */
 	public void compose(Raster src, Raster dstIn, WritableRaster dstOut)
 	{
-		// Get the resolver.
-		ZValueResolver zValueResolver = zComposite.getValueResolver();
-
-		if (zValueResolver == null) { throw new IllegalArgumentException("You must set a ZValueResolver before drawing any polygons with this composite."); }
+		if (_Composite.getShape() == null) { throw new IllegalArgumentException("You must set a shape before drawing anything with this composite."); }
 
 		// Get the max bounds of the writable raster.
 		int maxX = dstOut.getMinX() + dstOut.getWidth();
@@ -47,13 +41,13 @@ public class ZCompositeContext implements CompositeContext
 				int dstInY = -dstIn.getSampleModelTranslateY() + y;
 
 				// Get the depth (z) for both the destination and source rasters.
-				double dstZ = zComposite.getZOf(dstInX, dstInY);
-				double srcZ = zValueResolver.resolve(dstInX, dstInY);
+				double dstZ = _Composite.getZOf(dstInX, dstInY);
+				double srcZ = _Composite.getShape().getDepthSort(x, y);
 
 				// If to overwrite or keep the source raster's data.
 				if (srcZ < dstZ)
 				{
-					zComposite.setZOf(dstInX, dstInY, srcZ);
+					_Composite.setZOf(dstInX, dstInY, srcZ);
 					dstOut.setSample(x, y, R_BAND, src.getSample(x, y, R_BAND)); // R
 					dstOut.setSample(x, y, G_BAND, src.getSample(x, y, G_BAND)); // G
 					dstOut.setSample(x, y, B_BAND, src.getSample(x, y, B_BAND)); // B

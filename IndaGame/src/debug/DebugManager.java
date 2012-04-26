@@ -2,6 +2,7 @@ package debug;
 
 import input.InputManager;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
@@ -74,7 +75,7 @@ public class DebugManager
 	public void handleInput(InputManager input)
 	{
 		// Turn on/off debug mode.
-		if (input.isNewKeyPress(KeyEvent.VK_ENTER))
+		if (input.isKeyDown(KeyEvent.VK_ENTER))
 		{
 			debug = !debug;
 		}
@@ -186,6 +187,9 @@ public class DebugManager
 				// Save the old graphics matrix and insert the camera matrix in its place.
 				AffineTransform oldMatrix = graphics.getTransform();
 				graphics.setTransform(_Transform);
+				
+				//Nullify the depth composite.
+				graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
 
 				// The body's shape and position on screen.
 				Shape shape = b.getShape().getLayeredShape(debugBody.getShape().getBottomDepth());
@@ -234,6 +238,9 @@ public class DebugManager
 				}
 			}
 		}
+		
+		//Reset the graphics matrix.
+		graphics.setTransform(new AffineTransform());
 
 		// Change the color for the debug window.
 		graphics.setColor(Color.lightGray);

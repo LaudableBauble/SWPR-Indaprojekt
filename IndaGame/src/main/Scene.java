@@ -1,11 +1,14 @@
 package main;
 
 import infrastructure.GameTimer;
+import infrastructure.zBuffer.DepthComposite;
 import input.InputManager;
 
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Collections;
+
+import auxillary.Vector2;
 
 import physics.PhysicsSimulator;
 import debug.DebugManager;
@@ -111,9 +114,14 @@ public class Scene
 	 */
 	public void draw(Graphics2D graphics)
 	{
+		// Enable depth sorting by composite.
+		//graphics.setComposite(new DepthComposite(_SceneManager.getCamera().getViewportSize()));
+
 		// Draw all entities.
 		for (Entity entity : _Entities)
 		{
+			// Prepare the graphics device for depth-sorting.
+			//((DepthComposite) graphics.getComposite()).setShape(entity.getBody().getShape());
 			entity.draw(graphics);
 		}
 	}

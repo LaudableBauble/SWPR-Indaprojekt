@@ -14,7 +14,6 @@ import java.util.Arrays;
  */
 public class ZComposite implements Composite
 {
-
 	protected double[] clearBuffer;
 	protected double[] buffer;
 	protected int width;
@@ -46,7 +45,7 @@ public class ZComposite implements Composite
 	}
 
 	/**
-	 * Clear ZBuffer (fill buffer with Float.MAX_VALUE)
+	 * Clear ZBuffer (fill buffer with Float.MAX_VALUE).
 	 */
 	public void clearBufferBit()
 	{
@@ -54,7 +53,7 @@ public class ZComposite implements Composite
 	}
 
 	/**
-	 * Set z-value in buffer for given point
+	 * Set z-value in buffer for given point.
 	 * 
 	 * @param x
 	 *            coordinate
@@ -71,7 +70,7 @@ public class ZComposite implements Composite
 	}
 
 	/**
-	 * Get Z Buffer values in array
+	 * Get Z Buffer values in array.
 	 * 
 	 * @return values in array
 	 */
@@ -81,7 +80,7 @@ public class ZComposite implements Composite
 	}
 
 	/**
-	 * Set z-value resolver
+	 * Set z-value resolver.
 	 * 
 	 * @param valueResolver
 	 *            {@link ZValueResolver}
