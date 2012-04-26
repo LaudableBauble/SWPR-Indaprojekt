@@ -132,8 +132,8 @@ public class Shape
 	public static int isOverlaping(Shape s1, Shape s2)
 	{
 		// The entities' depth data.
-		Vector2 v1 = new Vector2(s1.getBottomDepth(), s1.getTopDepth(s1.getLayeredPosition()));
-		Vector2 v2 = new Vector2(s2.getBottomDepth(), s2.getTopDepth(s1.getLayeredPosition()));
+		Vector2 v1 = new Vector2(s1.getBottomDepth(), Math.min(s1.getTopDepth(s1.getLayeredPosition()), s1.getTopDepth(s2.getLayeredPosition())));
+		Vector2 v2 = new Vector2(s2.getBottomDepth(), Math.min(s2.getTopDepth(s1.getLayeredPosition()), s2.getTopDepth(s2.getLayeredPosition())));
 
 		// Compare the shapes to each other.
 		if (!v1.overlap(v2, false))
@@ -420,13 +420,13 @@ public class Shape
 			case Top:
 			{
 				// Calculate the depth.
-				depth = (_Position.y + (_Height / 2) - layeredPosition.y) * (_Depth / (_Height - amount));
+				depth = ((_Position.y + (_Height / 2)) - layeredPosition.y) * (_Depth / (_Height - amount));
 				break;
 			}
 			case Bottom:
 			{
 				// Calculate the depth.
-				depth = (layeredPosition.y - _Position.y - (_Height / 2)) * (_Depth / (_Height - amount));
+				depth = (layeredPosition.y - (_Position.y - (_Height / 2))) * (_Depth / (_Height - amount));
 				break;
 			}
 			case Right:
@@ -438,7 +438,7 @@ public class Shape
 			case Left:
 			{
 				// Calculate the depth.
-				depth = (layeredPosition.x - _Position.x - (_Width / 2)) * (_Depth / (_Width - amount));
+				depth = ((_Position.x + (_Width / 2)) - layeredPosition.x) * (_Depth / (_Width - amount));
 				break;
 			}
 			default:

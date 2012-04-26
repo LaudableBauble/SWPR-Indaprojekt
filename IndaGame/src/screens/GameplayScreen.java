@@ -45,18 +45,38 @@ public class GameplayScreen extends GameScreen
 	private Character _Character;
 
 	// Entities.
-	private Entity _Shelf;
+	private Entity _Shelf1;
+	private Entity _Shelf2;
+	private Entity _Shelf3;
+	private Entity _Shelf4;
+	private Entity _Shelf5;
 	private Entity _Block1;
 	private Entity _Block2;
+	private Entity _Block3;
+	private Entity _Block4;
+	private Entity _Block5;
+	private Entity _Block6;
 	private Entity _DarkBlock1;
 	private Entity _DarkBlock2;
 	private Entity _DarkBlock3;
 	private Entity _DarkBlock4;
 	private Entity _DarkBlock5;
+	private Entity _DarkBlock6;
+	private Entity _DarkBlock7;
+	private Entity _DarkBlock8;
+	private Entity _DarkBlock9;
+	private Entity _DarkBlock10;
+	private Entity _DarkBlock11;
+	private Entity _DarkBlock12;
+	private Entity _DarkBlock13;
 	private Entity _Stairs1;
 	private Entity _Stairs2;
 	private Entity _Stairs3;
 	private Entity _Stairs4;
+	private Entity _Stairs5;
+	private Entity _Stairs6;
+	private Entity _Stairs7;
+	private Entity _Stairs8;
 	private Entity _Pathway1;
 	private Entity _Pathway2;
 	private Entity _Pathway3;
@@ -64,6 +84,7 @@ public class GameplayScreen extends GameScreen
 	private Entity _PathwayArch1;
 	private Entity _PathwayPlatform1;
 	private Entity _PathwayPlatform2;
+	private Entity _PathwayPlatform3;
 	private Entity _Floor;
 
 	/**
@@ -100,69 +121,173 @@ public class GameplayScreen extends GameScreen
 		_Character = new main.Character(_Scene.getPhysicsSimulator(), "hydra", 3);
 		_Character.getBody().setPosition(new Vector3(1040, 1010, 50));
 
-		// Create the shelf.
-		_Shelf = new Entity(_Scene.getPhysicsSimulator());
-		_Shelf.getBody().setPosition(new Vector3(1100, 1100, 0));
-		_Shelf.getBody().setIsStatic(true);
+		// Create the shelf (south of pathway arch).
+		_Shelf1 = new Entity(_Scene.getPhysicsSimulator());
+		_Shelf1.getBody().setPosition(new Vector3(940, 1025, 0));
+		_Shelf1.getBody().setIsStatic(true);
+		
+		// Create the shelf (east of pathway platform 3).
+		_Shelf2 = new Entity(_Scene.getPhysicsSimulator());
+		_Shelf2.getBody().setPosition(new Vector3(1270, 1080, 0));
+		_Shelf2.getBody().setIsStatic(true);
+		
+		// Create the shelf (south of block 4).
+		_Shelf3 = new Entity(_Scene.getPhysicsSimulator());
+		_Shelf3.getBody().setPosition(new Vector3(900, 945, 0));
+		_Shelf3.getBody().setIsStatic(true);
+		
+		// Create the shelf (south of dark block 11).
+		_Shelf4 = new Entity(_Scene.getPhysicsSimulator());
+		_Shelf4.getBody().setPosition(new Vector3(1300, 940, 0));
+		_Shelf4.getBody().setIsStatic(true);
+		
+		// Create the shelf (south of dark block 7).
+		_Shelf5 = new Entity(_Scene.getPhysicsSimulator());
+		_Shelf5.getBody().setPosition(new Vector3(670, 850, 0));
+		_Shelf5.getBody().setIsStatic(true);
 
-		// Create a block.
+		// Create a block (north of staircase 2).
 		_Block1 = new Entity(_Scene.getPhysicsSimulator());
-		_Block1.getBody().setPosition(new Vector3(950, 700, 0));
+		_Block1.getBody().setPosition(new Vector3(710.5, 942, 0));
 		_Block1.getBody().setIsStatic(true);
 
-		// Create a block.
+		// Create a block (north of dark block 2).
 		_Block2 = new Entity(_Scene.getPhysicsSimulator());
-		_Block2.getBody().setPosition(new Vector3(1100, 700, 0));
+		_Block2.getBody().setPosition(new Vector3(1180, 940, 0));
 		_Block2.getBody().setIsStatic(true);
+
+		// Create a block (north of dark block 1).
+		_Block3 = new Entity(_Scene.getPhysicsSimulator());
+		_Block3.getBody().setPosition(new Vector3(852.5, 909, 0));
+		_Block3.getBody().setIsStatic(true);
+
+		// Create a block (north of block 1).
+		_Block4 = new Entity(_Scene.getPhysicsSimulator());
+		_Block4.getBody().setPosition(new Vector3(710.5, 875.5, 0));
+		_Block4.getBody().setIsStatic(true);
 		
-		// Create a dark block (left of pathway arch).
+		// Create a block (north of dark block 5, main stairs).
+		_Block5 = new Entity(_Scene.getPhysicsSimulator());
+		_Block5.getBody().setPosition(new Vector3(1000, 794.5, 0));
+		_Block5.getBody().setIsStatic(true);
+		
+		// Create a block (east of block 2).
+		_Block6 = new Entity(_Scene.getPhysicsSimulator());
+		_Block6.getBody().setPosition(new Vector3(1324, 940, 0));
+		_Block6.getBody().setIsStatic(true);
+
+		// Create a dark block (west of pathway arch).
 		_DarkBlock1 = new Entity(_Scene.getPhysicsSimulator());
 		_DarkBlock1.getBody().setPosition(new Vector3(852, 1000, 0));
 		_DarkBlock1.getBody().setIsStatic(true);
-		
-		// Create a dark block (right of pathway arch).
+
+		// Create a dark block (east of pathway arch).
 		_DarkBlock2 = new Entity(_Scene.getPhysicsSimulator());
 		_DarkBlock2.getBody().setPosition(new Vector3(1149, 1000, 0));
 		_DarkBlock2.getBody().setIsStatic(true);
-		
+
 		// Create a dark block (south of pathway platform 1).
 		_DarkBlock3 = new Entity(_Scene.getPhysicsSimulator());
 		_DarkBlock3.getBody().setPosition(new Vector3(900, 1183, 0));
 		_DarkBlock3.getBody().setIsStatic(true);
-		
+
 		// Create a dark block (south of pathway platform 2).
 		_DarkBlock4 = new Entity(_Scene.getPhysicsSimulator());
 		_DarkBlock4.getBody().setPosition(new Vector3(1120, 1183, 0));
 		_DarkBlock4.getBody().setIsStatic(true);
-		
+
 		// Create a dark block (north of pathway arch, main stairs).
 		_DarkBlock5 = new Entity(_Scene.getPhysicsSimulator());
 		_DarkBlock5.getBody().setPosition(new Vector3(1000, 872, 0));
 		_DarkBlock5.getBody().setIsStatic(true);
+		
+		// Create a dark block (north of block 4, west stairs).
+		_DarkBlock6 = new Entity(_Scene.getPhysicsSimulator());
+		_DarkBlock6.getBody().setPosition(new Vector3(710.5, 771, 0));
+		_DarkBlock6.getBody().setIsStatic(true);
+		
+		// Create a dark block (north of block 3, east of dark block 6).
+		_DarkBlock7 = new Entity(_Scene.getPhysicsSimulator());
+		_DarkBlock7.getBody().setPosition(new Vector3(847.5, 818, 0));
+		_DarkBlock7.getBody().setIsStatic(true);
+		
+		// Create a dark block (north of block 5, main stairs).
+		_DarkBlock8 = new Entity(_Scene.getPhysicsSimulator());
+		_DarkBlock8.getBody().setPosition(new Vector3(895, 720, 0));
+		_DarkBlock8.getBody().setIsStatic(true);
+		
+		// Create a dark block (east of dark block 2).
+		_DarkBlock9 = new Entity(_Scene.getPhysicsSimulator());
+		_DarkBlock9.getBody().setPosition(new Vector3(1283, 1000, 0));
+		_DarkBlock9.getBody().setIsStatic(true);
+		
+		// Create a dark block (north of block 2).
+		_DarkBlock10 = new Entity(_Scene.getPhysicsSimulator());
+		_DarkBlock10.getBody().setPosition(new Vector3(1180, 830.5, 0));
+		_DarkBlock10.getBody().setIsStatic(true);
+		
+		// Create a dark block (east of dark block 10).
+		_DarkBlock11 = new Entity(_Scene.getPhysicsSimulator());
+		_DarkBlock11.getBody().setPosition(new Vector3(1317, 863.5, 0));
+		_DarkBlock11.getBody().setIsStatic(true);
+		
+		// Create a dark block (south of pathway platform 2).
+		_DarkBlock12 = new Entity(_Scene.getPhysicsSimulator());
+		_DarkBlock12.getBody().setPosition(new Vector3(1257, 1183, 0));
+		_DarkBlock12.getBody().setIsStatic(true);
+		
+		// Create a dark block (north of block 5, east of dark block 8, main stairs).
+		_DarkBlock13 = new Entity(_Scene.getPhysicsSimulator());
+		_DarkBlock13.getBody().setPosition(new Vector3(1128, 720, 0));
+		_DarkBlock13.getBody().setIsStatic(true);
 
-		// Create a staircase.
+		// Create a staircase (west of dark block 1).
 		_Stairs1 = new Entity(_Scene.getPhysicsSimulator());
-		_Stairs1.getBody().setPosition(new Vector3(650, 1100, 0));
+		_Stairs1.getBody().setPosition(new Vector3(759.5, 982.5, 0));
 		_Stairs1.getBody().setIsStatic(true);
 		_Stairs1.getBody().getShape().setDepthDistribution(DepthDistribution.Right);
 
-		// Create a staircase.
+		// Create a staircase (west of dark block 2).
 		_Stairs2 = new Entity(_Scene.getPhysicsSimulator());
-		_Stairs2.getBody().setPosition(new Vector3(770, 920, 0));
+		_Stairs2.getBody().setPosition(new Vector3(1056.5, 1033, 0));
 		_Stairs2.getBody().setIsStatic(true);
 		_Stairs2.getBody().getShape().setDepthDistribution(DepthDistribution.Right);
-		
-		// Create a staircase (left of dark block 2).
-		_Stairs3 = new Entity(_Scene.getPhysicsSimulator());
-		_Stairs3.getBody().setPosition(new Vector3(1056.5, 1033, 0));
-		_Stairs3.getBody().setIsStatic(true);
-		_Stairs3.getBody().getShape().setDepthDistribution(DepthDistribution.Right);
-		
+
 		// Create a staircase (north of dark block 5).
+		_Stairs3 = new Entity(_Scene.getPhysicsSimulator());
+		_Stairs3.getBody().setPosition(new Vector3(1000, 931.5, 0));
+		_Stairs3.getBody().setIsStatic(true);
+		_Stairs3.getBody().getShape().setDepthDistribution(DepthDistribution.Top);
+
+		// Create a staircase (east of block 1).
 		_Stairs4 = new Entity(_Scene.getPhysicsSimulator());
-		_Stairs4.getBody().setPosition(new Vector3(1000, 910.5, 0));
+		_Stairs4.getBody().setPosition(new Vector3(807.5, 942, 0));
 		_Stairs4.getBody().setIsStatic(true);
-		_Stairs4.getBody().getShape().setDepthDistribution(DepthDistribution.Top);
+		_Stairs4.getBody().getShape().setDepthDistribution(DepthDistribution.Left);
+		
+		// Create a staircase (east of dark block 7).
+		_Stairs5 = new Entity(_Scene.getPhysicsSimulator());
+		_Stairs5.getBody().setPosition(new Vector3(755, 868.5, 0));
+		_Stairs5.getBody().setIsStatic(true);
+		_Stairs5.getBody().getShape().setDepthDistribution(DepthDistribution.Right);
+		
+		// Create a staircase (north of block 5, main stairs).
+		_Stairs6 = new Entity(_Scene.getPhysicsSimulator());
+		_Stairs6.getBody().setPosition(new Vector3(1000, 861, 0));
+		_Stairs6.getBody().setIsStatic(true);
+		_Stairs6.getBody().getShape().setDepthDistribution(DepthDistribution.Top);
+		
+		// Create a staircase (south of dark block 8, main stairs).
+		_Stairs7 = new Entity(_Scene.getPhysicsSimulator());
+		_Stairs7.getBody().setPosition(new Vector3(1000, 778, 0));
+		_Stairs7.getBody().setIsStatic(true);
+		_Stairs7.getBody().getShape().setDepthDistribution(DepthDistribution.Top);
+		
+		// Create a staircase (west of dark block 11).
+		_Stairs8 = new Entity(_Scene.getPhysicsSimulator());
+		_Stairs8.getBody().setPosition(new Vector3(1224.5, 914, 0));
+		_Stairs8.getBody().setIsStatic(true);
+		_Stairs8.getBody().getShape().setDepthDistribution(DepthDistribution.Right);
 
 		// Create a pathway.
 		_Pathway1 = new Entity(_Scene.getPhysicsSimulator());
@@ -180,16 +305,21 @@ public class GameplayScreen extends GameScreen
 		_Pathway3.getBody().setIsStatic(true);
 		_Pathway4.getBody().setIsStatic(true);
 		_PathwayArch1.getBody().setIsStatic(true);
-		
-		//Create a pathway platform (south of dark block 1).
+
+		// Create a pathway platform (south of dark block 1).
 		_PathwayPlatform1 = new Entity(_Scene.getPhysicsSimulator());
 		_PathwayPlatform1.getBody().setPosition(new Vector3(852, 1107.5, 0));
 		_PathwayPlatform1.getBody().setIsStatic(true);
-		
-		//Create a pathway platform (south of dark block 2).
+
+		// Create a pathway platform (south of dark block 2).
 		_PathwayPlatform2 = new Entity(_Scene.getPhysicsSimulator());
 		_PathwayPlatform2.getBody().setPosition(new Vector3(1149, 1107.5, 0));
 		_PathwayPlatform2.getBody().setIsStatic(true);
+		
+		// Create a pathway platform (south of dark block 9).
+		_PathwayPlatform3 = new Entity(_Scene.getPhysicsSimulator());
+		_PathwayPlatform3.getBody().setPosition(new Vector3(1305, 1107.5, 0));
+		_PathwayPlatform3.getBody().setIsStatic(true);
 
 		// Create the floor.
 		_Floor = new Entity(_Scene.getPhysicsSimulator());
@@ -199,18 +329,38 @@ public class GameplayScreen extends GameScreen
 		// Add all entities to the scene.
 		_Scene.addEntity(_Player);
 		_Scene.addEntity(_Character);
-		_Scene.addEntity(_Shelf);
+		_Scene.addEntity(_Shelf1);
+		_Scene.addEntity(_Shelf2);
+		_Scene.addEntity(_Shelf3);
+		_Scene.addEntity(_Shelf4);
+		_Scene.addEntity(_Shelf5);
 		_Scene.addEntity(_Block1);
 		_Scene.addEntity(_Block2);
+		_Scene.addEntity(_Block3);
+		_Scene.addEntity(_Block4);
+		_Scene.addEntity(_Block5);
+		_Scene.addEntity(_Block6);
 		_Scene.addEntity(_DarkBlock1);
 		_Scene.addEntity(_DarkBlock2);
 		_Scene.addEntity(_DarkBlock3);
 		_Scene.addEntity(_DarkBlock4);
 		_Scene.addEntity(_DarkBlock5);
+		_Scene.addEntity(_DarkBlock6);
+		_Scene.addEntity(_DarkBlock7);
+		_Scene.addEntity(_DarkBlock8);
+		_Scene.addEntity(_DarkBlock9);
+		_Scene.addEntity(_DarkBlock10);
+		_Scene.addEntity(_DarkBlock11);
+		_Scene.addEntity(_DarkBlock12);
+		_Scene.addEntity(_DarkBlock13);
 		_Scene.addEntity(_Stairs1);
 		_Scene.addEntity(_Stairs2);
 		_Scene.addEntity(_Stairs3);
 		_Scene.addEntity(_Stairs4);
+		_Scene.addEntity(_Stairs5);
+		_Scene.addEntity(_Stairs6);
+		_Scene.addEntity(_Stairs7);
+		_Scene.addEntity(_Stairs8);
 		_Scene.addEntity(_Pathway1);
 		_Scene.addEntity(_Pathway2);
 		_Scene.addEntity(_Pathway3);
@@ -218,6 +368,7 @@ public class GameplayScreen extends GameScreen
 		_Scene.addEntity(_PathwayArch1);
 		_Scene.addEntity(_PathwayPlatform1);
 		_Scene.addEntity(_PathwayPlatform2);
+		_Scene.addEntity(_PathwayPlatform3);
 		_Scene.addEntity(_Floor);
 	}
 
@@ -235,18 +386,38 @@ public class GameplayScreen extends GameScreen
 		// Load the player's content.
 		_Player.loadContent();
 		_Character.loadContent();
-		_Shelf.loadContent("Bookshelf[1].png", 12);
+		_Shelf1.loadContent("Bookshelf[1].png", 12);
+		_Shelf2.loadContent("Bookshelf[1].png", 12);
+		_Shelf3.loadContent("Bookshelf[1].png", 12);
+		_Shelf4.loadContent("Bookshelf[1].png", 12);
+		_Shelf5.loadContent("Bookshelf[1].png", 12);
 		_Block1.loadContent("ElevatedBlock[3].png", 48);
 		_Block2.loadContent("ElevatedBlock[2].png", 85);
+		_Block3.loadContent("ElevatedBlock[3].png", 48);
+		_Block4.loadContent("ElevatedBlock[2].png", 85);
+		_Block5.loadContent("ElevatedBlock[4].png", 85);
+		_Block6.loadContent("ElevatedBlock[2].png", 85);
 		_DarkBlock1.loadContent("DarkTiledBlock[2].png", 134);
 		_DarkBlock2.loadContent("DarkTiledBlock[2].png", 134);
 		_DarkBlock3.loadContent("DarkTiledBlock[1].png", 70);
 		_DarkBlock4.loadContent("DarkTiledBlock[1].png", 70);
-		_DarkBlock5.loadContent("DarkTiledBlock[1].png", 70);
-		_Stairs1.loadContent("StoneStairsRight[2].png", 33);
+		_DarkBlock5.loadContent("DarkTiledBlock[3].png", 70);
+		_DarkBlock6.loadContent("DarkTiledBlock[2].png", 134);
+		_DarkBlock7.loadContent("DarkTiledBlock[2].png", 134);
+		_DarkBlock8.loadContent("DarkTiledBlock[3].png", 70);
+		_DarkBlock9.loadContent("DarkTiledBlock[2].png", 134);
+		_DarkBlock10.loadContent("DarkTiledBlock[2].png", 134);
+		_DarkBlock11.loadContent("DarkTiledBlock[2].png", 134);
+		_DarkBlock12.loadContent("DarkTiledBlock[1].png", 70);
+		_DarkBlock13.loadContent("DarkTiledBlock[3].png", 70);
+		_Stairs1.loadContent("StoneStairsRight[3].png", 33);
 		_Stairs2.loadContent("StoneStairsRight[3].png", 33);
-		_Stairs3.loadContent("StoneStairsRight[3].png", 33);
-		_Stairs4.loadContent("StoneStairsTop[1].png", 30);
+		_Stairs3.loadContent("StoneStairsTop[2].png", 46);
+		_Stairs4.loadContent("StoneStairsLeft[1].png", 33);
+		_Stairs5.loadContent("StoneStairsRight[3].png", 33);
+		_Stairs6.loadContent("StoneStairsTop[2].png", 46);
+		_Stairs7.loadContent("StoneStairsTop[2].png", 46);
+		_Stairs8.loadContent("StoneStairsRight[3].png", 33);
 		_Pathway1.loadContent("StonePathwayBlock[1].png", 33);
 		_Pathway2.loadContent("StonePathwayBlock[1].png", 33);
 		_Pathway3.loadContent("StonePathwayBlock[1].png", 33);
@@ -254,22 +425,45 @@ public class GameplayScreen extends GameScreen
 		_PathwayArch1.loadContent("StonePathwayArch[1].png", 33);
 		_PathwayPlatform1.loadContent("StonePathwayBlock[2].png", 81);
 		_PathwayPlatform2.loadContent("StonePathwayBlock[4].png", 81);
+		_PathwayPlatform3.loadContent("StonePathwayBlock[3].png", 81);
 		_Floor.loadContent("WoodTiledFloor[1].png");
 
 		// Set their depths.
-		_Shelf.getBody().getShape().setBottomDepth(1);
+		_Shelf1.getBody().getShape().setBottomDepth(1);
+		_Shelf2.getBody().getShape().setBottomDepth(1);
+		_Shelf3.getBody().getShape().setBottomDepth(48);
+		_Shelf4.getBody().getShape().setBottomDepth(97);
+		_Shelf5.getBody().getShape().setBottomDepth(97);
 		_Block1.getBody().getShape().setBottomDepth(1);
-		_Block2.getBody().getShape().setBottomDepth(1);
+		_Block2.getBody().getShape().setBottomDepth(49);
+		_Block3.getBody().getShape().setBottomDepth(1);
+		_Block4.getBody().getShape().setBottomDepth(48);
+		_Block5.getBody().getShape().setBottomDepth(48);
+		_Block6.getBody().getShape().setBottomDepth(49);
 		_DarkBlock1.getBody().getShape().setBottomDepth(1);
 		_DarkBlock2.getBody().getShape().setBottomDepth(1);
 		_DarkBlock3.getBody().getShape().setBottomDepth(1);
 		_DarkBlock4.getBody().getShape().setBottomDepth(1);
 		_DarkBlock5.getBody().getShape().setBottomDepth(1);
+		_DarkBlock6.getBody().getShape().setBottomDepth(97);
+		_DarkBlock7.getBody().getShape().setBottomDepth(97);
+		_DarkBlock8.getBody().getShape().setBottomDepth(97);
+		_DarkBlock9.getBody().getShape().setBottomDepth(1);
+		_DarkBlock10.getBody().getShape().setBottomDepth(97);
+		_DarkBlock11.getBody().getShape().setBottomDepth(97);
+		_DarkBlock12.getBody().getShape().setBottomDepth(1);
+		_DarkBlock13.getBody().getShape().setBottomDepth(97);
 		_Stairs1.getBody().getShape().setBottomDepth(1);
 		_Stairs2.getBody().getShape().setBottomDepth(1);
+		_Stairs3.getBody().getShape().setDepth(48);
 		_Stairs3.getBody().getShape().setBottomDepth(1);
-		_Stairs4.getBody().getShape().setDepth(48);
-		_Stairs4.getBody().getShape().setBottomDepth(1);
+		_Stairs4.getBody().getShape().setBottomDepth(48);
+		_Stairs5.getBody().getShape().setBottomDepth(97);
+		_Stairs6.getBody().getShape().setDepth(48);
+		_Stairs6.getBody().getShape().setBottomDepth(49);
+		_Stairs7.getBody().getShape().setDepth(48);
+		_Stairs7.getBody().getShape().setBottomDepth(97);
+		_Stairs8.getBody().getShape().setBottomDepth(97);
 		_Pathway1.getBody().getShape().setBottomDepth(1);
 		_Pathway2.getBody().getShape().setBottomDepth(1);
 		_Pathway3.getBody().getShape().setBottomDepth(1);
@@ -277,6 +471,7 @@ public class GameplayScreen extends GameScreen
 		_PathwayArch1.getBody().getShape().setBottomDepth(22);
 		_PathwayPlatform1.getBody().getShape().setBottomDepth(37);
 		_PathwayPlatform2.getBody().getShape().setBottomDepth(37);
+		_PathwayPlatform3.getBody().getShape().setBottomDepth(1);
 		_Floor.getBody().getShape().setBottomDepth(0);
 
 		// Once the load has finished, we use ResetElapsedTime to tell the game's

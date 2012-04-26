@@ -2,6 +2,9 @@ package main;
 
 import java.util.Comparator;
 
+import auxillary.Helper;
+import auxillary.Vector3;
+
 import physics.Shape;
 
 /**
@@ -9,6 +12,47 @@ import physics.Shape;
  */
 public class EntityDepthComparator implements Comparator<Entity>
 {
+
+	/**
+	 * Compare two Entity objects to each other by their depth values.
+	 */
+	public int compareOld(Entity e1, Entity e2)
+	{
+		// The entities' bottom positions on screen.
+		double y1 = Helper.getScreenPosition(new Vector3(0, e1.getBody().getShape().getBottomLeft().y, e1.getBody().getShape().getBottomDepth())).y;
+		double y2 = Helper.getScreenPosition(new Vector3(0, e2.getBody().getShape().getBottomLeft().y, e2.getBody().getShape().getBottomDepth())).y;
+
+		// Go by their screen y-coordinates instead.
+		if (y1 < y2)
+		{
+			return -1;
+		}
+		else if (y1 > y2)
+		{
+			return 1;
+		}
+		else
+		{
+			// The entities' bottom position.
+			double z1 = e1.getBody().getShape().getBottomDepth();
+			double z2 = e1.getBody().getShape().getBottomDepth();
+
+			// Go by their z-coordinate.
+			if (z1 < z2)
+			{
+				return -1;
+			}
+			else if (z1 > z2)
+			{
+				return 1;
+			}
+			else
+			{
+				return 0;
+			}
+		}
+	}
+
 	/**
 	 * Compare two Entity objects to each other by their depth values.
 	 */
@@ -31,8 +75,8 @@ public class EntityDepthComparator implements Comparator<Entity>
 		else
 		{
 			// The entities' bottom positions.
-			double y1 = e1.getBody().getShape().getBottomLeft().y;
-			double y2 = e2.getBody().getShape().getBottomLeft().y;
+			double y1 = Helper.getScreenPosition(new Vector3(0, e1.getBody().getShape().getBottomLeft().y, e1.getBody().getShape().getBottomDepth())).y;
+			double y2 = Helper.getScreenPosition(new Vector3(0, e2.getBody().getShape().getBottomLeft().y, e2.getBody().getShape().getBottomDepth())).y;
 
 			// If an overlap exists, go by their y-coordinates instead.
 			if (y1 < y2)
