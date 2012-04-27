@@ -13,6 +13,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 
 import javax.imageio.ImageIO;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+
+import main.Entity;
 
 import physics.Shape;
 
@@ -257,14 +262,8 @@ public final class Helper
 	public static BufferedImage loadImage(String path, boolean pathHelp)
 	{
 		// If path help is enabled.
-		if (pathHelp)
-		{
-			return loadImage("src/images/" + path);
-		}
-		else
-		{
-			return loadImage(path);
-		}
+		if (pathHelp) { return loadImage("src/data/images/" + path); }
+		return loadImage(path);
 	}
 
 	/**
@@ -286,7 +285,7 @@ public final class Helper
 		catch (Exception e)
 		{
 			// Display information if the loading fails.
-			System.out.println("Can't find image:" + path);
+			System.out.println("Cannot find image:" + path);
 			System.out.println("Load Image Error: " + e.getClass().getName() + " " + e.getMessage());
 			System.exit(0);
 			return null;
@@ -439,5 +438,33 @@ public final class Helper
 				return super.resolve(x, y);
 			};
 		};
+	}
+
+	/**
+	 * Save an entity to file by serialization.
+	 * 
+	 * @param entity
+	 *            The entity to save.
+	 */
+	public static void saveEntity(Entity entity)
+	{
+		try
+		{
+			// Create the file.
+			File file = new File("src/data/entities/" + entity.getName());
+
+			// Set up the marshaller.
+			Marshaller marshaller = JAXBContext.newInstance(Entity.class).createMarshaller();
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+			// Serialize the entity to the file and output.
+			marshaller.marshal(entity, file);
+			marshaller.marshal(entity, System.out);
+
+		}
+		catch (JAXBException e)
+		{
+			System.out.println("Save Entity Error: " + e.getClass().getName() + " - " + e.getMessage());
+		}
 	}
 }

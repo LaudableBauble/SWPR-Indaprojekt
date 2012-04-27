@@ -189,7 +189,7 @@ public class DebugManager
 				graphics.setTransform(_Transform);
 				
 				//Nullify the depth composite.
-				graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
+				//graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
 
 				// The body's shape and position on screen.
 				Shape shape = b.getShape().getLayeredShape(debugBody.getShape().getBottomDepth());

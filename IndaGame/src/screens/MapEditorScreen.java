@@ -16,11 +16,16 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Robot;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -53,6 +58,7 @@ public class MapEditorScreen extends GameScreen
 	private FileTree _ImageTree;
 	private FileTree _EntityTree;
 	private EntityInfoPanel _InfoPanel;
+	private JMenuBar _MenuBar;
 
 	// The currently selected node.
 	private DefaultMutableTreeNode _SelectedNode;
@@ -84,15 +90,45 @@ public class MapEditorScreen extends GameScreen
 		// Create the GUI components.
 		_Tabs = new JTabbedPane();
 		_Tabs.setFocusable(false);
-		_ImageTree = new FileTree(new File("src/images"));
-		_EntityTree = new FileTree(new File("src/images"));
+		_ImageTree = new FileTree(new File("src/data/images"));
+		_EntityTree = new FileTree(new File("src/data/entities"));
 		_InfoPanel = new EntityInfoPanel();
+		_MenuBar = new JMenuBar();
+
+		// Set up the menu bar.
+		JMenu file = new JMenu("File");
+		_MenuBar.add(file);
+
+		// Set up file.
+		JMenuItem loadScene = new JMenuItem("Load Scene");
+		loadScene.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				// Save the current entity to file.
+				_SelectedEntity.setName("Entity1");
+				// Helper.saveEntity(_SelectedEntity);
+			}
+		});
+		JMenuItem saveScene = new JMenuItem("Save Scene");
+		saveScene.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				// Save the current entity to file.
+				_SelectedEntity.setName("Entity1");
+				Helper.saveEntity(_SelectedEntity);
+			}
+		});
+		file.add(loadScene);
+		file.add(saveScene);
 
 		// Add the GUI components to the frame.
 		_Tabs.add("Images", _ImageTree);
 		_Tabs.add("Entities", _EntityTree);
 		screenManager.getGame().getWindow().add(_Tabs, BorderLayout.WEST);
 		screenManager.getGame().getWindow().add(_InfoPanel, BorderLayout.EAST);
+		screenManager.getGame().getWindow().setJMenuBar(_MenuBar);
 
 		// Set up the camera.
 		_Camera = new Camera2D(new Rectangle(0, 0, (int) screenManager.getWindowBounds().x, (int) screenManager.getWindowBounds().y), new Rectangle(0, 0, 3000, 3000));
@@ -333,7 +369,7 @@ public class MapEditorScreen extends GameScreen
 	 */
 	private void updateSelectedNode(boolean force)
 	{
-		// If the tree's selected node does not match the one stored, change 'em.
+		// If the tree's selected node does not match the one stored, change them.
 		if (_SelectedNode != ((FileTree) _Tabs.getSelectedComponent()).getSelectedNode() || force)
 		{
 			// Switch selected node.
@@ -351,8 +387,8 @@ public class MapEditorScreen extends GameScreen
 			// If the node is not null, continue.
 			if (_SelectedNode != null)
 			{
-				// Load the entity's content. Remove the first 10 characters from parent (src/images).
-				entity.loadContent(_SelectedNode.getParent().toString().substring(10) + "\\" + _SelectedNode.toString());
+				// Load the entity's content. Remove the first 10 characters from parent (src/data/images).
+				entity.loadContent(_SelectedNode.getParent().toString().substring(15) + "\\" + _SelectedNode.toString());
 				// Add the entity to the scene.
 				_Scene.addEntity(entity);
 			}

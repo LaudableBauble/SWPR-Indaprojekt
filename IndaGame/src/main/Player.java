@@ -222,7 +222,7 @@ public class Player extends Entity
 			return _Sprites.getSprite(2);
 		}
 		// If facing left.
-		else if ((dir >= 150 && dir <= 180) || (dir >= -180 && dir <= -120)) { return _Sprites.getSprite(3); }
+		else if ((dir >= 150 && dir <= 180) || (dir >= -180 && dir <= -120)) { return _Sprites.getSprite(3); }	
 
 		// No sprite matched.
 		return _CurrentSprite;

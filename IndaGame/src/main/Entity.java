@@ -9,6 +9,10 @@ import input.InputManager;
 
 import java.awt.Graphics2D;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import physics.Body;
 import physics.PhysicsSimulator;
 import auxillary.Helper;
@@ -18,10 +22,15 @@ import auxillary.Vector3;
 /**
  * An entity, sporting a body and a sprite, is the most basic building blocks of the physical game world.
  */
+@XmlRootElement
 public class Entity
 {
+	// The name of the entity. Primarily used as file name when serialized.
+	private String _Name;
 	// The Sprite and Body.
+	// @XmlElement
 	protected SpriteManager _Sprites;
+	// @XmlElement
 	protected Body _Body;
 
 	/**
@@ -44,6 +53,7 @@ public class Entity
 	protected void initialize(PhysicsSimulator physics)
 	{
 		// Initialize the variables.
+		_Name = "";
 		_Sprites = new SpriteManager();
 		_Body = new Body(physics);
 		_Body.addBody();
@@ -183,5 +193,27 @@ public class Entity
 
 		// Update the sprite's position offset.
 		_Sprites.getSprite(0).setPositionOffset(new Vector2(0, -_Sprites.getSprite(0).getCurrentFrame().getOrigin().y + (_Body.getShape().getHeight() / 2)));
+	}
+
+	/**
+	 * Get the entity's name.
+	 * 
+	 * @return The name of the entity.
+	 */
+	public String getName()
+	{
+		return _Name;
+	}
+
+	/**
+	 * Set the entity's name.
+	 * 
+	 * @param name
+	 *            The new name of the entity.
+	 */
+	@XmlAttribute
+	public void setName(String name)
+	{
+		_Name = name;
 	}
 }
