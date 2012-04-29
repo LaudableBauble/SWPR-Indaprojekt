@@ -178,7 +178,7 @@ public class Entity
 		// If the position exists in the depth value array, return it from there.
 		try
 		{
-			return _DepthValues[x][y];
+			//return _DepthValues[x][y];
 		}
 		catch (Exception e)
 		{

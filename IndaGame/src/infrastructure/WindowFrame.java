@@ -90,7 +90,6 @@ public class WindowFrame extends JFrame
 	{
 		// Get the Graphics instance and translate it to the right position.
 		_Graphics = (Graphics2D) strategy.getDrawGraphics();
-		ColorModel cm = _Graphics.getDeviceConfiguration().getColorModel();
 		
 		// Clear the back-buffer.
 		_Graphics.setColor(_BackBufferColor);

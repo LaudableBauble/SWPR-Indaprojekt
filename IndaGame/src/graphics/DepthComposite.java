@@ -20,12 +20,15 @@ public class DepthComposite implements Composite, CompositeContext
 	protected final static byte R_BAND = 0;
 	protected final static byte G_BAND = 1;
 	protected final static byte B_BAND = 2;
-	
+	protected final static byte A_BAND = 3;
+
 	protected double[] clearBuffer;
 	protected double[] buffer;
 	protected int _Width;
 	protected int _Height;
 	protected Entity _Entity;
+	protected WritableRaster _OutputRaster;
+	protected int _FrameSkipCount;
 
 	public DepthComposite(Vector2 size)
 	{
@@ -37,6 +40,8 @@ public class DepthComposite implements Composite, CompositeContext
 		buffer = new double[_Height * _Width];
 		clearBuffer = new double[_Height * _Width];
 		Arrays.fill(clearBuffer, Double.MIN_VALUE);
+		_OutputRaster = null;
+		_FrameSkipCount = 0;
 		clearBufferBit();
 	}
 
@@ -47,44 +52,52 @@ public class DepthComposite implements Composite, CompositeContext
 	{
 		return this;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public void compose(Raster src, Raster dstIn, WritableRaster dstOut)
 	{
+		// If not time to update the depth-sorting and general drawing yet, use the stored output raster.
+		if (_OutputRaster != null && _FrameSkipCount != 0)
+		{
+			// Overwrite the current output raster with an old one.
+			dstOut.setRect(_OutputRaster);
+			return;
+		}
+
 		if (_Entity == null) { throw new IllegalArgumentException("You must set an entity before drawing anything with this composite."); }
 
 		// Get the max bounds of the writable raster.
 		int maxX = dstOut.getMinX() + dstOut.getWidth();
 		int maxY = dstOut.getMinY() + dstOut.getHeight();
-		
-		int a = src.getNumBands();
-		int b = dstIn.getNumBands();
-		int c = dstOut.getNumBands();
+
+		// Translate coordinates from the raster's space to the SampleModel's space.
+		int dstInX = -dstIn.getSampleModelTranslateX();
+		int dstInY = -dstIn.getSampleModelTranslateY();
 
 		// For each pixel in the writable raster.
 		for (int y = dstOut.getMinY(); y < maxY; y++)
 		{
+			// If the entity's shape has a uniform depth distribution, ie. it is not a slope, do not iterate through the width of the image
+			// because all x-coordinates will return the same depth value.
+			// If the source image sample slice contains alpha values however we have to iterate through all its pixels anyway.
+
 			for (int x = dstOut.getMinX(); x < maxX; x++)
 			{
-				// Translate coordinates from the raster's space to the SampleModel's space.
-				int dstInX = -dstIn.getSampleModelTranslateX() + x;
-				int dstInY = -dstIn.getSampleModelTranslateY() + y;
-
 				// Get the depth (z) for both the destination and source rasters.
-				double dstZ = getZOf(dstInX, dstInY);
-				double srcZ = getEntity().getDepthSort(x, y);
+				double dstZ = getZOf(dstInX + x, dstInY + y);
+				double srcZ = _Entity.getDepthSort(x, y);
 
 				// If to overwrite or keep the source raster's data.
-				if (srcZ > dstZ)
+				if (srcZ > dstZ && src.getSample(x, y, A_BAND) > 0)
 				{
-					setZOf(dstInX, dstInY, srcZ);
+					setZOf(dstInX + x, dstInY + y, srcZ);
 					dstOut.setSample(x, y, R_BAND, src.getSample(x, y, R_BAND)); // R
 					dstOut.setSample(x, y, G_BAND, src.getSample(x, y, G_BAND)); // G
 					dstOut.setSample(x, y, B_BAND, src.getSample(x, y, B_BAND)); // B
 				}
-				else if (srcZ == dstZ)
+				else if (srcZ == dstZ && src.getSample(x, y, A_BAND) > 0)
 				{
 					dstOut.setSample(x, y, R_BAND, src.getSample(x, y, R_BAND)); // R
 					dstOut.setSample(x, y, G_BAND, src.getSample(x, y, G_BAND)); // G
@@ -98,6 +111,10 @@ public class DepthComposite implements Composite, CompositeContext
 				}
 			}
 		}
+
+		// Save the output raster.
+		// _OutputRaster = dstOut.createCompatibleWritableRaster();
+		// _OutputRaster.setRect(dstOut);
 	}
 
 	/**
@@ -105,6 +122,17 @@ public class DepthComposite implements Composite, CompositeContext
 	 */
 	public void dispose()
 	{
+	}
+
+	/**
+	 * Notify the depth composite that the current frame has come to an end.
+	 */
+	public void endFrame()
+	{
+		// Increment the counter and reset it if need be.
+		_FrameSkipCount = (_FrameSkipCount >= 0) ? 0 : _FrameSkipCount + 1;
+		// Clear the z-buffer.
+		clearBufferBit();
 	}
 
 	/**

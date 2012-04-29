@@ -24,6 +24,8 @@ public class Scene
 	private PhysicsSimulator _Physics;
 	// List of entities.
 	private ArrayList<Entity> _Entities;
+	// The composite z-buffer.
+	private DepthComposite _Composite;
 
 	/**
 	 * Empty constructor for a scene.
@@ -56,6 +58,7 @@ public class Scene
 		_SceneManager = manager;
 		_Entities = new ArrayList<>();
 		_Physics = new PhysicsSimulator();
+		_Composite = new DepthComposite(_SceneManager.getCamera().getViewportSize());
 
 		// Let the debug manager know about the physics simulator.
 		DebugManager.getInstance().setPhysicsSimulator(_Physics);
@@ -115,7 +118,7 @@ public class Scene
 	public void draw(Graphics2D graphics)
 	{
 		// Enable depth sorting by composite.
-		graphics.setComposite(new DepthComposite(_SceneManager.getCamera().getViewportSize()));
+		graphics.setComposite(_Composite);
 
 		// Draw all entities.
 		for (Entity entity : _Entities)
@@ -124,6 +127,9 @@ public class Scene
 			((DepthComposite) graphics.getComposite()).setEntity(entity);
 			entity.draw(graphics);
 		}
+
+		// Notify the depth composite that the frame has ended, at least for the scene.
+		_Composite.endFrame();
 	}
 
 	/**

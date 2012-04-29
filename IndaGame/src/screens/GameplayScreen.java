@@ -110,7 +110,7 @@ public class GameplayScreen extends GameScreen
 		DebugManager.getInstance().debug = true;
 
 		// Create the scene.
-		_Scene = _SceneManager.addScene(new Scene());
+		_Scene = _SceneManager.addScene(new Scene(_SceneManager));
 
 		// Create the player.
 		_Player = new Player(_Scene.getPhysicsSimulator());
@@ -125,22 +125,22 @@ public class GameplayScreen extends GameScreen
 		_Shelf1 = new Entity(_Scene.getPhysicsSimulator());
 		_Shelf1.getBody().setPosition(new Vector3(940, 1025, 0));
 		_Shelf1.getBody().setIsStatic(true);
-		
+
 		// Create the shelf (east of pathway platform 3).
 		_Shelf2 = new Entity(_Scene.getPhysicsSimulator());
 		_Shelf2.getBody().setPosition(new Vector3(1270, 1080, 0));
 		_Shelf2.getBody().setIsStatic(true);
-		
+
 		// Create the shelf (south of block 4).
 		_Shelf3 = new Entity(_Scene.getPhysicsSimulator());
 		_Shelf3.getBody().setPosition(new Vector3(900, 945, 0));
 		_Shelf3.getBody().setIsStatic(true);
-		
+
 		// Create the shelf (south of dark block 11).
 		_Shelf4 = new Entity(_Scene.getPhysicsSimulator());
 		_Shelf4.getBody().setPosition(new Vector3(1300, 940, 0));
 		_Shelf4.getBody().setIsStatic(true);
-		
+
 		// Create the shelf (south of dark block 7).
 		_Shelf5 = new Entity(_Scene.getPhysicsSimulator());
 		_Shelf5.getBody().setPosition(new Vector3(670, 850, 0));
@@ -165,12 +165,12 @@ public class GameplayScreen extends GameScreen
 		_Block4 = new Entity(_Scene.getPhysicsSimulator());
 		_Block4.getBody().setPosition(new Vector3(710.5, 875.5, 0));
 		_Block4.getBody().setIsStatic(true);
-		
+
 		// Create a block (north of dark block 5, main stairs).
 		_Block5 = new Entity(_Scene.getPhysicsSimulator());
 		_Block5.getBody().setPosition(new Vector3(1000, 794.5, 0));
 		_Block5.getBody().setIsStatic(true);
-		
+
 		// Create a block (east of block 2).
 		_Block6 = new Entity(_Scene.getPhysicsSimulator());
 		_Block6.getBody().setPosition(new Vector3(1324, 940, 0));
@@ -200,42 +200,42 @@ public class GameplayScreen extends GameScreen
 		_DarkBlock5 = new Entity(_Scene.getPhysicsSimulator());
 		_DarkBlock5.getBody().setPosition(new Vector3(1000, 872, 0));
 		_DarkBlock5.getBody().setIsStatic(true);
-		
+
 		// Create a dark block (north of block 4, west stairs).
 		_DarkBlock6 = new Entity(_Scene.getPhysicsSimulator());
 		_DarkBlock6.getBody().setPosition(new Vector3(710.5, 771, 0));
 		_DarkBlock6.getBody().setIsStatic(true);
-		
+
 		// Create a dark block (north of block 3, east of dark block 6).
 		_DarkBlock7 = new Entity(_Scene.getPhysicsSimulator());
 		_DarkBlock7.getBody().setPosition(new Vector3(847.5, 818, 0));
 		_DarkBlock7.getBody().setIsStatic(true);
-		
+
 		// Create a dark block (north of block 5, main stairs).
 		_DarkBlock8 = new Entity(_Scene.getPhysicsSimulator());
 		_DarkBlock8.getBody().setPosition(new Vector3(895, 720, 0));
 		_DarkBlock8.getBody().setIsStatic(true);
-		
+
 		// Create a dark block (east of dark block 2).
 		_DarkBlock9 = new Entity(_Scene.getPhysicsSimulator());
 		_DarkBlock9.getBody().setPosition(new Vector3(1283, 1000, 0));
 		_DarkBlock9.getBody().setIsStatic(true);
-		
+
 		// Create a dark block (north of block 2).
 		_DarkBlock10 = new Entity(_Scene.getPhysicsSimulator());
 		_DarkBlock10.getBody().setPosition(new Vector3(1180, 830.5, 0));
 		_DarkBlock10.getBody().setIsStatic(true);
-		
+
 		// Create a dark block (east of dark block 10).
 		_DarkBlock11 = new Entity(_Scene.getPhysicsSimulator());
 		_DarkBlock11.getBody().setPosition(new Vector3(1317, 863.5, 0));
 		_DarkBlock11.getBody().setIsStatic(true);
-		
+
 		// Create a dark block (south of pathway platform 2).
 		_DarkBlock12 = new Entity(_Scene.getPhysicsSimulator());
 		_DarkBlock12.getBody().setPosition(new Vector3(1257, 1183, 0));
 		_DarkBlock12.getBody().setIsStatic(true);
-		
+
 		// Create a dark block (north of block 5, east of dark block 8, main stairs).
 		_DarkBlock13 = new Entity(_Scene.getPhysicsSimulator());
 		_DarkBlock13.getBody().setPosition(new Vector3(1128, 720, 0));
@@ -264,25 +264,25 @@ public class GameplayScreen extends GameScreen
 		_Stairs4.getBody().setPosition(new Vector3(807.5, 942, 0));
 		_Stairs4.getBody().setIsStatic(true);
 		_Stairs4.getBody().getShape().setDepthDistribution(DepthDistribution.Left);
-		
+
 		// Create a staircase (east of dark block 7).
 		_Stairs5 = new Entity(_Scene.getPhysicsSimulator());
 		_Stairs5.getBody().setPosition(new Vector3(755, 868.5, 0));
 		_Stairs5.getBody().setIsStatic(true);
 		_Stairs5.getBody().getShape().setDepthDistribution(DepthDistribution.Right);
-		
+
 		// Create a staircase (north of block 5, main stairs).
 		_Stairs6 = new Entity(_Scene.getPhysicsSimulator());
 		_Stairs6.getBody().setPosition(new Vector3(1000, 861, 0));
 		_Stairs6.getBody().setIsStatic(true);
 		_Stairs6.getBody().getShape().setDepthDistribution(DepthDistribution.Top);
-		
+
 		// Create a staircase (south of dark block 8, main stairs).
 		_Stairs7 = new Entity(_Scene.getPhysicsSimulator());
 		_Stairs7.getBody().setPosition(new Vector3(1000, 778, 0));
 		_Stairs7.getBody().setIsStatic(true);
 		_Stairs7.getBody().getShape().setDepthDistribution(DepthDistribution.Top);
-		
+
 		// Create a staircase (west of dark block 11).
 		_Stairs8 = new Entity(_Scene.getPhysicsSimulator());
 		_Stairs8.getBody().setPosition(new Vector3(1224.5, 914, 0));
@@ -315,7 +315,7 @@ public class GameplayScreen extends GameScreen
 		_PathwayPlatform2 = new Entity(_Scene.getPhysicsSimulator());
 		_PathwayPlatform2.getBody().setPosition(new Vector3(1149, 1107.5, 0));
 		_PathwayPlatform2.getBody().setIsStatic(true);
-		
+
 		// Create a pathway platform (south of dark block 9).
 		_PathwayPlatform3 = new Entity(_Scene.getPhysicsSimulator());
 		_PathwayPlatform3.getBody().setPosition(new Vector3(1305, 1107.5, 0));
