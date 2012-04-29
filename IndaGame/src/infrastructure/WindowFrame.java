@@ -13,6 +13,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferStrategy;
+import java.awt.image.ColorModel;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -89,6 +90,8 @@ public class WindowFrame extends JFrame
 	{
 		// Get the Graphics instance and translate it to the right position.
 		_Graphics = (Graphics2D) strategy.getDrawGraphics();
+		ColorModel cm = _Graphics.getDeviceConfiguration().getColorModel();
+		
 		// Clear the back-buffer.
 		_Graphics.setColor(_BackBufferColor);
 		_Graphics.fillRect(0, 0, getWidth(), getHeight());

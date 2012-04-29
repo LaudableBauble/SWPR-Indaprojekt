@@ -1,10 +1,10 @@
 package main;
 
+import graphics.DepthComposite;
 import graphics.Frame;
 import graphics.Sprite;
 import graphics.SpriteManager;
 import infrastructure.GameTimer;
-import infrastructure.zBuffer.DepthComposite;
 import input.InputManager;
 
 import java.awt.Graphics2D;
@@ -32,6 +32,8 @@ public class Entity
 	protected SpriteManager _Sprites;
 	// @XmlElement
 	protected Body _Body;
+	// Depth values used for the z-buffer.
+	protected double[][] _DepthValues;
 
 	/**
 	 * Constructor for an entity.
@@ -94,6 +96,9 @@ public class Entity
 
 		// Update the sprite's position offset.
 		_Sprites.getSprite(0).setPositionOffset(new Vector2(0, -_Sprites.getSprite(0).getCurrentFrame().getOrigin().y + (_Body.getShape().getHeight() / 2)));
+
+		// Set up the depth values.
+		setUpDepthValues();
 	}
 
 	/**
@@ -141,6 +146,47 @@ public class Entity
 	{
 		// Draw the sprite.
 		_Sprites.draw(graphics);
+	}
+
+	/**
+	 * Set up the array of depth values anew.
+	 */
+	public void setUpDepthValues()
+	{
+		// Set up the depth values.
+		_DepthValues = new double[(int) _Sprites.getSprite(0).getCurrentFrame().getWidth()][(int) _Sprites.getSprite(0).getCurrentFrame().getHeight()];
+		for (int x = 0; x < _Sprites.getSprite(0).getCurrentFrame().getWidth(); x++)
+		{
+			for (int y = 0; y < _Sprites.getSprite(0).getCurrentFrame().getHeight(); y++)
+			{
+				_DepthValues[x][y] = _Body.getShape().getDepthSort(x, y);
+			}
+		}
+	}
+
+	/**
+	 * Get a depth sorting value for this entity at the given local x and y-coordinates, ie. as seen from its image.
+	 * 
+	 * @param x
+	 *            The local x-coordinate.
+	 * @param y
+	 *            The local y-coordinate.
+	 * @return The depth sorting value for this entity.
+	 */
+	public double getDepthSort(int x, int y)
+	{
+		// If the position exists in the depth value array, return it from there.
+		try
+		{
+			return _DepthValues[x][y];
+		}
+		catch (Exception e)
+		{
+			System.out.println(this + ": Error getting depth sorting value. (" + e + ")");
+		}
+
+		// No stored depth value found, get a fresh one.
+		return _Body.getShape().getDepthSort(x, y);
 	}
 
 	/**

@@ -1,7 +1,7 @@
 package main;
 
+import graphics.DepthComposite;
 import infrastructure.GameTimer;
-import infrastructure.zBuffer.DepthComposite;
 import input.InputManager;
 
 import java.awt.Graphics2D;
@@ -97,7 +97,7 @@ public class Scene
 		_Physics.update();
 
 		// Sort the list of entities by descending depth.
-		Collections.sort(_Entities, new EntityDepthComparator());
+		// Collections.sort(_Entities, new EntityDepthComparator());
 
 		// Update all entities.
 		for (Entity entity : _Entities)
@@ -115,13 +115,13 @@ public class Scene
 	public void draw(Graphics2D graphics)
 	{
 		// Enable depth sorting by composite.
-		//graphics.setComposite(new DepthComposite(_SceneManager.getCamera().getViewportSize()));
+		graphics.setComposite(new DepthComposite(_SceneManager.getCamera().getViewportSize()));
 
 		// Draw all entities.
 		for (Entity entity : _Entities)
 		{
 			// Prepare the graphics device for depth-sorting.
-			//((DepthComposite) graphics.getComposite()).setShape(entity.getBody().getShape());
+			((DepthComposite) graphics.getComposite()).setEntity(entity);
 			entity.draw(graphics);
 		}
 	}

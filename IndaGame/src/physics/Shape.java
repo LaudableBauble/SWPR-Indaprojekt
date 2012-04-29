@@ -524,13 +524,13 @@ public class Shape
 	}
 
 	/**
-	 * Get the height of this shape at the given local x and y-coordinates, ie. as seen from its image.
+	 * Get a depth sorting value for this shape at the given local x and y-coordinates, ie. as seen from its image.
 	 * 
 	 * @param x
 	 *            The local x-coordinate.
 	 * @param y
 	 *            The local y-coordinate.
-	 * @return The height of this shape.
+	 * @return The depth sorting value for this shape.
 	 */
 	public double getDepthSort(double x, double y)
 	{
@@ -540,20 +540,23 @@ public class Shape
 		double dy = _Position.y;
 		double dz = _Position.z;
 
+		// The depth at the current position.
+		double depth = getTopDepth(new Vector2(x, y)) - (_Position.z - _Depth / 2);
+
 		// If the coordinates is within bounds on the x-axis.
 		if (x >= 0 && x <= _Width)
 		{
 			// If the coordinates match the front 'face' of the shape.
-			if (y >= _Height && y <= _Depth + _Height)
+			if (y >= _Height && y <= depth + _Height)
 			{
 				dy = _Position.y + _Height / 2;
-				dz = _Position.z + _Depth / 2 - y - _Height;
+				dz = _Position.z + depth / 2 - (y - _Height);
 			}
 			// If the coordinates match the top 'face' of the shape.
-			else if (y >= 0 && y <= _Depth)
+			else if (y >= 0 && y <= _Height)
 			{
 				dy = _Position.y - _Height / 2 + y;
-				dz = _Position.z + _Depth / 2;
+				dz = _Position.z + depth / 2;
 			}
 		}
 

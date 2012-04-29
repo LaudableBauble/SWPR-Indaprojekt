@@ -112,9 +112,10 @@ public class Character extends Entity
 		// Set the shape of the body.
 		_Body.getShape().setWidth(_Sprites.getSprite(0).getCurrentFrame().getWidth());
 		_Body.getShape().setHeight(_Sprites.getSprite(0).getCurrentFrame().getHeight() / 2);
+		_Body.getShape().setDepth(_Sprites.getSprite(0).getCurrentFrame().getHeight());
 
-		// Set the depth.
-		_Body.getShape().setDepth(5);
+		// Set up the depth values.
+		setUpDepthValues();
 	}
 
 	/**
@@ -161,7 +162,7 @@ public class Character extends Entity
 		// Subtract the time to walk and wait, effectively resetting the timer.
 		_ElapsedTime -= _TimeToWalk + _TimeToWait;
 		// Generate a new time to walk and wait.
-		_TimeToWalk = 1 + (int)( Math.random() * 2);
+		_TimeToWalk = 1 + (int) (Math.random() * 2);
 		_TimeToWait = 1 + (int) (Math.random() * 2);
 	}
 
