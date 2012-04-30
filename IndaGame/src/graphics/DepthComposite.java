@@ -27,8 +27,6 @@ public class DepthComposite implements Composite, CompositeContext
 	protected int _Width;
 	protected int _Height;
 	protected Entity _Entity;
-	protected WritableRaster _OutputRaster;
-	protected int _FrameSkipCount;
 
 	public DepthComposite(Vector2 size)
 	{
@@ -40,8 +38,6 @@ public class DepthComposite implements Composite, CompositeContext
 		buffer = new double[_Height * _Width];
 		clearBuffer = new double[_Height * _Width];
 		Arrays.fill(clearBuffer, Double.MIN_VALUE);
-		_OutputRaster = null;
-		_FrameSkipCount = 0;
 		clearBufferBit();
 	}
 
@@ -58,63 +54,66 @@ public class DepthComposite implements Composite, CompositeContext
 	 */
 	public void compose(Raster src, Raster dstIn, WritableRaster dstOut)
 	{
-		// If not time to update the depth-sorting and general drawing yet, use the stored output raster.
-		if (_OutputRaster != null && _FrameSkipCount != 0)
-		{
-			// Overwrite the current output raster with an old one.
-			dstOut.setRect(_OutputRaster);
-			return;
-		}
-
 		if (_Entity == null) { throw new IllegalArgumentException("You must set an entity before drawing anything with this composite."); }
 
-		// Get the max bounds of the writable raster.
-		int maxX = dstOut.getMinX() + dstOut.getWidth();
-		int maxY = dstOut.getMinY() + dstOut.getHeight();
-
-		// Translate coordinates from the raster's space to the SampleModel's space.
-		int dstInX = -dstIn.getSampleModelTranslateX();
-		int dstInY = -dstIn.getSampleModelTranslateY();
-
-		// For each pixel in the writable raster.
-		for (int y = dstOut.getMinY(); y < maxY; y++)
+		try
 		{
-			// If the entity's shape has a uniform depth distribution, ie. it is not a slope, do not iterate through the width of the image
-			// because all x-coordinates will return the same depth value.
-			// If the source image sample slice contains alpha values however we have to iterate through all its pixels anyway.
+			// Get the max bounds of the writable raster.
+			int maxX = dstOut.getMinX() + dstOut.getWidth();
+			int maxY = dstOut.getMinY() + dstOut.getHeight();
 
-			for (int x = dstOut.getMinX(); x < maxX; x++)
+			// Translate coordinates from the raster's space to the SampleModel's space.
+			int dstInX = -dstIn.getSampleModelTranslateX();
+			int dstInY = -dstIn.getSampleModelTranslateY();
+
+			// Whether the source raster supports a 4th color band, ie. alpha.
+			boolean supportsAlpha = src.getNumBands() >= 3;
+
+			// For each pixel in the writable raster.
+			for (int y = dstOut.getMinY(); y < maxY; y++)
 			{
-				// Get the depth (z) for both the destination and source rasters.
-				double dstZ = getZOf(dstInX + x, dstInY + y);
-				double srcZ = _Entity.getDepthSort(x, y);
+				for (int x = dstOut.getMinX(); x < maxX; x++)
+				{
+					// Get the depth (z) for both the destination and source rasters.
+					double dstZ = getZOf(dstInX + x, dstInY + y);
+					double srcZ = _Entity.getDepthSort(x, y);
 
-				// If to overwrite or keep the source raster's data.
-				if (srcZ > dstZ && src.getSample(x, y, A_BAND) > 0)
-				{
-					setZOf(dstInX + x, dstInY + y, srcZ);
-					dstOut.setSample(x, y, R_BAND, src.getSample(x, y, R_BAND)); // R
-					dstOut.setSample(x, y, G_BAND, src.getSample(x, y, G_BAND)); // G
-					dstOut.setSample(x, y, B_BAND, src.getSample(x, y, B_BAND)); // B
-				}
-				else if (srcZ == dstZ && src.getSample(x, y, A_BAND) > 0)
-				{
-					dstOut.setSample(x, y, R_BAND, src.getSample(x, y, R_BAND)); // R
-					dstOut.setSample(x, y, G_BAND, src.getSample(x, y, G_BAND)); // G
-					dstOut.setSample(x, y, B_BAND, src.getSample(x, y, B_BAND)); // B
-				}
-				else
-				{
-					dstOut.setSample(x, y, R_BAND, dstIn.getSample(x, y, R_BAND)); // R
-					dstOut.setSample(x, y, G_BAND, dstIn.getSample(x, y, G_BAND)); // G
-					dstOut.setSample(x, y, B_BAND, dstIn.getSample(x, y, B_BAND)); // B
+					if (!supportsAlpha)
+					{
+						int a = 0;
+						a++;
+					}
+
+					// Get the pixel's alpha value.
+					int alpha = supportsAlpha ? src.getSample(x, y, A_BAND) : 1;
+
+					// If to overwrite or keep the source raster's data.
+					if (srcZ > dstZ && alpha > 0)
+					{
+						setZOf(dstInX + x, dstInY + y, srcZ);
+						dstOut.setSample(x, y, R_BAND, src.getSample(x, y, R_BAND)); // R
+						dstOut.setSample(x, y, G_BAND, src.getSample(x, y, G_BAND)); // G
+						dstOut.setSample(x, y, B_BAND, src.getSample(x, y, B_BAND)); // B
+					}
+					else if (srcZ == dstZ && alpha > 0)
+					{
+						dstOut.setSample(x, y, R_BAND, src.getSample(x, y, R_BAND)); // R
+						dstOut.setSample(x, y, G_BAND, src.getSample(x, y, G_BAND)); // G
+						dstOut.setSample(x, y, B_BAND, src.getSample(x, y, B_BAND)); // B
+					}
+					else
+					{
+						dstOut.setSample(x, y, R_BAND, dstIn.getSample(x, y, R_BAND)); // R
+						dstOut.setSample(x, y, G_BAND, dstIn.getSample(x, y, G_BAND)); // G
+						dstOut.setSample(x, y, B_BAND, dstIn.getSample(x, y, B_BAND)); // B
+					}
 				}
 			}
 		}
-
-		// Save the output raster.
-		// _OutputRaster = dstOut.createCompatibleWritableRaster();
-		// _OutputRaster.setRect(dstOut);
+		catch (Exception e)
+		{
+			System.out.println(this + ": Depth Composite Error. (" + e + ", Entity: " + _Entity.getName() + ")");
+		}
 	}
 
 	/**
@@ -129,8 +128,6 @@ public class DepthComposite implements Composite, CompositeContext
 	 */
 	public void endFrame()
 	{
-		// Increment the counter and reset it if need be.
-		_FrameSkipCount = (_FrameSkipCount >= 0) ? 0 : _FrameSkipCount + 1;
 		// Clear the z-buffer.
 		clearBufferBit();
 	}

@@ -276,7 +276,7 @@ public final class Helper
 		try
 		{
 			// Load the image and return it.
-			return ImageIO.read(new File(path));
+			return makeCompatible(ImageIO.read(new File(path)));
 		}
 		// Catch.
 		catch (Exception e)
@@ -287,6 +287,28 @@ public final class Helper
 			System.exit(0);
 			return null;
 		}
+	}
+
+	/**
+	 * Makes an image compatible to the depth composite, ie. it forces the image to use a component color model.
+	 * 
+	 * @param image
+	 *            The image to make compatible.
+	 * @return The compatible image.
+	 */
+	public static BufferedImage makeCompatible(BufferedImage image)
+	{
+		// Create the compatible image.
+		//BufferedImage compatible = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
+		BufferedImage compatible = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+
+		// Draw the image onto the ensured compatible image, converting their color model's in the process.
+		Graphics2D g = compatible.createGraphics();
+		g.drawRenderedImage(image, new AffineTransform());
+		g.dispose();
+
+		// Return the compatible image.
+		return compatible;
 	}
 
 	/**

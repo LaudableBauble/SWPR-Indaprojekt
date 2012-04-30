@@ -129,20 +129,20 @@ public class Sprite
 			// graphics.transform(AffineTransform.getRotateInstance(_Rotation).getScaleInstance(_Scale, _Scale));
 
 			// Rotate and scale the sprite.
-			AffineTransform matrix = new AffineTransform();
+			/*AffineTransform matrix = new AffineTransform();
 			matrix.translate(_Frames.get(_FrameIndex).getOrigin().x, _Frames.get(_FrameIndex).getOrigin().y);
 			matrix.rotate(_Rotation);
 			matrix.scale(_Scale, _Scale);
 			matrix.translate(-_Frames.get(_FrameIndex).getOrigin().x / _Scale, -_Frames.get(_FrameIndex).getOrigin().y / _Scale);
 
-			BufferedImageOp bio = new AffineTransformOp(matrix, AffineTransformOp.TYPE_BILINEAR);
+			BufferedImageOp bio = new AffineTransformOp(matrix, AffineTransformOp.TYPE_BILINEAR);*/
 
 			// The 'real' position, including the offset and origin.
 			Vector2 position = Vector2.subtract(Vector2.add(_Position, _PositionOffset), _Frames.get(_FrameIndex).getOrigin());
 
 			// Draw the sprite.
-			// graphics.drawImage(_Texture, (int) _Position.x, (int) _Position.y, null);
-			graphics.drawImage(bio.filter(_Texture, null), (int) position.x, (int) position.y, null);
+			graphics.drawImage(_Texture, (int) position.x, (int) position.y, null);
+			//graphics.drawImage(bio.filter(_Texture, null), (int) position.x, (int) position.y, null);
 
 			// Revert to the old matrix configuration.
 			// graphics.setTransform(old);

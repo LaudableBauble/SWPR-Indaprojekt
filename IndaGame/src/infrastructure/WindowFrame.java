@@ -56,6 +56,7 @@ public class WindowFrame extends JFrame
 		// Set the panel's bounds and transparance.
 		panel.setPreferredSize(new Dimension(WIDTH, HEIGHT));
 		panel.setOpaque(false);
+		panel.setDoubleBuffered(false);
 
 		// Set the back-buffer color to gray.
 		_BackBufferColor = Color.gray;

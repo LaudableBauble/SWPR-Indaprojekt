@@ -187,9 +187,6 @@ public class DebugManager
 				// Save the old graphics matrix and insert the camera matrix in its place.
 				AffineTransform oldMatrix = graphics.getTransform();
 				graphics.setTransform(_Transform);
-				
-				//Nullify the depth composite.
-				graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
 
 				// The body's shape and position on screen.
 				Shape shape = b.getShape().getLayeredShape(debugBody.getShape().getBottomDepth());

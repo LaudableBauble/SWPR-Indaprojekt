@@ -4,6 +4,7 @@ import graphics.DepthComposite;
 import infrastructure.GameTimer;
 import input.InputManager;
 
+import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -118,6 +119,7 @@ public class Scene
 	public void draw(Graphics2D graphics)
 	{
 		// Enable depth sorting by composite.
+		Composite old = graphics.getComposite();
 		graphics.setComposite(_Composite);
 
 		// Draw all entities.
@@ -130,6 +132,7 @@ public class Scene
 
 		// Notify the depth composite that the frame has ended, at least for the scene.
 		_Composite.endFrame();
+		graphics.setComposite(old);
 	}
 
 	/**
