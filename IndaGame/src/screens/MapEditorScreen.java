@@ -30,6 +30,8 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import scenes.SmallDemoScene;
+
 import main.Entity;
 import main.Player;
 import main.Scene;
@@ -50,8 +52,6 @@ public class MapEditorScreen extends GameScreen
 	private SceneManager _SceneManager;
 	// The camera.
 	private Camera2D _Camera;
-	// The scene.
-	private Scene _Scene;
 
 	// The GUI.
 	private JTabbedPane _Tabs;
@@ -64,16 +64,6 @@ public class MapEditorScreen extends GameScreen
 	private DefaultMutableTreeNode _SelectedNode;
 	// The selected entity.
 	private Entity _SelectedEntity;
-
-	// The player.
-	private Player _Player;
-
-	// Entities.
-	private Entity _Shelf;
-	private Entity _Block1;
-	private Entity _Block2;
-	private Entity _Stairs;
-	private Entity _Floor;
 
 	/**
 	 * Constructor for a map editor screen.
@@ -141,46 +131,7 @@ public class MapEditorScreen extends GameScreen
 		DebugManager.getInstance().debug = true;
 
 		// Create the scene.
-		_Scene = _SceneManager.addScene(new Scene());
-
-		// Create the player.
-		_Player = new Player(_Scene.getPhysicsSimulator());
-		_Player.getBody().setBottomPosition(new Vector3(910, 1080, 100));
-		DebugManager.getInstance().setDebugBody(_Player.getBody());
-
-		// Create the shelf.
-		_Shelf = new Entity(_Scene.getPhysicsSimulator());
-		_Shelf.getBody().setPosition(new Vector3(1100, 1100, 0));
-		_Shelf.getBody().setIsStatic(true);
-
-		// Create a block.
-		_Block1 = new Entity(_Scene.getPhysicsSimulator());
-		_Block1.getBody().setPosition(new Vector3(950, 933.5, 0));
-		_Block1.getBody().setIsStatic(true);
-
-		// Create a block.
-		_Block2 = new Entity(_Scene.getPhysicsSimulator());
-		_Block2.getBody().setPosition(new Vector3(1000, 1020, 0));
-		_Block2.getBody().setIsStatic(true);
-
-		// Create a staircase.
-		_Stairs = new Entity(_Scene.getPhysicsSimulator());
-		_Stairs.getBody().setPosition(new Vector3(930, 1080, 0));
-		_Stairs.getBody().setIsStatic(true);
-		_Stairs.getBody().getShape().setDepthDistribution(DepthDistribution.Right);
-
-		// Create the floor.
-		_Floor = new Entity(_Scene.getPhysicsSimulator());
-		_Floor.getBody().setPosition(new Vector3(1000, 1000, 0));
-		_Floor.getBody().setIsStatic(true);
-
-		// Add all entities to the scene.
-		_Scene.addEntity(_Player);
-		_Scene.addEntity(_Shelf);
-		_Scene.addEntity(_Block1);
-		_Scene.addEntity(_Block2);
-		_Scene.addEntity(_Stairs);
-		_Scene.addEntity(_Floor);
+		_SceneManager.addScene(new SmallDemoScene(_SceneManager));
 	}
 
 	/**
@@ -194,23 +145,8 @@ public class MapEditorScreen extends GameScreen
 		// Load the scene manager's content.
 		_SceneManager.loadContent();
 
-		// Load the player's content.
-		_Player.loadContent();
-		_Shelf.loadContent("Bookshelf[1].png", 12);
-		_Block1.loadContent("ElevatedBlock[3].png", 48);
-		_Block2.loadContent("ElevatedBlock[2].png", 85);
-		_Stairs.loadContent("StoneStairsRight[2].png", 33);
-		_Floor.loadContent("DarkTiledFloor[1].png");
-
-		// Set their depths.
-		_Shelf.getBody().getShape().setBottomDepth(1);
-		_Block1.getBody().getShape().setBottomDepth(1);
-		_Block2.getBody().getShape().setBottomDepth(1);
-		_Stairs.getBody().getShape().setBottomDepth(1);
-		_Floor.getBody().getShape().setBottomDepth(0);
-
 		// Set the info panel's entity.
-		_InfoPanel.setEntity(_Player);
+		_InfoPanel.setEntity(_SceneManager.getCurrentScene().getEntities().get(0));
 
 		// Once the load has finished, we use ResetElapsedTime to tell the game's
 		// timing mechanism that we have just finished a very long frame, and that
@@ -378,11 +314,11 @@ public class MapEditorScreen extends GameScreen
 			// Remove the old entity from the scene and physics simulator.
 			if (_SelectedEntity != null)
 			{
-				_Scene.removeEntity(_SelectedEntity);
+				_SceneManager.getCurrentScene().removeEntity(_SelectedEntity);
 			}
 
 			// Create an entity from the selected node.
-			Entity entity = new Entity(_Scene.getPhysicsSimulator());
+			Entity entity = new Entity(_SceneManager.getCurrentScene().getPhysicsSimulator());
 
 			// If the node is not null, continue.
 			if (_SelectedNode != null)
@@ -390,7 +326,7 @@ public class MapEditorScreen extends GameScreen
 				// Load the entity's content. Remove the first 10 characters from parent (src/data/images).
 				entity.loadContent(_SelectedNode.getParent().toString().substring(15) + "\\" + _SelectedNode.toString());
 				// Add the entity to the scene.
-				_Scene.addEntity(entity);
+				_SceneManager.getCurrentScene().addEntity(entity);
 			}
 
 			// Add the entity to the info panel.

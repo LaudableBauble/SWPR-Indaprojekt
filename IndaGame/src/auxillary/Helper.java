@@ -277,6 +277,7 @@ public final class Helper
 		{
 			// Load the image and return it.
 			return makeCompatible(ImageIO.read(new File(path)));
+			// return ImageIO.read(new File(path));
 		}
 		// Catch.
 		catch (Exception e)
@@ -299,7 +300,7 @@ public final class Helper
 	public static BufferedImage makeCompatible(BufferedImage image)
 	{
 		// Create the compatible image.
-		//BufferedImage compatible = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
+		// BufferedImage compatible = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
 		BufferedImage compatible = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
 
 		// Draw the image onto the ensured compatible image, converting their color model's in the process.

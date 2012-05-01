@@ -100,9 +100,6 @@ public class Scene
 		// Update the physics simulator.
 		_Physics.update();
 
-		// Sort the list of entities by descending depth.
-		// Collections.sort(_Entities, new EntityDepthComparator());
-
 		// Update all entities.
 		for (Entity entity : _Entities)
 		{
@@ -121,6 +118,7 @@ public class Scene
 		// Enable depth sorting by composite.
 		Composite old = graphics.getComposite();
 		graphics.setComposite(_Composite);
+		// graphics.setComposite(new DepthComposite(_SceneManager.getCamera().getViewportSize()));
 
 		// Draw all entities.
 		for (Entity entity : _Entities)
@@ -179,5 +177,15 @@ public class Scene
 	public void setSceneManager(SceneManager manager)
 	{
 		_SceneManager = manager;
+	}
+	
+	/**
+	 * Get the list of entities.
+	 * 
+	 * @return List of entities.
+	 */
+	public ArrayList<Entity> getEntities()
+	{
+		return _Entities;
 	}
 }

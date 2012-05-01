@@ -82,12 +82,6 @@ public class SceneManager
 	 */
 	public void update(GameTimer gameTime)
 	{
-		// Set the current scene if it has not already.
-		if (_CurrentScene == null && _Scenes.size() > 0)
-		{
-			_CurrentScene = _Scenes.get(0);
-		}
-
 		// Update the current scene.
 		if (_CurrentScene != null)
 		{
@@ -134,6 +128,13 @@ public class SceneManager
 		// Add the scene and set its manager.
 		_Scenes.add(scene);
 		scene.setSceneManager(this);
+
+		// Set the current scene if it has not already.
+		if (_CurrentScene == null && _Scenes.size() > 0)
+		{
+			_CurrentScene = _Scenes.get(0);
+		}
+
 		return scene;
 	}
 
@@ -145,5 +146,15 @@ public class SceneManager
 	public Camera2D getCamera()
 	{
 		return _Camera;
+	}
+
+	/**
+	 * Get the currently active scene.
+	 * 
+	 * @return The active scene.
+	 */
+	public Scene getCurrentScene()
+	{
+		return _CurrentScene;
 	}
 }
