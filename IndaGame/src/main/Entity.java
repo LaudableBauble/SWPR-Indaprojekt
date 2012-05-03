@@ -1,6 +1,5 @@
 package main;
 
-import graphics.DepthComposite;
 import graphics.Frame;
 import graphics.Sprite;
 import graphics.SpriteManager;
@@ -9,9 +8,12 @@ import input.InputManager;
 
 import java.awt.Graphics2D;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import physics.Body;
 import physics.PhysicsSimulator;
@@ -22,18 +24,16 @@ import auxillary.Vector3;
 /**
  * An entity, sporting a body and a sprite, is the most basic building blocks of the physical game world.
  */
-@XmlRootElement
 public class Entity
 {
 	// The name of the entity. Primarily used as file name when serialized.
-	private String _Name;
+	@XmlElement(name = "Name")
+	protected String _Name;
 	// The Sprite and Body.
-	// @XmlElement
+	// @XmlElement(name = "Sprites")
 	protected SpriteManager _Sprites;
-	// @XmlElement
+	// @XmlElement(name = "Body")
 	protected Body _Body;
-	// Depth values used for the z-buffer.
-	protected double[][] _DepthValues;
 
 	/**
 	 * Constructor for an entity.
@@ -96,9 +96,6 @@ public class Entity
 
 		// Update the sprite's position offset.
 		_Sprites.getSprite(0).setPositionOffset(new Vector2(0, -_Sprites.getSprite(0).getCurrentFrame().getOrigin().y + (_Body.getShape().getHeight() / 2)));
-
-		// Set up the depth values.
-		setUpDepthValues();
 	}
 
 	/**
@@ -149,22 +146,6 @@ public class Entity
 	}
 
 	/**
-	 * Set up the array of depth values anew.
-	 */
-	public void setUpDepthValues()
-	{
-		// Set up the depth values.
-		_DepthValues = new double[(int) _Sprites.getSprite(0).getCurrentFrame().getWidth()][(int) _Sprites.getSprite(0).getCurrentFrame().getHeight()];
-		for (int x = 0; x < _Sprites.getSprite(0).getCurrentFrame().getWidth(); x++)
-		{
-			for (int y = 0; y < _Sprites.getSprite(0).getCurrentFrame().getHeight(); y++)
-			{
-				_DepthValues[x][y] = _Body.getShape().getDepthSort(x, y);
-			}
-		}
-	}
-
-	/**
 	 * Get a depth sorting value for this entity at the given local x and y-coordinates, ie. as seen from its image.
 	 * 
 	 * @param x
@@ -175,16 +156,6 @@ public class Entity
 	 */
 	public double getDepthSort(int x, int y)
 	{
-		// If the position exists in the depth value array, return it from there.
-		try
-		{
-			//return _DepthValues[x][y];
-		}
-		catch (Exception e)
-		{
-			System.out.println(this + ": Error getting depth sorting value. (" + e + ")");
-		}
-
 		// No stored depth value found, get a fresh one.
 		return _Body.getShape().getDepthSort(x, y);
 	}
@@ -257,9 +228,30 @@ public class Entity
 	 * @param name
 	 *            The new name of the entity.
 	 */
-	@XmlAttribute
 	public void setName(String name)
 	{
 		_Name = name;
+	}
+	
+	/**
+	 * Set the entity's body.
+	 * 
+	 * @param body
+	 *            The body of the entity.
+	 */
+	public void setBody(Body body)
+	{
+		_Body = body;
+	}
+
+	/**
+	 * Set the manager of all the entity's sprites.
+	 * 
+	 * @param sprites
+	 *            The new sprite manager.
+	 */
+	public void setSprites(SpriteManager sprites)
+	{
+		_Sprites = sprites;
 	}
 }

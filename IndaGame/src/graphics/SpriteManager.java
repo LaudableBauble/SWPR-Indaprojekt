@@ -7,15 +7,23 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import auxillary.Vector2;
 
 /**
  * A sprite manager keeps track of a number of sprites. It is basically a collection of sprites.
  */
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class SpriteManager
 {
 	// The list of sprites.
 	// Note: Every time the list needs to be iterated through use a new list to avoid exceptions when modifying it.
+	@XmlElement(name = "Sprites")
 	private ArrayList<Sprite> _Sprites;
 
 	/**
@@ -80,7 +88,7 @@ public class SpriteManager
 			{
 				sprite.setPosition(position);
 			}
-			
+
 			sprite.update(gameTime);
 		}
 	}

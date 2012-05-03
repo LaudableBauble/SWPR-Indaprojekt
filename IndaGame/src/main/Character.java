@@ -113,9 +113,6 @@ public class Character extends Entity
 		_Body.getShape().setWidth(_Sprites.getSprite(0).getCurrentFrame().getWidth());
 		_Body.getShape().setHeight(_Sprites.getSprite(0).getCurrentFrame().getHeight() / 2);
 		_Body.getShape().setDepth(_Sprites.getSprite(0).getCurrentFrame().getHeight());
-
-		// Set up the depth values.
-		setUpDepthValues();
 	}
 
 	/**

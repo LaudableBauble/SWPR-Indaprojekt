@@ -2,19 +2,38 @@ package graphics;
 
 import java.awt.image.BufferedImage;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import auxillary.Helper;
 import auxillary.Vector2;
 
 /**
  * A frame is basically an image used by a sprite to portray an animation by switching between a multitude of frames in fast succession.
  */
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.NONE)
 public class Frame
 {
+	@XmlElement(name = "PathName")
 	private String _PathName;
+	@XmlElement(name = "Width")
 	private float _Width;
+	@XmlElement(name = "Height")
 	private float _Height;
+	@XmlElement(name = "Origin")
 	private Vector2 _Origin;
 	private BufferedImage _Texture;
+
+	/**
+	 * Empty constructor for a frame.
+	 */
+	public Frame()
+	{
+		this("");
+	}
 
 	/**
 	 * Constructor for a frame.
@@ -72,6 +91,8 @@ public class Frame
 		}
 		else
 		{
+			if (_PathName.equals("")) { return; }
+
 			BufferedImage texture = Helper.loadImage(_PathName, true);
 			_Height = texture.getHeight();
 			_Width = texture.getWidth();
@@ -86,6 +107,20 @@ public class Frame
 	public String getPathName()
 	{
 		return _PathName;
+	}
+
+	/**
+	 * Set the path name of the frame.
+	 * 
+	 * @param path
+	 *            The path name.
+	 */
+	public void setPathName(String path)
+	{
+		_PathName = path;
+		updateBounds();
+		// Calculate the origin.
+		_Origin = new Vector2(_Width / 2, _Height / 2);
 	}
 
 	/**

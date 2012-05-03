@@ -55,7 +55,7 @@ public class DepthComposite implements Composite, CompositeContext
 	public void compose(Raster src, Raster dstIn, WritableRaster dstOut)
 	{
 		if (_Entity == null) { throw new IllegalArgumentException("You must set an entity before drawing anything with this composite."); }
-		
+
 		if (_Entity.getName().equals("Player"))
 		{
 			int b = 0;
@@ -83,16 +83,6 @@ public class DepthComposite implements Composite, CompositeContext
 					// Get the depth (z) for both the destination and source rasters.
 					double dstZ = getZOf(dstInX + x, dstInY + y);
 					double srcZ = _Entity.getDepthSort(x, y);
-
-					if (!supportsAlpha)
-					{
-						int a = 0;
-						a++;
-						/*dstOut.setSample(x, y, R_BAND, dstIn.getSample(x, y, R_BAND)); // R
-						dstOut.setSample(x, y, G_BAND, dstIn.getSample(x, y, G_BAND)); // G
-						dstOut.setSample(x, y, B_BAND, dstIn.getSample(x, y, B_BAND)); // B
-						continue;*/
-					}
 
 					// Get the pixel's alpha value.
 					int alpha = supportsAlpha ? src.getSample(x, y, A_BAND) : 1;

@@ -2,9 +2,12 @@ package auxillary;
 
 import java.math.BigDecimal;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * A vector is a position in the game, represented in the form of three double values; x, y and z.
  */
+@XmlRootElement
 public class Vector3
 {
 	// Create the variables.

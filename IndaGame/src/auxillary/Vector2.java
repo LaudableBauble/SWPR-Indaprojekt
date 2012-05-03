@@ -6,9 +6,12 @@ import java.awt.geom.Rectangle2D;
 import java.math.BigDecimal;
 import java.util.Arrays;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * A vector2 is a position in the game, represented in the form of two double values; x and y.
  */
+@XmlRootElement
 public class Vector2
 {
 	// Create the variables.

@@ -2,34 +2,50 @@ package physics;
 
 import java.util.HashSet;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorOrder;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
 import auxillary.Vector2;
 import auxillary.Vector3;
 
 /**
  * A body extends a shape to also include movement by altering its velocity, something the physics simulator does with its use of forces.
  */
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.NONE)
 public class Body
 {
 	// The PhysicsSimulator this body is part of.
 	private PhysicsSimulator _Physics;
 
 	// The shape of the body.
+	@XmlElement(name = "Shape")
 	private Shape _Shape;
 
 	// The Friction Coefficient.
+	@XmlElement(name = "FrictionCoefficient")
 	private double _FrictionCoefficient;
 	// The mass of the Body.
+	@XmlElement(name = "Mass")
 	private double _Mass;
 	// The acceleration value.
+	@XmlElement(name = "AccelerationValue")
 	private double _AccelerationValue;
 
 	// The velocity and maximum velocity.
 	private Vector3 _Velocity;
+	@XmlElement(name = "MaxVelocity")
 	private double _MaxVelocity;
 
 	// If the body is static, in other words immovable.
+	@XmlElement(name = "IsStatic")
 	private boolean _IsStatic;
 	// If the body is immaterial, in other words incapable of colliding.
+	@XmlElement(name = "IsImmaterial")
 	private boolean _IsImmaterial;
 
 	// The bodies with which this body has collided with.
@@ -133,28 +149,26 @@ public class Body
 	 */
 	public void addBody()
 	{
-		// Check if the PhysicsSimultor isn't null.
-		if (_Physics != null)
-		{
-			// Try to add the body.
-			try
-			{
-				// Check if the body already is added.
-				if (!_Physics.exists(this))
-				{
-					_Physics.addBody(this);
-				}
-			}
-			// Catch the Exceptions that may arise.
-			catch (Exception e)
-			{
-				System.out.println(this + ": Error adding body. (" + e + ")");
-			}
-		}
-		// Print out the error.
-		else
+		// If the physics simulator is null, stop and print an error.
+		if (_Physics == null)
 		{
 			System.out.println(this + ": Error reaching PhysicsSimulator.");
+			return;
+		}
+
+		// Try to add the body.
+		try
+		{
+			// Check if the body already is added.
+			if (!_Physics.exists(this))
+			{
+				_Physics.addBody(this);
+			}
+		}
+		// Catch the Exceptions that may arise.
+		catch (Exception e)
+		{
+			System.out.println(this + ": Error adding body. (" + e + ")");
 		}
 	}
 
@@ -210,7 +224,7 @@ public class Body
 	}
 
 	/**
-	 * Get this body's collisions this update cycle.
+	 * Get all of the body's collisions this update cycle.
 	 * 
 	 * @return All collisions this update cycle.
 	 */
@@ -225,6 +239,27 @@ public class Body
 	public void clearCollisions()
 	{
 		_Collisions.clear();
+	}
+
+	/**
+	 * Get the body's physics simulator.
+	 * 
+	 * @return The physics simulator.
+	 */
+	public PhysicsSimulator getPhysicsSimulator()
+	{
+		return _Physics;
+	}
+
+	/**
+	 * Set the body's physics simulator.
+	 * 
+	 * @param physics
+	 *            The new physics simulator.
+	 */
+	public void setPhysicsSimulator(PhysicsSimulator physics)
+	{
+		_Physics = physics;
 	}
 
 	/**

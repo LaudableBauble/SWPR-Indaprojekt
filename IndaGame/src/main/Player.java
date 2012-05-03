@@ -104,9 +104,6 @@ public class Player extends Entity
 		back.setPositionOffset(new Vector2(0, -back.getCurrentFrame().getOrigin().y + (_Body.getShape().getHeight() / 2)));
 		right.setPositionOffset(new Vector2(0, -right.getCurrentFrame().getOrigin().y + (_Body.getShape().getHeight() / 2)));
 		left.setPositionOffset(new Vector2(0, -left.getCurrentFrame().getOrigin().y + (_Body.getShape().getHeight() / 2)));
-		
-		// Set up the depth values.
-		setUpDepthValues();
 	}
 
 	/**

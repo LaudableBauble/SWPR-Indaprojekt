@@ -366,6 +366,36 @@ public final class Helper
 	}
 
 	/**
+	 * Load an entity from file by deserialization. Assumes that the file is located in the data/entities folder. Be sure to include the file suffix in the path.
+	 * 
+	 * @param path
+	 *            The path to the entity file.
+	 * @return The loaded entity.
+	 */
+	public static Entity loadEntity(String path)
+	{
+		try
+		{
+			// Create the file.
+			File file = new File("src/data/entities/" + path);
+
+			// Set up the marshaller and load the entity content.
+			EntityContent content = (EntityContent) JAXBContext.newInstance(EntityContent.class).createUnmarshaller().unmarshal(file);
+
+			// Convert the content data into an entity and return it.
+			return content.createEntity();
+
+		}
+		catch (JAXBException e)
+		{
+			System.out.println("Save Entity Error: " + e.getClass().getName() + " - " + e.getMessage());
+		}
+
+		// No entity found.
+		return null;
+	}
+
+	/**
 	 * Save an entity to file by serialization.
 	 * 
 	 * @param entity
@@ -376,15 +406,17 @@ public final class Helper
 		try
 		{
 			// Create the file.
-			File file = new File("src/data/entities/" + entity.getName());
+			File file = new File("src/data/entities/" + entity.getName() + ".xml");
+
+			// Create the entity content data.
+			EntityContent content = EntityContent.createContent(entity);
 
 			// Set up the marshaller.
-			Marshaller marshaller = JAXBContext.newInstance(Entity.class).createMarshaller();
+			Marshaller marshaller = JAXBContext.newInstance(EntityContent.class).createMarshaller();
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
-			// Serialize the entity to the file and output.
-			marshaller.marshal(entity, file);
-			marshaller.marshal(entity, System.out);
+			// Serialize the entity to the file.
+			marshaller.marshal(content, file);
 
 		}
 		catch (JAXBException e)

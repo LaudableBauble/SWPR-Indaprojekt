@@ -2,7 +2,6 @@ package screens;
 
 import infrastructure.Camera2D;
 import infrastructure.EntityInfoPanel;
-import infrastructure.Enums.DepthDistribution;
 import infrastructure.FileTree;
 import infrastructure.GameScreen;
 import infrastructure.GameTimer;
@@ -10,35 +9,27 @@ import infrastructure.ScreenManager;
 import infrastructure.TimeSpan;
 import input.InputManager;
 
-import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.Robot;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import scenes.SmallDemoScene;
 
 import main.Entity;
-import main.Player;
-import main.Scene;
 import main.SceneManager;
 import auxillary.Helper;
 import auxillary.Vector2;
-import auxillary.Vector3;
 import debug.DebugManager;
 
 /**
@@ -95,9 +86,8 @@ public class MapEditorScreen extends GameScreen
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				// Save the current entity to file.
-				_SelectedEntity.setName("Entity1");
-				// Helper.saveEntity(_SelectedEntity);
+				// Load an entity from file.
+				// Helper.loadEntity(_SelectedEntity);
 			}
 		});
 		JMenuItem saveScene = new JMenuItem("Save Scene");
@@ -106,7 +96,6 @@ public class MapEditorScreen extends GameScreen
 			public void actionPerformed(ActionEvent e)
 			{
 				// Save the current entity to file.
-				_SelectedEntity.setName("Entity1");
 				Helper.saveEntity(_SelectedEntity);
 			}
 		});
@@ -317,20 +306,59 @@ public class MapEditorScreen extends GameScreen
 				_SceneManager.getCurrentScene().removeEntity(_SelectedEntity);
 			}
 
+			// Create an entity from the selected node and add it to the scene.
+			Entity entity = (_SelectedNode != null) ? loadEntity() : new Entity(_SceneManager.getCurrentScene().getPhysicsSimulator());
+			_SceneManager.getCurrentScene().addEntity(entity);
+
+			// Add the entity to the info panel and debug manager.
+			setSelectedEntity(entity);
+		}
+	}
+
+	/**
+	 * Load the entity mapped to the currently selected node.
+	 * 
+	 * @return The loaded entity.
+	 */
+	private Entity loadEntity()
+	{
+		// If the selected node is null, stop here.
+		if (_SelectedNode == null) { return null; }
+
+		// Whether to create from image or load from file.
+		if (((FileTree) _Tabs.getSelectedComponent()) == _ImageTree)
+		{
 			// Create an entity from the selected node.
 			Entity entity = new Entity(_SceneManager.getCurrentScene().getPhysicsSimulator());
+			// Load the entity's content. Remove the first 15 characters from parent (src/data/images).
+			entity.loadContent(_SelectedNode.getParent().toString().substring(15) + "\\" + _SelectedNode.toString());
 
-			// If the node is not null, continue.
-			if (_SelectedNode != null)
-			{
-				// Load the entity's content. Remove the first 10 characters from parent (src/data/images).
-				entity.loadContent(_SelectedNode.getParent().toString().substring(15) + "\\" + _SelectedNode.toString());
-				// Add the entity to the scene.
-				_SceneManager.getCurrentScene().addEntity(entity);
-			}
-
-			// Add the entity to the info panel.
-			_InfoPanel.setEntity(entity);
+			// Return the entity.
+			return entity;
 		}
+		else
+		{
+			// Load the entity from file. Remove the first 17 characters from parent (src/data/entities).
+			Entity entity = Helper.loadEntity(_SelectedNode.getParent().toString().substring(17) + "\\" + _SelectedNode.toString());
+			// Add the body to the physics simulator.
+			_SceneManager.getCurrentScene().getPhysicsSimulator().addBody(entity.getBody());
+
+			// Return the entity.
+			return entity;
+		}
+
+	}
+
+	/**
+	 * Set the selected entity.
+	 * 
+	 * @param entity
+	 *            The new entity to be selected.
+	 */
+	private void setSelectedEntity(Entity entity)
+	{
+		// Add the entity to the info panel and debug manager.
+		_InfoPanel.setEntity(entity);
+		DebugManager.getInstance().setDebugBody(entity.getBody());
 	}
 }

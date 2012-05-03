@@ -11,35 +11,66 @@ import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.util.ArrayList;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import auxillary.Helper;
 import auxillary.Vector2;
 
 /**
  * A sprite is either an image or a collection of images used to simulate an animation.
  */
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.NONE)
 public class Sprite
 {
 	// Fields.
 	private SpriteManager _Manager;
 	private BufferedImage _Texture;
+	@XmlElement(name = "Position")
 	private Vector2 _Position;
+	@XmlElement(name = "PositionOffset")
 	private Vector2 _PositionOffset;
+	@XmlElement(name = "Name")
 	private String _Name;
+	@XmlElement(name = "Tag")
 	private String _Tag;
+	@XmlElement(name = "Frames")
 	private ArrayList<Frame> _Frames;
 	private int _FrameIndex;
+	@XmlElement(name = "TimePerFrame")
 	private float _TimePerFrame;
+	@XmlElement(name = "FrameStartIndex")
 	private int _FrameStartIndex;
+	@XmlElement(name = "FrameEndIndex")
 	private int _FrameEndIndex;
+	@XmlElement(name = "EnableAnimation")
 	private boolean _EnableAnimation;
+	@XmlElement(name = "AnimationDirection")
 	private boolean _AnimationDirection;
 	private float _TotalElapsedTime;
+	@XmlElement(name = "Rotation")
 	private double _Rotation;
+	@XmlElement(name = "Scale")
 	private double _Scale;
+	@XmlElement(name = "Depth")
 	private int _Depth;
+	@XmlElement(name = "Transparence")
 	private float _Transparence;
+	@XmlElement(name = "Visibility")
 	private Visibility _Visibility;
+	@XmlElement(name = "Orientation")
 	private Orientation _Orientation;
+
+	/**
+	 * Empty constructor for a sprite.
+	 */
+	public Sprite()
+	{
+		this("");
+	}
 
 	/**
 	 * Constructor for a sprite.
@@ -129,20 +160,19 @@ public class Sprite
 			// graphics.transform(AffineTransform.getRotateInstance(_Rotation).getScaleInstance(_Scale, _Scale));
 
 			// Rotate and scale the sprite.
-			/*AffineTransform matrix = new AffineTransform();
-			matrix.translate(_Frames.get(_FrameIndex).getOrigin().x, _Frames.get(_FrameIndex).getOrigin().y);
-			matrix.rotate(_Rotation);
-			matrix.scale(_Scale, _Scale);
-			matrix.translate(-_Frames.get(_FrameIndex).getOrigin().x / _Scale, -_Frames.get(_FrameIndex).getOrigin().y / _Scale);
-
-			BufferedImageOp bio = new AffineTransformOp(matrix, AffineTransformOp.TYPE_BILINEAR);*/
+			/*
+			 * AffineTransform matrix = new AffineTransform(); matrix.translate(_Frames.get(_FrameIndex).getOrigin().x, _Frames.get(_FrameIndex).getOrigin().y); matrix.rotate(_Rotation);
+			 * matrix.scale(_Scale, _Scale); matrix.translate(-_Frames.get(_FrameIndex).getOrigin().x / _Scale, -_Frames.get(_FrameIndex).getOrigin().y / _Scale);
+			 * 
+			 * BufferedImageOp bio = new AffineTransformOp(matrix, AffineTransformOp.TYPE_BILINEAR);
+			 */
 
 			// The 'real' position, including the offset and origin.
 			Vector2 position = Vector2.subtract(Vector2.add(_Position, _PositionOffset), _Frames.get(_FrameIndex).getOrigin());
 
 			// Draw the sprite.
 			graphics.drawImage(_Texture, (int) position.x, (int) position.y, null);
-			//graphics.drawImage(bio.filter(_Texture, null), (int) position.x, (int) position.y, null);
+			// graphics.drawImage(bio.filter(_Texture, null), (int) position.x, (int) position.y, null);
 
 			// Revert to the old matrix configuration.
 			// graphics.setTransform(old);
@@ -204,7 +234,6 @@ public class Sprite
 	 */
 	public void loadFrame()
 	{
-		// Try.
 		try
 		{
 			// Quit if there is not enough frames.
@@ -221,7 +250,6 @@ public class Sprite
 				_Texture = Helper.loadImage(_Frames.get(_FrameIndex).getPathName(), true);
 			}
 		}
-		// Catch
 		catch (Exception e)
 		{
 			System.out.println(this + ": Load Frame Error. (" + e + ")");

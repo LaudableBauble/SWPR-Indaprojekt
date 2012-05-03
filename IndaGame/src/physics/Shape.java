@@ -4,6 +4,11 @@ import infrastructure.Enums.DepthDistribution;
 
 import java.awt.Rectangle;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import auxillary.Helper;
 import auxillary.Vector2;
 import auxillary.Vector3;
@@ -12,16 +17,33 @@ import auxillary.Vector3;
  * A shape is a geometrical form used primarily for collision detection. When used by a body it can interact with the world around it, otherwise it is nothing more than a ghost in the eyes of the
  * engine. Currently only supports rectangular boxes and triangles with rectangular bases.
  */
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Shape
 {
 	// The width, height and position. Note that position is always where the origin of the shape is.
+	@XmlElement(name = "Width")
 	private float _Width;
+	@XmlElement(name = "Height")
 	private float _Height;
+	@XmlElement(name = "Depth")
 	private float _Depth;
+	@XmlElement(name = "Position")
 	private Vector3 _Position;
+	@XmlElement(name = "Rotation")
 	private float _Rotation;
+	@XmlElement(name = "Origin")
 	private Vector2 _Origin;
+	@XmlElement(name = "DepthDistribution")
 	private DepthDistribution _DepthDistribution;
+
+	/**
+	 * Empty constructor for a shape.
+	 */
+	public Shape()
+	{
+		this(1, 1, 1);
+	}
 
 	/**
 	 * Constructor for a shape.
