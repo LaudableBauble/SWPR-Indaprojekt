@@ -1,25 +1,14 @@
 package scenes;
 
-import graphics.DepthComposite;
-import infrastructure.GameTimer;
 import infrastructure.Enums.DepthDistribution;
-import input.InputManager;
 
-import java.awt.Composite;
-import java.awt.Graphics2D;
-import java.util.ArrayList;
-import java.util.Collections;
-
-import main.Character;
 import main.Entity;
 import main.Player;
 import main.Scene;
 import main.SceneManager;
 
-import auxillary.Vector2;
 import auxillary.Vector3;
 
-import physics.PhysicsSimulator;
 import debug.DebugManager;
 
 /**
@@ -59,6 +48,9 @@ public class SmallDemoScene extends Scene
 	{
 		// Call the base method.
 		super.initialize(manager);
+
+		// Name the scene.
+		_Name = "SmallDemoScene";
 
 		// Create the player.
 		_Player = new Player(getPhysicsSimulator());

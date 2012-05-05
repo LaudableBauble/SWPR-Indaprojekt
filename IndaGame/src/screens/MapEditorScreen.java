@@ -18,6 +18,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 
+import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -81,16 +82,37 @@ public class MapEditorScreen extends GameScreen
 		_MenuBar.add(file);
 
 		// Set up file.
-		JMenuItem loadScene = new JMenuItem("Load Scene");
-		loadScene.addActionListener(new ActionListener()
+		JMenuItem openScene = new JMenuItem("Open Scene");
+		openScene.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				// Load an entity from file.
-				// Helper.loadEntity(_SelectedEntity);
+				// Create a file chooser and show it.
+				JFileChooser fc = new JFileChooser("src/data/scenes");
+				int decision = fc.showOpenDialog(_ScreenManager.getGame().getWindow());
+
+				// If the user wants to load a file, do so.
+				if (decision == JFileChooser.APPROVE_OPTION)
+				{
+					// Convert the path into relative form.
+					String path = fc.getSelectedFile().getPath();
+					path = path.substring(path.indexOf("scenes") + 7);
+
+					_SceneManager.addScene(Helper.loadScene(path, _SceneManager));
+					_SceneManager.setCurrentScene(1);
+				}
 			}
 		});
 		JMenuItem saveScene = new JMenuItem("Save Scene");
+		saveScene.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				// Save the current scene to file.
+				Helper.saveScene(_SceneManager.getCurrentScene());
+			}
+		});
+		JMenuItem saveEntity = new JMenuItem("Save Entity");
 		saveScene.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
@@ -99,12 +121,13 @@ public class MapEditorScreen extends GameScreen
 				Helper.saveEntity(_SelectedEntity);
 			}
 		});
-		file.add(loadScene);
+		file.add(openScene);
 		file.add(saveScene);
+		file.add(saveEntity);
 
 		// Add the GUI components to the frame.
-		_Tabs.add("Images", _ImageTree);
 		_Tabs.add("Entities", _EntityTree);
+		_Tabs.add("Images", _ImageTree);
 		screenManager.getGame().getWindow().add(_Tabs, BorderLayout.WEST);
 		screenManager.getGame().getWindow().add(_InfoPanel, BorderLayout.EAST);
 		screenManager.getGame().getWindow().setJMenuBar(_MenuBar);

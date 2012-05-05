@@ -27,12 +27,9 @@ import auxillary.Vector3;
 public class Entity
 {
 	// The name of the entity. Primarily used as file name when serialized.
-	@XmlElement(name = "Name")
 	protected String _Name;
 	// The Sprite and Body.
-	// @XmlElement(name = "Sprites")
 	protected SpriteManager _Sprites;
-	// @XmlElement(name = "Body")
 	protected Body _Body;
 
 	/**

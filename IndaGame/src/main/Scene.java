@@ -19,14 +19,16 @@ import debug.DebugManager;
  */
 public class Scene
 {
+	// The name of the scene. Primarily used as file name when serialized.
+	protected String _Name;
 	// The scene manager.
-	SceneManager _SceneManager;
+	protected SceneManager _SceneManager;
 	// The physics simulator.
-	private PhysicsSimulator _Physics;
+	protected PhysicsSimulator _Physics;
 	// List of entities.
-	private ArrayList<Entity> _Entities;
+	protected ArrayList<Entity> _Entities;
 	// The composite z-buffer.
-	private DepthComposite _Composite;
+	protected DepthComposite _Composite;
 
 	/**
 	 * Empty constructor for a scene.
@@ -56,6 +58,7 @@ public class Scene
 	protected void initialize(SceneManager manager)
 	{
 		// Initialize the variables.
+		_Name = "Scene";
 		_SceneManager = manager;
 		_Entities = new ArrayList<>();
 		_Physics = new PhysicsSimulator();
@@ -159,6 +162,27 @@ public class Scene
 	}
 
 	/**
+	 * Get the scene's name.
+	 * 
+	 * @return The name of the scene.
+	 */
+	public String getName()
+	{
+		return _Name;
+	}
+
+	/**
+	 * Set the scene's name.
+	 * 
+	 * @param name
+	 *            The new name of the scene.
+	 */
+	public void setName(String name)
+	{
+		_Name = name;
+	}
+
+	/**
 	 * Get the scene's physics simulator.
 	 * 
 	 * @return The scene's physics simulator.
@@ -178,14 +202,25 @@ public class Scene
 	{
 		_SceneManager = manager;
 	}
-	
+
 	/**
 	 * Get the list of entities.
 	 * 
-	 * @return List of entities.
+	 * @return The list of entities.
 	 */
 	public ArrayList<Entity> getEntities()
 	{
 		return _Entities;
+	}
+
+	/**
+	 * Set the list of entities.
+	 * 
+	 * @param entities
+	 *            The new list of entities.
+	 */
+	public void setEntities(ArrayList<Entity> entities)
+	{
+		_Entities = entities;
 	}
 }

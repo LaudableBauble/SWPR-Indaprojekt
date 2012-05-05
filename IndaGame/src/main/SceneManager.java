@@ -157,4 +157,15 @@ public class SceneManager
 	{
 		return _CurrentScene;
 	}
+
+	/**
+	 * Set the scene to be active.
+	 * 
+	 * @param index
+	 *            The index of the scene to be active.
+	 */
+	public void setCurrentScene(int index)
+	{
+		_CurrentScene = _Scenes.get(index);
+	}
 }

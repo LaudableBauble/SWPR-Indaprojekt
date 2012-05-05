@@ -15,6 +15,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import main.Entity;
+import main.Scene;
+import main.SceneManager;
 
 import physics.Shape;
 
@@ -366,6 +368,68 @@ public final class Helper
 	}
 
 	/**
+	 * Load a scene from file by deserialization. Assumes that the file is located in the data/scenes folder. Be sure to include the file suffix in the path.
+	 * 
+	 * @param path
+	 *            The path to the scene file.
+	 * @param manager
+	 *            The scene's manager.
+	 * @return The loaded scene.
+	 */
+	public static Scene loadScene(String path, SceneManager manager)
+	{
+		try
+		{
+			// Create the file.
+			File file = new File("src/data/scenes/" + path);
+
+			// Set up the unmarshaller and load the scene content.
+			SceneContent content = (SceneContent) JAXBContext.newInstance(SceneContent.class).createUnmarshaller().unmarshal(file);
+
+			// Convert the content data into a scene and return it.
+			return content.createScene(manager);
+
+		}
+		catch (JAXBException e)
+		{
+			System.out.println("Load Scene Error: " + e.getClass().getName() + " - " + e.getMessage());
+		}
+
+		// No scene found.
+		return null;
+	}
+
+	/**
+	 * Save a scene to file by serialization.
+	 * 
+	 * @param scene
+	 *            The scene to save.
+	 */
+	public static void saveScene(Scene scene)
+	{
+		try
+		{
+			// Create the file.
+			File file = new File("src/data/scenes/" + scene.getName() + ".xml");
+
+			// Create the scene content data.
+			SceneContent content = SceneContent.createContent(scene);
+
+			// Set up the marshaller.
+			Marshaller marshaller = JAXBContext.newInstance(SceneContent.class).createMarshaller();
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+			// Serialize the scene to the file.
+			marshaller.marshal(content, file);
+
+		}
+		catch (JAXBException e)
+		{
+			System.out.println("Save Scene Error: " + e.getClass().getName() + " - " + e.getMessage());
+		}
+	}
+
+	/**
 	 * Load an entity from file by deserialization. Assumes that the file is located in the data/entities folder. Be sure to include the file suffix in the path.
 	 * 
 	 * @param path
@@ -379,7 +443,7 @@ public final class Helper
 			// Create the file.
 			File file = new File("src/data/entities/" + path);
 
-			// Set up the marshaller and load the entity content.
+			// Set up the unmarshaller and load the entity content.
 			EntityContent content = (EntityContent) JAXBContext.newInstance(EntityContent.class).createUnmarshaller().unmarshal(file);
 
 			// Convert the content data into an entity and return it.
@@ -388,7 +452,7 @@ public final class Helper
 		}
 		catch (JAXBException e)
 		{
-			System.out.println("Save Entity Error: " + e.getClass().getName() + " - " + e.getMessage());
+			System.out.println("Load Entity Error: " + e.getClass().getName() + " - " + e.getMessage());
 		}
 
 		// No entity found.

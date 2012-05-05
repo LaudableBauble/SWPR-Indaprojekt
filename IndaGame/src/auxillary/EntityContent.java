@@ -77,6 +77,9 @@ public class EntityContent
 				sprite.setSpriteManager(_Sprites);
 			}
 
+			// Load the sprites' content.
+			_Sprites.loadContent();
+
 			// Return the entity.
 			return entity;
 		}

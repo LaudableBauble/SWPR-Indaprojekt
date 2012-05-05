@@ -167,6 +167,7 @@ public class PhysicsSimulator
 				if (!_Bodies.contains(body))
 				{
 					_Bodies.add(body);
+					body.setPhysicsSimulator(this);
 				}
 			}
 			// Catch the exception and display relevant information.
