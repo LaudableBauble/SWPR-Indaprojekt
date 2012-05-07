@@ -50,7 +50,7 @@ public class GameplayScreen extends GameScreen
 		_TransitionOffTime = TimeSpan.FromSeconds(0.5);
 
 		// Set up the camera.
-		_Camera = new Camera2D(new Rectangle(0, 0, (int) screenManager.getWindowBounds().x, (int) screenManager.getWindowBounds().y), new Rectangle(0, 0, 3000, 3000));
+		_Camera = new Camera2D(screenManager.getWindowBounds(), new Vector2(3000, 3000));
 		_Camera.setPosition(new Vector2(1000, 900));
 
 		// Create the scene manager.

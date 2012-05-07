@@ -162,7 +162,7 @@ public abstract class MenuScreen extends GameScreen
 		}
 
 		// Draw the menu title.
-		Vector2 titlePosition = new Vector2(426, 80);
+		Vector2 titlePosition = new Vector2(250, 80);
 		Vector2 titleOrigin = Vector2.divide(new Vector2(font.getStringBounds(_MenuTitle, graphics.getFontRenderContext())), 2);
 		Color titleColor = new Color(62, 69, 71, getTransitionAlpha());
 		float titleScale = 1.5f;

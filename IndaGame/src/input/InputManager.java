@@ -16,7 +16,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 
+import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;
+
+import main.Game;
 
 import auxillary.Vector2;
 
@@ -26,6 +29,9 @@ import auxillary.Vector2;
  */
 public final class InputManager extends MouseInputAdapter implements KeyListener
 {
+	// The game.
+	private Game _Game;
+
 	// Array of key states used to log the time of every key press.
 	private long[] keys = new long[256];
 
@@ -341,7 +347,10 @@ public final class InputManager extends MouseInputAdapter implements KeyListener
 	 */
 	public Vector2 mousePosition()
 	{
-		return new Vector2(MouseInfo.getPointerInfo().getLocation());
+		//Get the mouse position and convert into local space.
+		Point p = MouseInfo.getPointerInfo().getLocation();
+		SwingUtilities.convertPointFromScreen(MouseInfo.getPointerInfo().getLocation(), _Game.getWindow());
+		return new Vector2(p);
 	}
 
 	/**
@@ -382,5 +391,16 @@ public final class InputManager extends MouseInputAdapter implements KeyListener
 	public boolean getPauseGame()
 	{
 		return (isNewKeyPress(KeyEvent.VK_ESCAPE));
+	}
+
+	/**
+	 * Set the game.
+	 * 
+	 * @param game
+	 *            The game.
+	 */
+	public void setGame(Game game)
+	{
+		_Game = game;
 	}
 }

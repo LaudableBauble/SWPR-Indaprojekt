@@ -103,9 +103,11 @@ public class Entity
 	 */
 	public void handleInput(InputManager input)
 	{
-		// Check if the First Mouse Button is down.
+		// Check if the left mouse button is down.
 		if (input.isMouseButtonDown(1))
 		{
+			// Transform the mouse coordinates into world space.
+
 			// Check if the Body has been clicked on.
 			if ((input.mouseEventPosition().x <= (_Body.getLayeredPosition().x + (_Body.getShape().getWidth() / 2)))
 					&& (input.mouseEventPosition().x >= (_Body.getLayeredPosition().x - (_Body.getShape().getWidth() / 2)))
@@ -229,7 +231,7 @@ public class Entity
 	{
 		_Name = name;
 	}
-	
+
 	/**
 	 * Set the entity's body.
 	 * 
@@ -250,5 +252,21 @@ public class Entity
 	public void setSprites(SpriteManager sprites)
 	{
 		_Sprites = sprites;
+	}
+
+	/**
+	 * Get the entity's position, ie. all three dimensions.
+	 * 
+	 * @return The position of the entity.
+	 */
+	public Vector3 getPosition()
+	{
+		return _Body.getPosition();
+	}
+
+	@Override
+	public String toString()
+	{
+		return _Name;
 	}
 }

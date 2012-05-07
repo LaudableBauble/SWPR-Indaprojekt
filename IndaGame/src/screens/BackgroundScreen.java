@@ -1,14 +1,17 @@
 package screens;
 
+import infrastructure.Camera2D;
 import infrastructure.GameScreen;
 import infrastructure.GameTimer;
 import infrastructure.TimeSpan;
 
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 import auxillary.Helper;
+import auxillary.Vector2;
 
 /**
  * The background screen sits behind all the other menu screens. It draws a background image that remains fixed in place regardless of whatever transitions the screens on top of it may be doing.
@@ -17,6 +20,7 @@ public class BackgroundScreen extends GameScreen
 {
 	// The fields.
 	BufferedImage _BackgroundTexture;
+	Camera2D _Camera;
 
 	/**
 	 * Constructor for the background screen.
@@ -34,6 +38,7 @@ public class BackgroundScreen extends GameScreen
 	public void loadContent()
 	{
 		_BackgroundTexture = Helper.loadImage("Distant_City.png", true);
+		_Camera = new Camera2D(_ScreenManager.getWindowBounds(), new Vector2(_BackgroundTexture.getWidth(), _BackgroundTexture.getHeight()));
 	}
 
 	/**
@@ -44,6 +49,13 @@ public class BackgroundScreen extends GameScreen
 	{
 		// Call the base method.
 		super.update(gameTime, otherScreenHasFocus, false);
+
+		// Update the camera.
+		float sin = ((float) Math.sin(gameTime.getTotalElapsedTime().Seconds() / 12) * .25f);
+		float cos = ((float) Math.cos(gameTime.getTotalElapsedTime().Seconds() / 12) * .25f);
+		_Camera.moveAmount(new Vector2(sin, cos));
+		_Camera.zoom(sin * cos * .005f);
+		_Camera.update(gameTime);
 	}
 
 	/**
@@ -56,9 +68,16 @@ public class BackgroundScreen extends GameScreen
 	 */
 	public void draw(GameTimer gameTime, Graphics2D graphics)
 	{
+		// Save the old graphics matrix and insert the camera matrix in its place.
+		AffineTransform old = graphics.getTransform();
+		graphics.setTransform(_Camera.getTransformMatrix());
+
 		// Prepare for drawing with an alpha value.
 		graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getTransitionPosition()));
 		graphics.drawImage(_BackgroundTexture, 0, 0, null);
 		graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
+
+		// Reinstate the old graphics matrix.
+		graphics.setTransform(old);
 	}
 }

@@ -8,7 +8,7 @@ import java.util.EventObject;
 public class EntrySelectEvent extends EventObject
 {
 	/**
-	 * Constructor for a menu select event.
+	 * Constructor for a select event.
 	 */
 	public EntrySelectEvent(Object source)
 	{

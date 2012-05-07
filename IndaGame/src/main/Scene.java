@@ -86,7 +86,7 @@ public class Scene
 	public void handleInput(InputManager input)
 	{
 		// Let all entities respond to input.
-		for (Entity entity : _Entities)
+		for (Entity entity : new ArrayList<Entity>(_Entities))
 		{
 			entity.handleInput(input);
 		}
@@ -104,7 +104,7 @@ public class Scene
 		_Physics.update();
 
 		// Update all entities.
-		for (Entity entity : _Entities)
+		for (Entity entity : new ArrayList<Entity>(_Entities))
 		{
 			entity.update(gameTime);
 		}
@@ -121,10 +121,9 @@ public class Scene
 		// Enable depth sorting by composite.
 		Composite old = graphics.getComposite();
 		graphics.setComposite(_Composite);
-		// graphics.setComposite(new DepthComposite(_SceneManager.getCamera().getViewportSize()));
 
 		// Draw all entities.
-		for (Entity entity : _Entities)
+		for (Entity entity : new ArrayList<Entity>(_Entities))
 		{
 			// Prepare the graphics device for depth-sorting.
 			((DepthComposite) graphics.getComposite()).setEntity(entity);

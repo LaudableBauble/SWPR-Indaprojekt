@@ -24,8 +24,8 @@ import javax.swing.JPanel;
 public class WindowFrame extends JFrame
 {
 	// The Bounds of the window.
-	public static final int WIDTH = 1280;
-	public static final int HEIGHT = 804;
+	public static final int WIDTH = 800;
+	public static final int HEIGHT = 600;
 
 	// The Keyboard and Mouse input handlers.
 	public InputManager inputManager = InputManager.getInstance();

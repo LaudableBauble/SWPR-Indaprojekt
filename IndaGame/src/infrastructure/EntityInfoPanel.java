@@ -40,10 +40,6 @@ public class EntityInfoPanel extends JPanel
 	private JLabel _Name;
 	// The entity position.
 	private JLabel _Position;
-	// The depth explanation.
-	private JLabel _DepthDescription;
-	// The depth spinner. (From the user's perspective, not the game.)
-	private JSpinner _DepthSpinner;
 	// The isStatic checkbox.
 	private JCheckBox _StaticState;
 
@@ -62,7 +58,6 @@ public class EntityInfoPanel extends JPanel
 		// Create the labels.
 		_Name = new JLabel("Entity");
 		_Position = new JLabel("Position: ");
-		_DepthDescription = new JLabel("Depth:");
 
 		// Create the checkbox.
 		_StaticState = new JCheckBox("Is Static?");
@@ -76,27 +71,9 @@ public class EntityInfoPanel extends JPanel
 			}
 		});
 
-		// Create the spinner.
-		_DepthSpinner = new JSpinner(new SpinnerNumberModel(0, -1, 1000, 1));
-		_DepthSpinner.setFocusable(false);
-		for (Component component : _DepthSpinner.getEditor().getComponents())
-		{
-			component.setFocusable(false);
-		}
-		_DepthSpinner.addChangeListener(new ChangeListener()
-		{
-			public void stateChanged(ChangeEvent e)
-			{
-				// Set the entity's depth (height).
-				_Entity.setHeight(Float.parseFloat(_DepthSpinner.getValue().toString()));
-			}
-		});
-
 		// Add all components to the panel.
 		add(_Name);
 		add(_Position);
-		add(_DepthDescription);
-		add(_DepthSpinner);
 		add(_StaticState);
 
 		// Set all components' position and size.
@@ -104,10 +81,6 @@ public class EntityInfoPanel extends JPanel
 		_Name.setSize(100, 20);
 		_Position.setLocation(10, 60);
 		_Position.setSize(150, 20);
-		_DepthDescription.setLocation(10, 300);
-		_DepthDescription.setSize(50, 20);
-		_DepthSpinner.setLocation(60, 300);
-		_DepthSpinner.setSize(50, 20);
 		_StaticState.setLocation(10, 330);
 		_StaticState.setSize(150, 20);
 
@@ -164,13 +137,10 @@ public class EntityInfoPanel extends JPanel
 			_Entity = entity;
 
 			// Pass along the entity's data.
-			_DepthSpinner.setValue((_Entity.getBody().getShape().getDepth() != 1) ? _Entity.getBody().getShape().getHeight() : _DepthSpinner.getValue());
-			_StaticState.setSelected(_Entity.getBody().getIsStatic() ? true : _StaticState.isSelected());
+			_StaticState.setSelected(_Entity.getBody().getIsStatic());
 
 			// Initialize the entity to the state of this info panel.
 			_Entity.getBody().setIsImmaterial(true);
-			_Entity.getBody().setIsStatic(_StaticState.isSelected());
-			_Entity.setHeight(Float.parseFloat(_DepthSpinner.getValue().toString()));
 			_Image = Helper.loadImage(entity.getSprites().getSprite(0).getCurrentFrame().getPathName(), true);
 			_ImagePosition = new Vector2((getWidth() / 2) - (_Image.getWidth() / 2), 200);
 		}

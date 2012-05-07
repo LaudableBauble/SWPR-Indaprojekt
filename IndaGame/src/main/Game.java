@@ -4,6 +4,7 @@ import infrastructure.GameTimer;
 import infrastructure.ScreenManager;
 import infrastructure.TimeSpan;
 import infrastructure.WindowFrame;
+import input.InputManager;
 import screens.BackgroundScreen;
 import screens.MainMenuScreen;
 import debug.DebugManager;
@@ -57,6 +58,9 @@ public class Game
 		// Add screens to the screen manager.
 		_ScreenManager.addScreen(new BackgroundScreen());
 		_ScreenManager.addScreen(new MainMenuScreen());
+
+		// Add this game to the input manager.
+		InputManager.getInstance().setGame(this);
 	}
 
 	public void loadContent()

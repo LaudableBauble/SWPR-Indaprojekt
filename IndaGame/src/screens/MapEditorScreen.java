@@ -5,6 +5,7 @@ import infrastructure.EntityInfoPanel;
 import infrastructure.FileTree;
 import infrastructure.GameScreen;
 import infrastructure.GameTimer;
+import infrastructure.SceneTree;
 import infrastructure.ScreenManager;
 import infrastructure.TimeSpan;
 import input.InputManager;
@@ -32,6 +33,10 @@ import main.SceneManager;
 import auxillary.Helper;
 import auxillary.Vector2;
 import debug.DebugManager;
+import events.EntitySelectEvent;
+import events.EntitySelectEventListener;
+import events.PathSelectEvent;
+import events.PathSelectEventListener;
 
 /**
  * This screen implements the actual game logic by reusing components from before.
@@ -47,13 +52,11 @@ public class MapEditorScreen extends GameScreen
 
 	// The GUI.
 	private JTabbedPane _Tabs;
-	private FileTree _ImageTree;
 	private FileTree _EntityTree;
+	private SceneTree _SceneTree;
 	private EntityInfoPanel _InfoPanel;
 	private JMenuBar _MenuBar;
 
-	// The currently selected node.
-	private DefaultMutableTreeNode _SelectedNode;
 	// The selected entity.
 	private Entity _SelectedEntity;
 
@@ -69,13 +72,42 @@ public class MapEditorScreen extends GameScreen
 		_TransitionOnTime = TimeSpan.FromSeconds(1.5);
 		_TransitionOffTime = TimeSpan.FromSeconds(0.5);
 
+		// Set up the camera.
+		_Camera = new Camera2D(screenManager.getWindowBounds(), new Vector2(3000, 3000));
+		_Camera.setPosition(new Vector2(1000, 1000));
+
+		// Create the scene manager, enable debug and add a scene.
+		_SceneManager = new SceneManager(_Camera);
+		DebugManager.getInstance().debug = true;
+		_SceneManager.addScene(new SmallDemoScene(_SceneManager));
+
 		// Create the GUI components.
 		_Tabs = new JTabbedPane();
 		_Tabs.setFocusable(false);
-		_ImageTree = new FileTree(new File("src/data/images"));
 		_EntityTree = new FileTree(new File("src/data/entities"));
+		_SceneTree = new SceneTree(_SceneManager.getCurrentScene());
 		_InfoPanel = new EntityInfoPanel();
 		_MenuBar = new JMenuBar();
+
+		// Handle the tree events.
+		_EntityTree.addEventListener(new PathSelectEventListener()
+		{
+			@Override
+			public void handleEvent(PathSelectEvent event)
+			{
+				// Update the selected entity.
+				changeSelectedEntity(event.Path);
+			}
+		});
+		_SceneTree.addEventListener(new EntitySelectEventListener()
+		{
+			@Override
+			public void handleEvent(EntitySelectEvent event)
+			{
+				// Update the selected entity.
+				changeSelectedEntity(event.Entity);
+			}
+		});
 
 		// Set up the menu bar.
 		JMenu file = new JMenu("File");
@@ -100,6 +132,9 @@ public class MapEditorScreen extends GameScreen
 
 					_SceneManager.addScene(Helper.loadScene(path, _SceneManager));
 					_SceneManager.setCurrentScene(1);
+
+					// Update the scene tree.
+					_SceneTree.updateTree(_SceneManager.getCurrentScene());
 				}
 			}
 		});
@@ -127,23 +162,10 @@ public class MapEditorScreen extends GameScreen
 
 		// Add the GUI components to the frame.
 		_Tabs.add("Entities", _EntityTree);
-		_Tabs.add("Images", _ImageTree);
+		_Tabs.add("Scene", _SceneTree);
 		screenManager.getGame().getWindow().add(_Tabs, BorderLayout.WEST);
 		screenManager.getGame().getWindow().add(_InfoPanel, BorderLayout.EAST);
 		screenManager.getGame().getWindow().setJMenuBar(_MenuBar);
-
-		// Set up the camera.
-		_Camera = new Camera2D(new Rectangle(0, 0, (int) screenManager.getWindowBounds().x, (int) screenManager.getWindowBounds().y), new Rectangle(0, 0, 3000, 3000));
-		_Camera.setPosition(new Vector2(1000, 1000));
-
-		// Create the scene manager.
-		_SceneManager = new SceneManager(_Camera);
-
-		// Enable debug.
-		DebugManager.getInstance().debug = true;
-
-		// Create the scene.
-		_SceneManager.addScene(new SmallDemoScene(_SceneManager));
 	}
 
 	/**
@@ -158,7 +180,7 @@ public class MapEditorScreen extends GameScreen
 		_SceneManager.loadContent();
 
 		// Set the info panel's entity.
-		_InfoPanel.setEntity(_SceneManager.getCurrentScene().getEntities().get(0));
+		setSelectedEntity(_SceneManager.getCurrentScene().getEntities().get(0));
 
 		// Once the load has finished, we use ResetElapsedTime to tell the game's
 		// timing mechanism that we have just finished a very long frame, and that
@@ -189,30 +211,7 @@ public class MapEditorScreen extends GameScreen
 			_SceneManager.handleInput(input);
 
 			// Update the selected entity's position.
-			// The mouse position in the world.
-			Vector2 mouse = _Camera.convertScreenToWorld(input.mousePosition());
-
-			// Due to unknown error getting an accurate mouse position, subtract a bit.
-			_SelectedEntity.getBody().getShape().setLayeredPosition(new Vector2(mouse.x - 145, mouse.y));
-
-			// If the user has pressed the left mouse button, try to add the entity to the scene.
-			if (input.isMouseButtonClicked(1))
-			{
-				addSelectedEntityToScene();
-			}
-
-			// If to increase the entity's depth.
-			if (input.isKeyDown(KeyEvent.VK_2))
-			{
-				// The entity's bottom depth position.
-				_SelectedEntity.getBody().getShape().setBottomDepth(_SelectedEntity.getBody().getShape().getBottomDepth() + .8);
-			}
-			// If to decrease the entity's depth.
-			else if (input.isKeyDown(KeyEvent.VK_1))
-			{
-				// The entity's bottom depth position.
-				_SelectedEntity.getBody().getShape().setBottomDepth(_SelectedEntity.getBody().getShape().getBottomDepth() - .8);
-			}
+			updateSelectedEntity(input);
 
 			// If to zoom in.
 			if (input.isKeyDown(KeyEvent.VK_O))
@@ -265,11 +264,6 @@ public class MapEditorScreen extends GameScreen
 
 		// Update the scene manager.
 		_SceneManager.update(gameTime);
-		// Update the selected entity.
-		_SelectedEntity = _InfoPanel.getEntity();
-
-		// Update the selected node.
-		updateSelectedNode(false);
 	}
 
 	/**
@@ -293,83 +287,112 @@ public class MapEditorScreen extends GameScreen
 	}
 
 	/**
+	 * Move the selected entity according to input.
+	 * 
+	 * @param input
+	 *            The input to go by.
+	 */
+	private void updateSelectedEntity(InputManager input)
+	{
+		// If the selected entity is null, quit.
+		if (_SelectedEntity == null) { return; }
+
+		// The mouse position in the world.
+		_SelectedEntity.getBody().getShape().setLayeredPosition(_Camera.convertScreenToWorld(input.mousePosition()));
+
+		// If the user has pressed the left mouse button, try to add the entity to the scene.
+		if (input.isMouseButtonClicked(1))
+		{
+			addSelectedEntityToScene();
+		}
+
+		// If to increase the entity's depth.
+		if (input.isKeyDown(KeyEvent.VK_2))
+		{
+			// The entity's bottom depth position.
+			_SelectedEntity.getBody().getShape().setBottomDepth(_SelectedEntity.getBody().getShape().getBottomDepth() + .8);
+		}
+		// If to decrease the entity's depth.
+		else if (input.isKeyDown(KeyEvent.VK_1))
+		{
+			// The entity's bottom depth position.
+			_SelectedEntity.getBody().getShape().setBottomDepth(_SelectedEntity.getBody().getShape().getBottomDepth() - .8);
+		}
+	}
+
+	/**
 	 * Add the selected entity to the scene.
 	 */
 	private void addSelectedEntityToScene()
 	{
-		// If the entity is not currently colliding with anything, add it.
-		if (_SelectedEntity.getBody().getCollisions().size() == 0)
-		{
-			// Because the entity has already been added to the scene, all we do is not remove him from it.
-			_SelectedEntity.getBody().setIsImmaterial(false);
-			_SelectedEntity = null;
+		// If the entity is currently colliding with something, stop here.
+		if (_SelectedEntity.getBody().getCollisions().size() != 0) { return; }
 
-			// Get a new entity to add.
-			updateSelectedNode(true);
-		}
+		// Because the entity has already been added to the scene, all we do is not remove him from it.
+		_SelectedEntity.getBody().setIsImmaterial(false);
+		_SelectedEntity = null;
+		_SceneTree.updateTree();
 	}
 
 	/**
-	 * Update the currently selected node and consequently the info panel's entity.
+	 * Update the currently selected entity and consequently the info panel's entity.
 	 * 
-	 * @param force
-	 *            Force an update regardless if the node has changed or not.
+	 * @param path
+	 *            The path of the entity.
 	 */
-	private void updateSelectedNode(boolean force)
+	private void changeSelectedEntity(String path)
 	{
-		// If the tree's selected node does not match the one stored, change them.
-		if (_SelectedNode != ((FileTree) _Tabs.getSelectedComponent()).getSelectedNode() || force)
+		// Remove the old entity from the scene and physics simulator.
+		if (_SelectedEntity != null)
 		{
-			// Switch selected node.
-			_SelectedNode = ((FileTree) _Tabs.getSelectedComponent()).getSelectedNode();
-
-			// Remove the old entity from the scene and physics simulator.
-			if (_SelectedEntity != null)
-			{
-				_SceneManager.getCurrentScene().removeEntity(_SelectedEntity);
-			}
-
-			// Create an entity from the selected node and add it to the scene.
-			Entity entity = (_SelectedNode != null) ? loadEntity() : new Entity(_SceneManager.getCurrentScene().getPhysicsSimulator());
-			_SceneManager.getCurrentScene().addEntity(entity);
-
-			// Add the entity to the info panel and debug manager.
-			setSelectedEntity(entity);
+			_SceneManager.getCurrentScene().removeEntity(_SelectedEntity);
 		}
+
+		// Create an entity from the selected node and add it to the scene.
+		Entity entity = loadEntity(path);
+		_SceneManager.getCurrentScene().addEntity(entity);
+
+		// Add the entity to the info panel and debug manager.
+		setSelectedEntity(entity);
 	}
 
 	/**
-	 * Load the entity mapped to the currently selected node.
+	 * Update the currently selected entity and consequently the info panel's entity.
 	 * 
+	 * @param entity
+	 *            The entity to select.
+	 */
+	private void changeSelectedEntity(Entity entity)
+	{
+		// Remove the old entity from the scene and physics simulator.
+		if (_SelectedEntity != null)
+		{
+			_SceneManager.getCurrentScene().removeEntity(_SelectedEntity);
+		}
+
+		// Add the entity to the scene.
+		_SceneManager.getCurrentScene().addEntity(entity);
+
+		// Add the entity to the info panel and debug manager.
+		setSelectedEntity(entity);
+	}
+
+	/**
+	 * Load the entity mapped at the specified path.
+	 * 
+	 * @param path
+	 *            The path of the entity to load. Assumes that the path is relative to the root of the game, ie. src folder.
 	 * @return The loaded entity.
 	 */
-	private Entity loadEntity()
+	private Entity loadEntity(String path)
 	{
-		// If the selected node is null, stop here.
-		if (_SelectedNode == null) { return null; }
+		// Load the entity from file. Remove the first 17 characters from the path (src/data/entities).
+		Entity entity = Helper.loadEntity(path.substring(17));
+		// Add the body to the physics simulator.
+		_SceneManager.getCurrentScene().getPhysicsSimulator().addBody(entity.getBody());
 
-		// Whether to create from image or load from file.
-		if (((FileTree) _Tabs.getSelectedComponent()) == _ImageTree)
-		{
-			// Create an entity from the selected node.
-			Entity entity = new Entity(_SceneManager.getCurrentScene().getPhysicsSimulator());
-			// Load the entity's content. Remove the first 15 characters from parent (src/data/images).
-			entity.loadContent(_SelectedNode.getParent().toString().substring(15) + "\\" + _SelectedNode.toString());
-
-			// Return the entity.
-			return entity;
-		}
-		else
-		{
-			// Load the entity from file. Remove the first 17 characters from parent (src/data/entities).
-			Entity entity = Helper.loadEntity(_SelectedNode.getParent().toString().substring(17) + "\\" + _SelectedNode.toString());
-			// Add the body to the physics simulator.
-			_SceneManager.getCurrentScene().getPhysicsSimulator().addBody(entity.getBody());
-
-			// Return the entity.
-			return entity;
-		}
-
+		// Return the entity.
+		return entity;
 	}
 
 	/**
@@ -381,6 +404,7 @@ public class MapEditorScreen extends GameScreen
 	private void setSelectedEntity(Entity entity)
 	{
 		// Add the entity to the info panel and debug manager.
+		_SelectedEntity = entity;
 		_InfoPanel.setEntity(entity);
 		DebugManager.getInstance().setDebugBody(entity.getBody());
 	}

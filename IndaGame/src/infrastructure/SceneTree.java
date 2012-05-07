@@ -36,15 +36,9 @@ package infrastructure;
  */
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Container;
 import java.awt.Dimension;
-import java.io.File;
-import java.util.Collections;
-import java.util.Vector;
+import java.util.ArrayList;
 
-import javax.swing.BoxLayout;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
@@ -55,87 +49,105 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import events.EntitySelectEvent;
 import events.EntitySelectEventListener;
-import events.PathSelectEvent;
-import events.PathSelectEventListener;
+
+import main.Entity;
+import main.Character;
+import main.Player;
+import main.Scene;
 
 /**
- * Display a file system in a JTree view
- * 
- * @version $Id: FileTree.java,v 1.9 2004/02/23 03:39:22 ian Exp $
- * @author Ian Darwin
+ * Display all entities in a scene by using a JTree view.
  */
-public class FileTree extends JPanel
+public class SceneTree extends JPanel
 {
+	// The scene to map out.
+	private Scene _Scene;
+	// The tree.
+	private JTree _Tree;
 	// The currently selected node.
 	private DefaultMutableTreeNode _SelectedNode;
 	// The list of event listeners.
 	private EventListenerList _EventListeners;
 
-	/** Construct a FileTree */
-	public FileTree(File dir)
+	/**
+	 * Constructor for a scene tree.
+	 * 
+	 * @param scene
+	 *            The scene to view.
+	 * */
+	public SceneTree(Scene scene)
 	{
-		// Initialize some variables.
 		setLayout(new BorderLayout());
+
+		// Set the scene and initialize some variables.
+		_Scene = scene;
 		_EventListeners = new EventListenerList();
 
 		// Make a tree list with all the nodes, and make it a JTree.
-		JTree tree = new JTree(addNodes(null, dir));
-		tree.setFocusable(false);
+		_Tree = new JTree(mapScene(scene));
+		_Tree.setFocusable(false);
+		_Tree.getComponent(0).setFocusable(false);
 
-		// Add a listener
-		tree.addTreeSelectionListener(new TreeSelectionListener()
+		// Add a listener.
+		_Tree.addTreeSelectionListener(new TreeSelectionListener()
 		{
 			public void valueChanged(TreeSelectionEvent e)
 			{
 				_SelectedNode = (DefaultMutableTreeNode) e.getPath().getLastPathComponent();
-				selectedNodeInvoke();
+
+				if (getSelectedEntity() != null)
+				{
+					selectedEntityInvoke();
+				}
 			}
 		});
 
 		// Lastly, put the JTree into a JScrollPane.
 		JScrollPane scrollpane = new JScrollPane();
-		scrollpane.getViewport().add(tree);
+		scrollpane.getViewport().add(_Tree);
 		add(BorderLayout.CENTER, scrollpane);
 	}
 
-	/** Add nodes from under "dir" into curTop. Highly recursive. */
-	DefaultMutableTreeNode addNodes(DefaultMutableTreeNode curTop, File dir)
+	/**
+	 * Maps out all of the scene's entities into a root node, ready to add to a JTree.
+	 * 
+	 * @param scene
+	 *            The scene to map out.
+	 * @return The root node of the scene.
+	 */
+	private DefaultMutableTreeNode mapScene(Scene scene)
 	{
-		String curPath = dir.getPath();
-		DefaultMutableTreeNode curDir = new DefaultMutableTreeNode(curPath);
+		// Create the root node.
+		DefaultMutableTreeNode dir = new DefaultMutableTreeNode("Scene");
 
-		if (curTop != null)
-		{ // should only be null at root
-			curTop.add(curDir);
-		}
+		// Add the top nodes to the root.
+		DefaultMutableTreeNode pDir = new DefaultMutableTreeNode("Player");
+		DefaultMutableTreeNode cDir = new DefaultMutableTreeNode("Character");
+		DefaultMutableTreeNode eDir = new DefaultMutableTreeNode("Entity");
+		dir.add(pDir);
+		dir.add(cDir);
+		dir.add(eDir);
 
-		Vector ol = new Vector();
-		String[] tmp = dir.list();
-		for (int i = 0; i < tmp.length; i++)
+		// For each entity in the scene, add them to their respective node in the tree.
+		for (Entity entity : new ArrayList<Entity>(scene.getEntities()))
 		{
-			ol.addElement(tmp[i]);
-		}
-		Collections.sort(ol, String.CASE_INSENSITIVE_ORDER);
-		File f;
-		Vector files = new Vector();
-
-		// Make two passes, one for Dirs and one for Files. This is #1.
-		for (int i = 0; i < ol.size(); i++)
-		{
-			String thisObject = (String) ol.elementAt(i);
-			String newPath;
-			if (curPath.equals(".")) newPath = thisObject;
-			else newPath = curPath + File.separator + thisObject;
-			if ((f = new File(newPath)).isDirectory()) addNodes(curDir, f);
-			else files.addElement(thisObject);
+			// Depending on the entity's sub-type class, put it under different nodes. Go from the most exclusive and upwards.
+			if (entity instanceof Player)
+			{
+				pDir.add(new DefaultMutableTreeNode(entity));
+			}
+			else if (entity instanceof Character)
+			{
+				cDir.add(new DefaultMutableTreeNode(entity));
+			}
+			else
+			{
+				eDir.add(new DefaultMutableTreeNode(entity));
+			}
 		}
 
-		// Pass two: for files.
-		for (int fnum = 0; fnum < files.size(); fnum++)
-		{
-			curDir.add(new DefaultMutableTreeNode(files.elementAt(fnum)));
-		}
-		return curDir;
+		// Return the root node.
+		return dir;
 	}
 
 	/**
@@ -144,9 +156,9 @@ public class FileTree extends JPanel
 	 * @param listener
 	 *            The listener class.
 	 */
-	public void addEventListener(PathSelectEventListener listener)
+	public void addEventListener(EntitySelectEventListener listener)
 	{
-		_EventListeners.add(PathSelectEventListener.class, listener);
+		_EventListeners.add(EntitySelectEventListener.class, listener);
 	}
 
 	/**
@@ -155,21 +167,41 @@ public class FileTree extends JPanel
 	 * @param listener
 	 *            The listener class.
 	 */
-	public void removeEventListener(PathSelectEventListener listener)
+	public void removeEventListener(EntitySelectEventListener listener)
 	{
-		_EventListeners.remove(PathSelectEventListener.class, listener);
+		_EventListeners.remove(EntitySelectEventListener.class, listener);
 	}
 
 	/**
 	 * Method for raising the selected event.
 	 */
-	protected void selectedNodeInvoke()
+	protected void selectedEntityInvoke()
 	{
 		// For all listeners, enlighten them.
-		for (PathSelectEventListener listener : _EventListeners.getListeners(PathSelectEventListener.class))
+		for (EntitySelectEventListener listener : _EventListeners.getListeners(EntitySelectEventListener.class))
 		{
-			listener.handleEvent(new PathSelectEvent(_SelectedNode.getParent().toString() + "\\" + _SelectedNode.toString()));
+			listener.handleEvent(new EntitySelectEvent(getSelectedEntity()));
 		}
+	}
+
+	/**
+	 * Update the tree.
+	 */
+	public void updateTree()
+	{
+		updateTree(_Scene);
+	}
+
+	/**
+	 * Update the tree.
+	 * 
+	 * @param scene
+	 *            The new scene.
+	 */
+	public void updateTree(Scene scene)
+	{
+		_Scene = scene;
+		_Tree.setModel(new JTree(mapScene(scene)).getModel());
 	}
 
 	/**
@@ -180,6 +212,20 @@ public class FileTree extends JPanel
 	public DefaultMutableTreeNode getSelectedNode()
 	{
 		return _SelectedNode;
+	}
+
+	/**
+	 * Get the currently selected entity.
+	 * 
+	 * @return The currently selected entity.
+	 */
+	public Entity getSelectedEntity()
+	{
+		// If the selected node is a type of entity, return it.
+		if (_SelectedNode.getUserObject() instanceof Entity) { return (Entity) _SelectedNode.getUserObject(); }
+
+		// No valid entity, return null.
+		return null;
 	}
 
 	public Dimension getMinimumSize()

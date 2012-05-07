@@ -33,10 +33,10 @@ public class Camera2D
 	 * @param world
 	 *            The game world's outer bounds.
 	 */
-	public Camera2D(Rectangle viewport, Rectangle world)
+	public Camera2D(Vector2 viewport, Vector2 world)
 	{
 		// Initialize the camera.
-		initialize(viewport, world);
+		initialize(new Rectangle(0, 0, (int) viewport.x, (int) viewport.y), new Rectangle(0, 0, (int) world.x, (int) world.y));
 	}
 
 	/**
