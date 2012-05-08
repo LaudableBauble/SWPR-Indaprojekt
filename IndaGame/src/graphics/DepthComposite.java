@@ -7,7 +7,6 @@ import java.awt.image.ColorModel;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.util.Arrays;
-import java.util.concurrent.ExecutionException;
 
 import main.Entity;
 
@@ -70,62 +69,38 @@ public class DepthComposite implements Composite, CompositeContext
 			// Whether the source raster supports a 4th color band, ie. alpha.
 			boolean supportsAlpha = src.getNumBands() >= 4;
 
-			// Get the depth sorting interval for the source entity and the destination area.
-			Vector2 srcInterval = _Entity.getDepthSortInterval();
-			Vector2 destInterval = getZInterval(dstInX, dstInY, maxX, maxY);
-
-			// Determine if the entity is completely behind or completely in front of the destination area.
-			switch (Vector2.isOverlaping(srcInterval, destInterval))
+			// For each pixel in the writable raster.
+			for (int y = dstOut.getMinY(); y < maxY; y++)
 			{
-				case 1:
+				for (int x = dstOut.getMinX(); x < maxX; x++)
 				{
-					// The source entity is completely in front of the destination; draw over and update the z-values.
-					dstOut.setRect(0, 0, src);
-					setZArea(dstInX, dstInY, _Entity);
-					break;
-				}
-				case -1:
-				{
-					// The source entity is completely behind the destination, do nothing.
-					break;
-				}
-				case 0:
-				{
-					// For each pixel in the writable raster.
-					for (int y = dstOut.getMinY(); y < maxY; y++)
+					// Get the depth (z) for both the destination and source rasters.
+					double dstZ = getZ(dstInX + x, dstInY + y);
+					double srcZ = _Entity.getDepthSort(x, y);
+
+					// Get the pixel's alpha value.
+					int alpha = supportsAlpha ? src.getSample(x, y, A_BAND) : 1;
+
+					// If to overwrite or keep the source raster's data.
+					if (srcZ > dstZ && alpha > 0)
 					{
-						for (int x = dstOut.getMinX(); x < maxX; x++)
-						{
-							// Get the depth (z) for both the destination and source rasters.
-							double dstZ = getZ(dstInX + x, dstInY + y);
-							double srcZ = _Entity.getDepthSort(x, y);
-
-							// Get the pixel's alpha value.
-							int alpha = supportsAlpha ? src.getSample(x, y, A_BAND) : 1;
-
-							// If to overwrite or keep the source raster's data.
-							if (srcZ > dstZ && alpha > 0)
-							{
-								setZ(dstInX + x, dstInY + y, srcZ);
-								dstOut.setSample(x, y, R_BAND, src.getSample(x, y, R_BAND)); // R
-								dstOut.setSample(x, y, G_BAND, src.getSample(x, y, G_BAND)); // G
-								dstOut.setSample(x, y, B_BAND, src.getSample(x, y, B_BAND)); // B
-							}
-							else if (srcZ == dstZ && alpha > 0)
-							{
-								dstOut.setSample(x, y, R_BAND, src.getSample(x, y, R_BAND)); // R
-								dstOut.setSample(x, y, G_BAND, src.getSample(x, y, G_BAND)); // G
-								dstOut.setSample(x, y, B_BAND, src.getSample(x, y, B_BAND)); // B
-							}
-							else
-							{
-								dstOut.setSample(x, y, R_BAND, dstIn.getSample(x, y, R_BAND)); // R
-								dstOut.setSample(x, y, G_BAND, dstIn.getSample(x, y, G_BAND)); // G
-								dstOut.setSample(x, y, B_BAND, dstIn.getSample(x, y, B_BAND)); // B
-							}
-						}
+						setZ(dstInX + x, dstInY + y, srcZ);
+						dstOut.setSample(x, y, R_BAND, src.getSample(x, y, R_BAND)); // R
+						dstOut.setSample(x, y, G_BAND, src.getSample(x, y, G_BAND)); // G
+						dstOut.setSample(x, y, B_BAND, src.getSample(x, y, B_BAND)); // B
 					}
-					break;
+					else if (srcZ == dstZ && alpha > 0)
+					{
+						dstOut.setSample(x, y, R_BAND, src.getSample(x, y, R_BAND)); // R
+						dstOut.setSample(x, y, G_BAND, src.getSample(x, y, G_BAND)); // G
+						dstOut.setSample(x, y, B_BAND, src.getSample(x, y, B_BAND)); // B
+					}
+					else
+					{
+						dstOut.setSample(x, y, R_BAND, dstIn.getSample(x, y, R_BAND)); // R
+						dstOut.setSample(x, y, G_BAND, dstIn.getSample(x, y, G_BAND)); // G
+						dstOut.setSample(x, y, B_BAND, dstIn.getSample(x, y, B_BAND)); // B
+					}
 				}
 			}
 		}
@@ -195,33 +170,6 @@ public class DepthComposite implements Composite, CompositeContext
 		if (x >= _Width || x < 0 || y >= _Height || y < 0) { throw new IllegalArgumentException("Point [" + x + ", " + y + "] is outside of the Z Buffer array"); }
 
 		buffer[y * _Width + x] = value;
-	}
-
-	/**
-	 * Sets all z-values in an area corresponding to an entity.
-	 * 
-	 * @param xPosition
-	 *            The x-coordinate of the area's top-left corner.
-	 * @param yPosition
-	 *            The y-coordinate of the area's top-left corner.
-	 * @param entity
-	 *            The entity to get the depth values from.
-	 * @throws ExecutionException
-	 *             Throws an exception if such has occurred.
-	 */
-	public void setZArea(int xPosition, int yPosition, Entity entity) throws ExecutionException
-	{
-		// Get the array of z-values.
-		double[][] depths = entity.getDepthSort();
-
-		// For each pixel in the entity's sprite, get its z-value and set it to the buffer.
-		for (int y = 0; y < depths.length; y++)
-		{
-			for (int x = 0; x < depths[y].length; x++)
-			{
-				setZ(xPosition + x, yPosition + y, depths[x][y]);
-			}
-		}
 	}
 
 	/**

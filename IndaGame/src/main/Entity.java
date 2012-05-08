@@ -33,8 +33,6 @@ public class Entity
 	// The Sprite and Body.
 	protected SpriteManager _Sprites;
 	protected Body _Body;
-	protected Vector2 _DepthInterval;
-	protected double[][] _DepthValues;
 
 	/**
 	 * Constructor for an entity.
@@ -161,97 +159,6 @@ public class Entity
 	{
 		// No stored depth value found, get a fresh one.
 		return _Body.getShape().getDepthSort(x, y);
-	}
-
-	/**
-	 * Get an array containing all depth sorting values for this entity, ie. as seen from its image.
-	 * 
-	 * @return The array of depth sorting values for this entity.
-	 * @throws ExecutionException
-	 *             Throw an exception if there has occurred one.
-	 */
-	public double[][] getDepthSort() throws ExecutionException
-	{
-		try
-		{
-			// If the entity's body is static, the depth values should be the same.
-			if (_Body.getIsStatic() && _DepthValues != null) { return _DepthValues; }
-
-			// Shortcuts to the sprite's width and height.
-			int width = (int) _Sprites.getSprite(0).getCurrentFrame().getWidth();
-			int height = (int) _Sprites.getSprite(0).getCurrentFrame().getHeight();
-
-			// Create the array to return.
-			double[][] depths = new double[width][height];
-
-			// For all pixels in the current sprite, get its z-value.
-			for (int x = 0; x < width; x++)
-			{
-				for (int y = 0; y < height; y++)
-				{
-					depths[x][y] = getDepthSort(x, y);
-				}
-			}
-
-			// Update the stored depth values.
-			_DepthValues = depths;
-
-			// Return the array.
-			return _DepthValues;
-		}
-		catch (Exception e)
-		{
-			System.out.println(this + ": Error getting Depth sort values. - " + e.getMessage());
-			throw new ExecutionException("Error getting depth intervals.", null);
-		}
-	}
-
-	/**
-	 * Get the interval for the entity's depth sorting value, ie. the min and max value. The currently active sprite is used as reference.
-	 * 
-	 * @return The interval (min and max) of the entity's depth sorting values.
-	 * @throws ExecutionException
-	 *             Throws an exception if there has occurred one.
-	 */
-	public Vector2 getDepthSortInterval() throws ExecutionException
-	{
-		try
-		{
-			// If the entity's body is static, the depth intervals should be the same.
-			if (_Body.getIsStatic() && _DepthInterval != null) { return _DepthInterval; }
-
-			// The min and max values.
-			double min = Double.MAX_VALUE;
-			double max = Double.MIN_VALUE;
-
-			// If the entity's shape is not uniform all x-coordinates also need to be evaluated.
-			float width = (_Body.getShape().getDepthDistribution() == DepthDistribution.Uniform) ? 1 : _Sprites.getSprite(0).getCurrentFrame().getWidth();
-
-			// Iterate through all pixels in the sprite.
-			for (int y = 0; y < _Sprites.getSprite(0).getCurrentFrame().getHeight(); y++)
-			{
-				for (int x = 0; x < width; x++)
-				{
-					// Get the depth sort value.
-					double d = _Body.getShape().getDepthSort(x, y);
-
-					// Determine if the min and max values have changed.
-					min = (d < min) ? d : min;
-					max = (d > max) ? d : max;
-				}
-			}
-
-			// Update the depth intervals.
-			_DepthInterval = new Vector2(min, max);
-
-			// Return the interval.
-			return _DepthInterval;
-		}
-		catch (Exception e)
-		{
-			System.out.println(this + ": Error getting Depth sort values. - " + e.getMessage());
-			throw new ExecutionException("Error getting depth values.", null);
-		}
 	}
 
 	/**

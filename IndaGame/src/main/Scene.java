@@ -145,7 +145,7 @@ public class Scene
 	public Entity addEntity(Entity entity)
 	{
 		_Entities.add(entity);
-		//Collections.sort(_Entities, new EntityDepthComparator());
+		Collections.sort(_Entities, new EntityDepthComparator());
 		return entity;
 	}
 
