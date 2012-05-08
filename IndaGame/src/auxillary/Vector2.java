@@ -8,6 +8,8 @@ import java.util.Arrays;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import physics.Shape;
+
 /**
  * A vector2 is a position in the game, represented in the form of two double values; x and y.
  */
@@ -263,6 +265,27 @@ public class Vector2
 
 		// Return the difference of the middle values.
 		return Math.max(v[1], v[2]) - Math.min(v[1], v[2]);
+	}
+
+	/**
+	 * Compare two vectors by their values. The vectors need to be in the order of (x = min, y = max). Allows margin overlap, ie. same end-point position.
+	 * 
+	 * @return 1 if the first vector is greater, -1 if the second vector is greater and 0 if the vectors overlap.
+	 */
+	public static int isOverlaping(Vector2 v1, Vector2 v2)
+	{
+		// Compare the vectors to each other.
+		if (!v1.overlap(v2, false))
+		{
+			if (v1.x > v2.y)
+			{
+				return 1;
+			}
+			else if (v2.x > v1.y) { return -1; }
+		}
+
+		// The vectors overlap, return 0.
+		return 0;
 	}
 
 	// Add the supplied Vector to this Vector.
