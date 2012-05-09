@@ -235,65 +235,72 @@ public class DebugManager
 				}
 			}
 		}
-		
-		//Reset the graphics matrix.
+
+		// Reset the graphics matrix.
 		graphics.setTransform(new AffineTransform());
 
 		// Change the color for the debug window.
 		graphics.setColor(Color.lightGray);
 		// Draw a debug window.
-		graphics.fillRect(0, 0, 130, 480);
+		graphics.fillRect(0, 0, 130, 600);
 
 		// Change the color back to black.
 		graphics.setColor(Color.black);
 
+		// The x-coordinate of all texts.
+		float x = 5;
+
 		// Display the gravity.
-		graphics.drawString("DF, Gravity: " + Vector2.round(_Physics.getGravity(), 1), 2, 20);
+		graphics.drawString("DF, Gravity: " + Vector2.round(_Physics.getGravity(), 1), x, 20);
 		// Display the number of bodies.
-		graphics.drawString("Bodies: " + _Physics.bodyCount(), 2, 35);
+		graphics.drawString("Bodies: " + _Physics.bodyCount(), x, 35);
 		// Display the number of forces to add.
-		graphics.drawString("Forces: " + forcesToAdd, 2, 50);
+		graphics.drawString("Forces: " + forcesToAdd, x, 50);
 		// Display the energyDecrease at each collision.
-		graphics.drawString("GH, Impact ED: " + Vector2.round(_Physics.energyDecrease, 1), 2, 65);
+		graphics.drawString("GH, Impact ED: " + Vector2.round(_Physics.energyDecrease, 1), x, 65);
 
 		// Display the used time.
-		graphics.drawString("Input: " + phaseTime[0] + " ms", 2, 95);
-		graphics.drawString("Physics: " + phaseTime[1] + " ms", 2, 110);
-		graphics.drawString("Body: " + phaseTime[2] + " ms", 2, 125);
-		graphics.drawString("Draw: " + phaseTime[3] + " ms", 2, 140);
-		graphics.drawString("Total: " + phaseEndTime + " ms", 2, 155);
+		graphics.drawString("Input: " + phaseTime[0] + " ms", x, 95);
+		graphics.drawString("Physics: " + phaseTime[1] + " ms", x, 110);
+		graphics.drawString("Body: " + phaseTime[2] + " ms", x, 125);
+		graphics.drawString("Draw: " + phaseTime[3] + " ms", x, 140);
+		graphics.drawString("Total: " + phaseEndTime + " ms", x, 155);
 
 		// Draw the Debug Body's information.
 		if (debugBody != null)
 		{
 			// Draw the information.
-			graphics.drawString("------- Body -------", 2, 170);
-			graphics.drawString("Pos: " + Vector2.round(debugBody.getLayeredPosition(), 0).toString(), 2, 185);
-			graphics.drawString("Velocity: " + Vector3.round(debugBody.getVelocity(), 0).toString(), 2, 200);
-			graphics.drawString("AS, Mass: " + Math.round(debugBody.getMass()), 2, 215);
-			graphics.drawString("NB, FrictionCoe: " + Math.round(debugBody.getFrictionCoefficient()), 2, 230);
-			graphics.drawString("Width: " + debugBody.getShape().getWidth(), 2, 245);
-			graphics.drawString("Height: " + debugBody.getShape().getHeight(), 2, 260);
-			graphics.drawString("VC, Max Velocity: " + Vector2.round(debugBody.getMaxVelocity(), 1), 2, 275);
-			graphics.drawString("ZX, Acc Value: " + Vector2.round(debugBody.getAccelerationValue(), 1), 2, 290);
+			graphics.drawString("------- Body -------", x, 170);
+			graphics.drawString("Pos: " + Vector2.round(debugBody.getLayeredPosition(), 0).toString(), x, 185);
+			graphics.drawString("Velocity: " + Vector3.round(debugBody.getVelocity(), 0).toString(), x, 200);
+			graphics.drawString("AS, Mass: " + Math.round(debugBody.getMass()), x, 215);
+			graphics.drawString("NB, FrictionCoe: " + Math.round(debugBody.getFrictionCoefficient()), x, 230);
+			graphics.drawString("Width: " + debugBody.getShape().getWidth(), x, 245);
+			graphics.drawString("Height: " + debugBody.getShape().getHeight(), x, 260);
+			graphics.drawString("VC, Max Velocity: " + Vector2.round(debugBody.getMaxVelocity(), 1), x, 275);
+			graphics.drawString("ZX, Acc Value: " + Vector2.round(debugBody.getAccelerationValue(), 1), x, 290);
 		}
 
 		// Draw the time since game start in milliseconds.
-		graphics.drawString("Time: " + (System.currentTimeMillis() - startTime) + " ms", 2, 400);
+		graphics.drawString("Time: " + (System.currentTimeMillis() - startTime) + " ms", x, 400);
 
 		// Draw the FPS.
 		if (phaseEndTime > 0)
 		{
-			graphics.drawString(String.valueOf(1000 / phaseEndTime) + " FPS", 2, 415);
+			graphics.drawString(String.valueOf(1000 / phaseEndTime) + " FPS", x, 415);
 		}
 		// Draw a blank.
 		else
 		{
-			graphics.drawString("--- FPS", 0, 415);
+			graphics.drawString("--- FPS", x - 2, 415);
 		}
 
-		// Let the player know that the magic happens with ENTER.
-		graphics.drawString("Press ENTER to toggle", 2, 460);
+		// How to use the camera.
+		graphics.drawString("JKLI to move camera", x, 500);
+		graphics.drawString("OP to zoom camera", x, 520);
+
+		// Let the player know that the magic happens with F1.
+		graphics.drawString("Press F1 to toggle", x, 580);
 
 		// Revert to the old color.
 		graphics.setColor(old);

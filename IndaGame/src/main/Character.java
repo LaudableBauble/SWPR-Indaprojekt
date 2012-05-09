@@ -31,9 +31,10 @@ public class Character extends Entity
 	private Sprite _CurrentSprite;
 	// Whether the character wants to move.
 	private boolean _WantToMove;
-	// filename of char
-	private String character;
-	private int nrPics;
+	// The filename of the character's main sprite.
+	private String _FileName;
+	// The number of frames per sprite.
+	private int _FrameCount;
 	// The elapsed time since last random amble.
 	private float _ElapsedTime;
 	// The time to wait between moving randomly and the time to walk.
@@ -43,7 +44,7 @@ public class Character extends Entity
 	private float _Speed;
 
 	/**
-	 * Constructor for a Character.
+	 * Constructor for a character.
 	 * 
 	 * @param physics
 	 *            The physics simulator this Character is part of.
@@ -68,9 +69,9 @@ public class Character extends Entity
 		// Initialize the variables.
 		// _CanBeControlled = true;
 		_MaxSpeed = 1;
-		character = chara;
+		_FileName = chara;
 		_Body.setAccelerationValue(3);
-		nrPics = nrOfPics;
+		_FrameCount = nrOfPics;
 		_WantToMove = false;
 		_ElapsedTime = 0;
 		_TimeToWalk = 2;
@@ -90,12 +91,12 @@ public class Character extends Entity
 		Sprite left = _Sprites.addSprite(new Sprite("Left"));
 
 		// Adding the pictures depending on how many are available.
-		for (int x = 1; x <= nrPics; x++)
+		for (int x = 1; x <= _FrameCount; x++)
 		{
-			down.addFrame(new Frame("Character/" + character + "/" + character + "down" + x + ".png"));
-			up.addFrame(new Frame("Character/" + character + "/" + character + "up" + x + ".png"));
-			right.addFrame(new Frame("Character/" + character + "/" + character + "right" + x + ".png"));
-			left.addFrame(new Frame("Character/" + character + "/" + character + "left" + x + ".png"));
+			down.addFrame(new Frame("Character/" + _FileName + "/" + _FileName + "down" + x + ".png"));
+			up.addFrame(new Frame("Character/" + _FileName + "/" + _FileName + "up" + x + ".png"));
+			right.addFrame(new Frame("Character/" + _FileName + "/" + _FileName + "right" + x + ".png"));
+			left.addFrame(new Frame("Character/" + _FileName + "/" + _FileName + "left" + x + ".png"));
 		}
 
 		// Only make one sprite visible.
@@ -112,7 +113,7 @@ public class Character extends Entity
 		// Set the shape of the body.
 		_Body.getShape().setWidth(_Sprites.getSprite(0).getCurrentFrame().getWidth());
 		_Body.getShape().setHeight(_Sprites.getSprite(0).getCurrentFrame().getHeight() / 2);
-		_Body.getShape().setDepth(_Sprites.getSprite(0).getCurrentFrame().getHeight());
+		_Body.getShape().setDepth(_Sprites.getSprite(0).getCurrentFrame().getHeight() / 2);
 	}
 
 	/**

@@ -27,7 +27,7 @@ import events.MessageEvent;
 public class MessageBoxScreen extends GameScreen
 {
 	private String _Message;
-	BufferedImage _Texture;
+	private BufferedImage _Texture;
 	private EventListenerList _EventListeners;
 
 	/**

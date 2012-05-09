@@ -3,7 +3,9 @@ package auxillary;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
+import java.awt.Transparency;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
@@ -303,7 +305,9 @@ public final class Helper
 	{
 		// Create the compatible image.
 		// BufferedImage compatible = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
-		BufferedImage compatible = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+		// BufferedImage compatible = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+		BufferedImage compatible = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration()
+				.createCompatibleImage(image.getWidth(), image.getHeight(), Transparency.TRANSLUCENT);
 
 		// Draw the image onto the ensured compatible image, converting their color model's in the process.
 		Graphics2D g = compatible.createGraphics();

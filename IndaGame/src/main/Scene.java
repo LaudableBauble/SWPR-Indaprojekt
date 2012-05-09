@@ -6,6 +6,7 @@ import input.InputManager;
 
 import java.awt.Composite;
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -117,7 +118,7 @@ public class Scene
 	 *            The graphics component.
 	 */
 	public void draw(Graphics2D graphics)
-	{
+	{		
 		// Enable depth sorting by composite.
 		Composite old = graphics.getComposite();
 		graphics.setComposite(_Composite);

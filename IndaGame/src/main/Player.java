@@ -97,7 +97,7 @@ public class Player extends Entity
 		// Set the shape of the body.
 		_Body.getShape().setWidth(_Sprites.getSprite(0).getCurrentFrame().getWidth() / 2);
 		_Body.getShape().setHeight(_Sprites.getSprite(0).getCurrentFrame().getHeight() / 4);
-		_Body.getShape().setDepth(_Sprites.getSprite(0).getCurrentFrame().getHeight());
+		_Body.getShape().setDepth(_Sprites.getSprite(0).getCurrentFrame().getHeight() / 4);
 
 		// Update the sprites' position offset.
 		front.setPositionOffset(new Vector2(0, -front.getCurrentFrame().getOrigin().y + (_Body.getShape().getHeight() / 2)));
