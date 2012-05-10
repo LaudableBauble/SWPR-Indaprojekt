@@ -5,6 +5,8 @@ import infrastructure.Enums.DepthDistribution;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
+import main.Player;
+
 import auxillary.Helper;
 import auxillary.Vector2;
 import auxillary.Vector3;
@@ -56,11 +58,15 @@ public class PhysicsSimulator
 		// Check if the array isn't empty.
 		try
 		{
+			// Clear all bodies' record of collision.
+			for (Body b : _Bodies)
+			{
+				b.clearCollisions();
+			}
+
 			// Loop through all bodies.
 			for (Body b1 : _Bodies)
 			{
-				// Clear all previous collisions.
-				b1.clearCollisions();
 				// Ground collision?
 				boolean ground = false;
 
@@ -84,6 +90,7 @@ public class PhysicsSimulator
 						{
 							// Add the collision to the body.
 							b1.addCollision(b2);
+							b2.addCollision(b1);
 
 							if (b1.getIsStatic() || b1.getIsImmaterial() || b2.getIsImmaterial())
 							{
@@ -101,7 +108,6 @@ public class PhysicsSimulator
 						}
 						else
 						{
-
 							// Ensure that the would-be collision occurred in allowed height space.
 							mtv = getLayeredCollision(b1, b2, mtv);
 
@@ -110,16 +116,13 @@ public class PhysicsSimulator
 							{
 								if (!b1.getIsImmaterial() && !b2.getIsImmaterial())
 								{
-									// Calculate the Impact force and vector for both
-									// bodies.
-									// addForce(impactForce(b1, b2));
-									// addForce(impactForce(b2, b1));
 									// Move the bodies so that they don't intersect each other anymore.
 									clearIntersection(b1, b2, mtv);
 								}
 
 								// Add the collision to the body.
 								b1.addCollision(b2);
+								b2.addCollision(b1);
 							}
 						}
 					}

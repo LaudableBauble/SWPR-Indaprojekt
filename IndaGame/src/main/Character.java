@@ -14,6 +14,7 @@ import input.InputManager;
 
 //import java.awt.event.KeyEvent;
 
+import physics.Body;
 import physics.PhysicsSimulator;
 import auxillary.Helper;
 import auxillary.Vector2;
@@ -43,6 +44,8 @@ public class Character extends Entity
 	private float _TimeToWalk;
 	// The character's speed.
 	private float _Speed;
+	// The target entity.
+	private Entity _Target;
 
 	/**
 	 * Constructor for a character.
@@ -69,7 +72,7 @@ public class Character extends Entity
 
 		// Initialize the variables.
 		// _CanBeControlled = true;
-		_MaxSpeed = 1;
+		_MaxSpeed = 2;
 		_FileName = chara;
 		_Body.setAccelerationValue(3);
 		_FrameCount = nrOfPics;
@@ -78,6 +81,9 @@ public class Character extends Entity
 		_TimeToWalk = 2;
 		_TimeToWait = 4;
 		_Speed = 1;
+
+		// Try to find a target.
+		updateTarget(false);
 	}
 
 	/**
@@ -87,7 +93,7 @@ public class Character extends Entity
 	{
 		// Clear all sprites.
 		_Sprites = new SpriteManager();
-		
+
 		// Add and load all the different sprites.
 		Sprite down = _Sprites.addSprite(new Sprite("Down"));
 		Sprite up = _Sprites.addSprite(new Sprite("Up"));
@@ -131,11 +137,45 @@ public class Character extends Entity
 		// Call the base method.
 		super.update(gameTime);
 
-		// Move randomly.
-		moveRandomly(gameTime);
+		// Hunt a target or move randomly.
+		if (!huntTarget())
+		{
+			moveRandomly(gameTime);
+		}
 
 		// Determine which sprite should be drawn.
 		changeSprite();
+	}
+
+	/**
+	 * Hunt a target.
+	 * 
+	 * @return Whether the character was on a hunt or not.
+	 */
+	private boolean huntTarget()
+	{
+		// Try to find a target if none has been found.
+		updateTarget(false);
+
+		// If no target has been found or if the distance to it is too far, skip here.
+		if (_Target == null || Vector3.distance(_Target.getPosition(), getPosition()) > 200) { return false; }
+		
+		//If the velocity is too high, skip.
+		if (_Body.getVelocity().toVector2().getLength() > _MaxSpeed) { return false; }
+		
+		_Body.addForce(Vector2.multiply(Vector3.subtract(_Target.getPosition(), getPosition()).toVector2().normalize(), _Speed));
+
+		// Check if the character has collided with the player.
+		for (Body body : _Body.getCollisions())
+		{
+			if (body.getEntity() instanceof Player)
+			{
+				// player = (Player) body.getEntity();
+				// player.healthReduce();
+			}
+		}
+
+		return true;
 	}
 
 	/**
@@ -228,6 +268,27 @@ public class Character extends Entity
 
 		// No sprite matched.
 		return null;
+	}
+
+	/**
+	 * Update the target of the character's hunt.
+	 * 
+	 * @param force
+	 *            Whether to force an update, regardless if there already exists a target.
+	 */
+	public void updateTarget(boolean force)
+	{
+		// If we already have a target, skip looking fo one.
+		if (force || _Target != null) { return; }
+
+		// Try to find a target among the scene's entities.
+		for (Entity entity : _Scene.getEntities())
+		{
+			if (entity.getClass() == Player.class)
+			{
+				_Target = entity;
+			}
+		}
 	}
 
 	/**

@@ -419,7 +419,7 @@ public class Shape
 	}
 
 	/**
-	 * Get the position (z + depth / 2) of the shape's top-edge, not acknowledging rotation, at a given layered position.
+	 * Get the position (z - depth / 2 + actual depth) of the shape's top-edge, not acknowledging rotation, at a given layered position.
 	 * 
 	 * @param layeredPosition
 	 *            The layered position to find the depth for.
@@ -572,7 +572,7 @@ public class Shape
 			if (y >= _Height && y <= depth + _Height)
 			{
 				dy = _Position.y + _Height / 2;
-				dz = _Position.z + depth / 2 - (y - _Height);
+				dz = _Position.z - _Depth / 2 + (depth - (y - _Height));
 			}
 			// If the coordinates match the top 'face' of the shape.
 			else if (y >= 0 && y <= _Height)

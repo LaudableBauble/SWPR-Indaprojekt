@@ -247,6 +247,28 @@ public class Vector3
 	}
 
 	/**
+	 * Normalize a vector.
+	 * 
+	 * @param v
+	 *            The vector to normalize.
+	 * @return The normalized vector.
+	 */
+	public static Vector3 normalize(Vector3 v)
+	{
+		return Vector3.divide(v, Math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z));
+	}
+
+	/**
+	 * Normalize the vector.
+	 * 
+	 * @return The normalized vector.
+	 */
+	public Vector3 normalize()
+	{
+		return normalize(this);
+	}
+
+	/**
 	 * Get a vector with the absolute coordinates of the given vector.
 	 * 
 	 * @param v

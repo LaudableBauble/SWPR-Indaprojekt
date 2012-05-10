@@ -182,9 +182,17 @@ public class Player extends Entity
 		// Check if the player has collided with an exit.
 		for (Body body : _Body.getCollisions())
 		{
-			if (body.getEntity() instanceof Exit)
+			if (body.getEntity().getClass() == Exit.class)
 			{
 				exit = (Exit) body.getEntity();
+			}
+			else if (body.getEntity().getName().equals("Stairs"))
+			{
+				Vector2 v1 = Vector2.subtract(_Body.getShape().getTopLeft(), _Body.getLayeredPosition());
+				Vector2 v2 = Vector2.subtract(body.getShape().getTopLeft(), _Body.getLayeredPosition());
+
+				System.out.println("Player top depth sort: " + _Body.getShape().getDepthSort(v1.x, v1.y));
+				System.out.println(body.getEntity() + " top depth sort: " + body.getShape().getDepthSort(v2.x, v2.y));
 			}
 		}
 
@@ -196,7 +204,7 @@ public class Player extends Entity
 
 		// Change the position to match the entrance.
 		_Body.setPosition(exit.getEntrance());
-		
+
 		// Remove the player from this scene, change scenes and add the player to the goto scene.
 		_Scene.removeEntity(this);
 		_Scene.getSceneManager().setCurrentScene(exit.getGotoScene());
