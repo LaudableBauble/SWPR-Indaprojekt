@@ -419,59 +419,6 @@ public class Shape
 	}
 
 	/**
-	 * Get the position (z - depth / 2 + actual depth) of the shape's top-edge, not acknowledging rotation, at a given layered position.
-	 * 
-	 * @param layeredPosition
-	 *            The layered position to find the depth for.
-	 * 
-	 * @return The position (depth) of the shape's top-edge. Either the top depth or bottom depth if the shape does not occupy the space at the given position, depending on direction.
-	 */
-	public double getTopDepth(Vector2 layeredPosition)
-	{
-		// The depth to add.
-		double depth;
-		// The amount of the top step. Used to enable characters to reach the top of the slope without colliding with adjacent bodies.
-		double amount = 5;
-
-		// Check the depth distribution. Shorten the sloped shape to fix the issue with characters not reaching the top height of the slope due to collisions with adjacent bodies.
-		switch (_DepthDistribution)
-		{
-			case Top:
-			{
-				// Calculate the depth.
-				depth = ((_Position.y + (_Height / 2)) - layeredPosition.y) * (_Depth / (_Height - amount));
-				break;
-			}
-			case Bottom:
-			{
-				// Calculate the depth.
-				depth = (layeredPosition.y - (_Position.y - (_Height / 2))) * (_Depth / (_Height - amount));
-				break;
-			}
-			case Right:
-			{
-				// Calculate the depth.
-				depth = (layeredPosition.x - (_Position.x - (_Width / 2))) * (_Depth / (_Width - amount));
-				break;
-			}
-			case Left:
-			{
-				// Calculate the depth.
-				depth = ((_Position.x + (_Width / 2)) - layeredPosition.x) * (_Depth / (_Width - amount));
-				break;
-			}
-			default:
-			{
-				// Calculate the depth.
-				depth = _Depth;
-				break;
-			}
-		}
-
-		return (_Position.z - (_Depth / 2) + Math.min(Math.max(depth, 0), _Depth));
-	}
-
-	/**
 	 * Get a layer from this shape given a z-coordinate.
 	 * 
 	 * @param z
@@ -546,6 +493,59 @@ public class Shape
 	}
 
 	/**
+	 * Get the position (z - depth / 2 + actual depth) of the shape's top-edge, not acknowledging rotation, at a given layered position.
+	 * 
+	 * @param layeredPosition
+	 *            The layered position to find the depth for.
+	 * 
+	 * @return The position (depth) of the shape's top-edge. Either the top depth or bottom depth if the shape does not occupy the space at the given position, depending on direction.
+	 */
+	public double getTopDepth(Vector2 layeredPosition)
+	{
+		// The depth to add.
+		double depth;
+		// The amount of the top step. Used to enable characters to reach the top of the slope without colliding with adjacent bodies.
+		double amount = 5;
+
+		// Check the depth distribution. Shorten the sloped shape to fix the issue with characters not reaching the top height of the slope due to collisions with adjacent bodies.
+		switch (_DepthDistribution)
+		{
+			case Top:
+			{
+				// Calculate the depth.
+				depth = ((_Position.y + (_Height / 2)) - layeredPosition.y) * (_Depth / (_Height - amount));
+				break;
+			}
+			case Bottom:
+			{
+				// Calculate the depth.
+				depth = (layeredPosition.y - (_Position.y - (_Height / 2))) * (_Depth / (_Height - amount));
+				break;
+			}
+			case Right:
+			{
+				// Calculate the depth.
+				depth = (layeredPosition.x - (_Position.x - (_Width / 2))) * (_Depth / (_Width - amount));
+				break;
+			}
+			case Left:
+			{
+				// Calculate the depth.
+				depth = ((_Position.x + (_Width / 2)) - layeredPosition.x) * (_Depth / (_Width - amount));
+				break;
+			}
+			default:
+			{
+				// Calculate the depth.
+				depth = _Depth;
+				break;
+			}
+		}
+
+		return (_Position.z - (_Depth / 2) + Math.min(Math.max(depth, 0), _Depth));
+	}
+
+	/**
 	 * Get a depth sorting value for this shape at the given local x and y-coordinates, ie. as seen from its image.
 	 * 
 	 * @param x
@@ -562,23 +562,23 @@ public class Shape
 		double dy = _Position.y;
 		double dz = _Position.z;
 
-		// The depth at the current position.
-		double depth = getTopDepth(new Vector2(x, y)) - (_Position.z - _Depth / 2);
+		// The depth at the current position, local to the shape.
+		double depth = getTopDepth(new Vector2(_Position.x - _Width / 2 + x, _Position.y - _Height / 2 + y)) - (_Position.z - _Depth / 2);
 
 		// If the coordinates is within bounds on the x-axis.
 		if (x >= 0 && x <= _Width)
 		{
 			// If the coordinates match the front 'face' of the shape.
-			if (y >= _Height && y <= depth + _Height)
+			if (y >= _Depth + _Height - depth && y <= _Depth + _Height)
 			{
 				dy = _Position.y + _Height / 2;
-				dz = _Position.z - _Depth / 2 + (depth - (y - _Height));
+				dz = _Position.z - _Depth / 2 + _Depth + _Height - y;
 			}
 			// If the coordinates match the top 'face' of the shape.
-			else if (y >= 0 && y <= _Height)
+			else if (y >= _Depth - depth && y <= _Depth - depth + _Height)
 			{
-				dy = _Position.y - _Height / 2 + y;
-				dz = _Position.z + depth / 2;
+				dy = _Position.y - _Height / 2 + y - (_Depth - depth);
+				dz = getBottomDepth() + depth;
 			}
 		}
 

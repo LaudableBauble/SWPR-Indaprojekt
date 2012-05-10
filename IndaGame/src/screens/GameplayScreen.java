@@ -70,7 +70,7 @@ public class GameplayScreen extends GameScreen
 		// Create the player.
 		_Player = new Player(_SceneManager.getCurrentScene());
 		_Player.setName("Player");
-		_Player.getBody().setBottomPosition(new Vector3(910, 1080, 100));
+		_Player.getBody().setBottomPosition(new Vector3(800, 1090, 100));
 		_SceneManager.getCurrentScene().addEntity(_Player);
 		DebugManager.getInstance().setDebugBody(_Player.getBody());
 	}

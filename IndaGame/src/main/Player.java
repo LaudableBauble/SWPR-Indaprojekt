@@ -3,16 +3,19 @@ package main;
 import graphics.Frame;
 import graphics.Sprite;
 import graphics.SpriteManager;
+import infrastructure.Enums.DepthDistribution;
 import infrastructure.Enums.Visibility;
 import infrastructure.GameTimer;
 import input.InputManager;
 
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 
 import org.omg.CORBA._PolicyStub;
 
 import physics.Body;
 import physics.PhysicsSimulator;
+import auxillary.Helper;
 import auxillary.Vector2;
 import auxillary.Vector3;
 
@@ -100,9 +103,9 @@ public class Player extends Entity
 		_Sprites.loadContent();
 
 		// Set the shape of the body.
-		_Body.getShape().setWidth(_Sprites.getSprite(0).getCurrentFrame().getWidth() / 2);
-		_Body.getShape().setHeight(_Sprites.getSprite(0).getCurrentFrame().getHeight() / 4);
-		_Body.getShape().setDepth(_Sprites.getSprite(0).getCurrentFrame().getHeight() / 4);
+		_Body.getShape().setWidth(15);
+		_Body.getShape().setHeight(15);
+		_Body.getShape().setDepth(_Sprites.getSprite(0).getCurrentFrame().getHeight() / 3);
 
 		// Update the sprites' position offset.
 		front.setPositionOffset(new Vector2(0, -front.getCurrentFrame().getOrigin().y + (_Body.getShape().getHeight() / 2)));
@@ -185,14 +188,6 @@ public class Player extends Entity
 			if (body.getEntity().getClass() == Exit.class)
 			{
 				exit = (Exit) body.getEntity();
-			}
-			else if (body.getEntity().getName().equals("Stairs"))
-			{
-				Vector2 v1 = Vector2.subtract(_Body.getShape().getTopLeft(), _Body.getLayeredPosition());
-				Vector2 v2 = Vector2.subtract(body.getShape().getTopLeft(), _Body.getLayeredPosition());
-
-				System.out.println("Player top depth sort: " + _Body.getShape().getDepthSort(v1.x, v1.y));
-				System.out.println(body.getEntity() + " top depth sort: " + body.getShape().getDepthSort(v2.x, v2.y));
 			}
 		}
 

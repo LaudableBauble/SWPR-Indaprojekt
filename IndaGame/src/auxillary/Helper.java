@@ -4,11 +4,13 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Transparency;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
 import java.io.File;
 
 import javax.imageio.ImageIO;
@@ -490,6 +492,72 @@ public final class Helper
 		catch (JAXBException e)
 		{
 			System.out.println("Save Entity Error: " + e.getClass().getName() + " - " + e.getMessage());
+		}
+	}
+
+	/**
+	 * Create an image from an array of pixel data.
+	 * 
+	 * @param pixels
+	 *            The array of pixels.
+	 * @param width
+	 *            The width of the image.
+	 * @param height
+	 *            The height of the image.
+	 * @return The image.
+	 */
+	public static BufferedImage getImageFromArray(int[] pixels, int width, int height)
+	{
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		WritableRaster raster = (WritableRaster) image.getData();
+		raster.setPixels(0, 0, width, height, pixels);
+		return image;
+	}
+
+	/**
+	 * Create a grayscale image from an array.
+	 * 
+	 * @param data
+	 *            The data array.
+	 * @param width
+	 *            The width of the image.
+	 * @param height
+	 *            The height of the image.
+	 * @return The image.
+	 */
+	public static BufferedImage createGrayscale(int[][] data, int width, int height)
+	{
+		// Create the image.
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+
+		// Go through the array and set all pixels.
+		for (int y = 0; y < height; y++)
+		{
+			for (int x = 0; x < width; x++)
+			{
+				int value = data[y][x] << 16 | data[y][x] << 8 | data[y][x];
+				image.setRGB(x, y, value);
+			}
+		}
+
+		return image;
+	}
+
+	/**
+	 * Save an image to disk.
+	 * 
+	 * @param image
+	 *            The image to save.
+	 */
+	public static void saveImage(BufferedImage image)
+	{
+		try
+		{
+			ImageIO.write(image, "bmp", new File("src/data/image.bmp"));
+		}
+		catch (Exception e)
+		{
+			System.out.println("Save Image Error: " + e.getClass().getName() + " " + e.getMessage());
 		}
 	}
 }
