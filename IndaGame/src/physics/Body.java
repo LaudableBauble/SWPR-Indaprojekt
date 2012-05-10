@@ -9,6 +9,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import main.Entity;
+
 import auxillary.Vector2;
 import auxillary.Vector3;
 
@@ -21,6 +23,9 @@ public class Body
 {
 	// The PhysicsSimulator this body is part of.
 	private PhysicsSimulator _Physics;
+
+	// The entity of the body.
+	private Entity _Entity;
 
 	// The shape of the body.
 	@XmlElement(name = "Shape")
@@ -468,5 +473,26 @@ public class Body
 	public void setMaxVelocity(double max)
 	{
 		_MaxVelocity = max;
+	}
+
+	/**
+	 * Get the entity of this body.
+	 * 
+	 * @return The entity.
+	 */
+	public Entity getEntity()
+	{
+		return _Entity;
+	}
+
+	/**
+	 * Set the entity of this body.
+	 * 
+	 * @param entity
+	 *            The entity.
+	 */
+	public void setEntity(Entity entity)
+	{
+		_Entity = entity;
 	}
 }

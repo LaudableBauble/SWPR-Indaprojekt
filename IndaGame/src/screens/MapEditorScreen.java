@@ -29,9 +29,11 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import scenes.SmallDemoScene;
 
 import main.Entity;
+import main.Player;
 import main.SceneManager;
 import auxillary.Helper;
 import auxillary.Vector2;
+import auxillary.Vector3;
 import debug.DebugManager;
 import events.EntitySelectEvent;
 import events.EntitySelectEventListener;
@@ -49,6 +51,9 @@ public class MapEditorScreen extends GameScreen
 	private SceneManager _SceneManager;
 	// The camera.
 	private Camera2D _Camera;
+	
+	// The player.
+	private Player _Player;
 
 	// The GUI.
 	private JTabbedPane _Tabs;
@@ -80,6 +85,13 @@ public class MapEditorScreen extends GameScreen
 		_SceneManager = new SceneManager(_Camera);
 		DebugManager.getInstance().debug = true;
 		_SceneManager.addScene(new SmallDemoScene(_SceneManager));
+		
+		// Create the player.
+		_Player = new Player(_SceneManager.getCurrentScene());
+		_Player.setName("Player");
+		_Player.getBody().setBottomPosition(new Vector3(910, 1080, 100));
+		_SceneManager.getCurrentScene().addEntity(_Player);
+		DebugManager.getInstance().setDebugBody(_Player.getBody());
 
 		// Create the GUI components.
 		_Tabs = new JTabbedPane();
@@ -178,6 +190,9 @@ public class MapEditorScreen extends GameScreen
 
 		// Load the scene manager's content.
 		_SceneManager.loadContent();
+		
+		// Load the player's content.
+		_Player.loadContent();
 
 		// Set the info panel's entity.
 		setSelectedEntity(_SceneManager.getCurrentScene().getEntities().get(0));

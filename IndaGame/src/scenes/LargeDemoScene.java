@@ -4,6 +4,7 @@ import infrastructure.Enums.DepthDistribution;
 
 import main.Character;
 import main.Entity;
+import main.Exit;
 import main.Player;
 import main.Scene;
 import main.SceneManager;
@@ -17,11 +18,11 @@ import debug.DebugManager;
  */
 public class LargeDemoScene extends Scene
 {
-	// The player.
-	private Player _Player;
-
 	// Character.
 	private Character _Character;
+	
+	//The exits.
+	private Exit _Exit1;
 
 	// Entities.
 	private Entity _Shelf1;
@@ -92,189 +93,189 @@ public class LargeDemoScene extends Scene
 		// Name the scene.
 		_Name = "LargeDemoScene";
 
-		// Create the player.
-		_Player = new Player(getPhysicsSimulator());
-		_Player.getBody().setBottomPosition(new Vector3(910, 1080, 100));
-		DebugManager.getInstance().setDebugBody(_Player.getBody());
-
 		// Create a character.
-		_Character = new main.Character(getPhysicsSimulator(), "hydra", 3);
+		_Character = new main.Character(this, "hydra", 3);
 		_Character.getBody().setPosition(new Vector3(1040, 1010, 50));
+		
+		//Create the exits.
+		_Exit1 = new Exit(this, "SmallDemoScene", new Vector3(910, 1080, 100));
+		_Exit1.getBody().setPosition(new Vector3(800, 1100, 0));
+		_Exit1.getBody().setIsStatic(true);
 
 		// Create the shelf (south of pathway arch).
-		_Shelf1 = new Entity(getPhysicsSimulator());
+		_Shelf1 = new Entity(this);
 		_Shelf1.getBody().setPosition(new Vector3(940, 1025, 0));
 		_Shelf1.getBody().setIsStatic(true);
 
 		// Create the shelf (east of pathway platform 3).
-		_Shelf2 = new Entity(getPhysicsSimulator());
+		_Shelf2 = new Entity(this);
 		_Shelf2.getBody().setPosition(new Vector3(1270, 1080, 0));
 		_Shelf2.getBody().setIsStatic(true);
 
 		// Create the shelf (south of block 4).
-		_Shelf3 = new Entity(getPhysicsSimulator());
+		_Shelf3 = new Entity(this);
 		_Shelf3.getBody().setPosition(new Vector3(900, 945, 0));
 		_Shelf3.getBody().setIsStatic(true);
 
 		// Create the shelf (south of dark block 11).
-		_Shelf4 = new Entity(getPhysicsSimulator());
+		_Shelf4 = new Entity(this);
 		_Shelf4.getBody().setPosition(new Vector3(1300, 940, 0));
 		_Shelf4.getBody().setIsStatic(true);
 
 		// Create the shelf (south of dark block 7).
-		_Shelf5 = new Entity(getPhysicsSimulator());
+		_Shelf5 = new Entity(this);
 		_Shelf5.getBody().setPosition(new Vector3(670, 850, 0));
 		_Shelf5.getBody().setIsStatic(true);
 
 		// Create a block (north of staircase 2).
-		_Block1 = new Entity(getPhysicsSimulator());
+		_Block1 = new Entity(this);
 		_Block1.getBody().setPosition(new Vector3(710.5, 942, 0));
 		_Block1.getBody().setIsStatic(true);
 
 		// Create a block (north of dark block 2).
-		_Block2 = new Entity(getPhysicsSimulator());
+		_Block2 = new Entity(this);
 		_Block2.getBody().setPosition(new Vector3(1180, 940, 0));
 		_Block2.getBody().setIsStatic(true);
 
 		// Create a block (north of dark block 1).
-		_Block3 = new Entity(getPhysicsSimulator());
+		_Block3 = new Entity(this);
 		_Block3.getBody().setPosition(new Vector3(852.5, 909, 0));
 		_Block3.getBody().setIsStatic(true);
 
 		// Create a block (north of block 1).
-		_Block4 = new Entity(getPhysicsSimulator());
+		_Block4 = new Entity(this);
 		_Block4.getBody().setPosition(new Vector3(710.5, 875.5, 0));
 		_Block4.getBody().setIsStatic(true);
 
 		// Create a block (north of dark block 5, main stairs).
-		_Block5 = new Entity(getPhysicsSimulator());
+		_Block5 = new Entity(this);
 		_Block5.getBody().setPosition(new Vector3(1000, 794.5, 0));
 		_Block5.getBody().setIsStatic(true);
 
 		// Create a block (east of block 2).
-		_Block6 = new Entity(getPhysicsSimulator());
+		_Block6 = new Entity(this);
 		_Block6.getBody().setPosition(new Vector3(1324, 940, 0));
 		_Block6.getBody().setIsStatic(true);
 
 		// Create a dark block (west of pathway arch).
-		_DarkBlock1 = new Entity(getPhysicsSimulator());
+		_DarkBlock1 = new Entity(this);
 		_DarkBlock1.getBody().setPosition(new Vector3(852, 1000, 0));
 		_DarkBlock1.getBody().setIsStatic(true);
 
 		// Create a dark block (east of pathway arch).
-		_DarkBlock2 = new Entity(getPhysicsSimulator());
+		_DarkBlock2 = new Entity(this);
 		_DarkBlock2.getBody().setPosition(new Vector3(1149, 1000, 0));
 		_DarkBlock2.getBody().setIsStatic(true);
 
 		// Create a dark block (south of pathway platform 1).
-		_DarkBlock3 = new Entity(getPhysicsSimulator());
+		_DarkBlock3 = new Entity(this);
 		_DarkBlock3.getBody().setPosition(new Vector3(900, 1183, 0));
 		_DarkBlock3.getBody().setIsStatic(true);
 
 		// Create a dark block (south of pathway platform 2).
-		_DarkBlock4 = new Entity(getPhysicsSimulator());
+		_DarkBlock4 = new Entity(this);
 		_DarkBlock4.getBody().setPosition(new Vector3(1120, 1183, 0));
 		_DarkBlock4.getBody().setIsStatic(true);
 
 		// Create a dark block (north of pathway arch, main stairs).
-		_DarkBlock5 = new Entity(getPhysicsSimulator());
+		_DarkBlock5 = new Entity(this);
 		_DarkBlock5.getBody().setPosition(new Vector3(1000, 872, 0));
 		_DarkBlock5.getBody().setIsStatic(true);
 
 		// Create a dark block (north of block 4, west stairs).
-		_DarkBlock6 = new Entity(getPhysicsSimulator());
+		_DarkBlock6 = new Entity(this);
 		_DarkBlock6.getBody().setPosition(new Vector3(710.5, 771, 0));
 		_DarkBlock6.getBody().setIsStatic(true);
 
 		// Create a dark block (north of block 3, east of dark block 6).
-		_DarkBlock7 = new Entity(getPhysicsSimulator());
+		_DarkBlock7 = new Entity(this);
 		_DarkBlock7.getBody().setPosition(new Vector3(847.5, 818, 0));
 		_DarkBlock7.getBody().setIsStatic(true);
 
 		// Create a dark block (north of block 5, main stairs).
-		_DarkBlock8 = new Entity(getPhysicsSimulator());
+		_DarkBlock8 = new Entity(this);
 		_DarkBlock8.getBody().setPosition(new Vector3(895, 720, 0));
 		_DarkBlock8.getBody().setIsStatic(true);
 
 		// Create a dark block (east of dark block 2).
-		_DarkBlock9 = new Entity(getPhysicsSimulator());
+		_DarkBlock9 = new Entity(this);
 		_DarkBlock9.getBody().setPosition(new Vector3(1283, 1000, 0));
 		_DarkBlock9.getBody().setIsStatic(true);
 
 		// Create a dark block (north of block 2).
-		_DarkBlock10 = new Entity(getPhysicsSimulator());
+		_DarkBlock10 = new Entity(this);
 		_DarkBlock10.getBody().setPosition(new Vector3(1180, 830.5, 0));
 		_DarkBlock10.getBody().setIsStatic(true);
 
 		// Create a dark block (east of dark block 10).
-		_DarkBlock11 = new Entity(getPhysicsSimulator());
+		_DarkBlock11 = new Entity(this);
 		_DarkBlock11.getBody().setPosition(new Vector3(1317, 863.5, 0));
 		_DarkBlock11.getBody().setIsStatic(true);
 
 		// Create a dark block (south of pathway platform 2).
-		_DarkBlock12 = new Entity(getPhysicsSimulator());
+		_DarkBlock12 = new Entity(this);
 		_DarkBlock12.getBody().setPosition(new Vector3(1257, 1183, 0));
 		_DarkBlock12.getBody().setIsStatic(true);
 
 		// Create a dark block (north of block 5, east of dark block 8, main stairs).
-		_DarkBlock13 = new Entity(getPhysicsSimulator());
+		_DarkBlock13 = new Entity(this);
 		_DarkBlock13.getBody().setPosition(new Vector3(1128, 720, 0));
 		_DarkBlock13.getBody().setIsStatic(true);
 
 		// Create a staircase (west of dark block 1).
-		_Stairs1 = new Entity(getPhysicsSimulator());
+		_Stairs1 = new Entity(this);
 		_Stairs1.getBody().setPosition(new Vector3(759.5, 982.5, 0));
 		_Stairs1.getBody().setIsStatic(true);
 		_Stairs1.getBody().getShape().setDepthDistribution(DepthDistribution.Right);
 
 		// Create a staircase (west of dark block 2).
-		_Stairs2 = new Entity(getPhysicsSimulator());
+		_Stairs2 = new Entity(this);
 		_Stairs2.getBody().setPosition(new Vector3(1056.5, 1033, 0));
 		_Stairs2.getBody().setIsStatic(true);
 		_Stairs2.getBody().getShape().setDepthDistribution(DepthDistribution.Right);
 
 		// Create a staircase (north of dark block 5).
-		_Stairs3 = new Entity(getPhysicsSimulator());
+		_Stairs3 = new Entity(this);
 		_Stairs3.getBody().setPosition(new Vector3(1000, 931.5, 0));
 		_Stairs3.getBody().setIsStatic(true);
 		_Stairs3.getBody().getShape().setDepthDistribution(DepthDistribution.Top);
 
 		// Create a staircase (east of block 1).
-		_Stairs4 = new Entity(getPhysicsSimulator());
+		_Stairs4 = new Entity(this);
 		_Stairs4.getBody().setPosition(new Vector3(807.5, 942, 0));
 		_Stairs4.getBody().setIsStatic(true);
 		_Stairs4.getBody().getShape().setDepthDistribution(DepthDistribution.Left);
 
 		// Create a staircase (east of dark block 7).
-		_Stairs5 = new Entity(getPhysicsSimulator());
+		_Stairs5 = new Entity(this);
 		_Stairs5.getBody().setPosition(new Vector3(755, 868.5, 0));
 		_Stairs5.getBody().setIsStatic(true);
 		_Stairs5.getBody().getShape().setDepthDistribution(DepthDistribution.Right);
 
 		// Create a staircase (north of block 5, main stairs).
-		_Stairs6 = new Entity(getPhysicsSimulator());
+		_Stairs6 = new Entity(this);
 		_Stairs6.getBody().setPosition(new Vector3(1000, 861, 0));
 		_Stairs6.getBody().setIsStatic(true);
 		_Stairs6.getBody().getShape().setDepthDistribution(DepthDistribution.Top);
 
 		// Create a staircase (south of dark block 8, main stairs).
-		_Stairs7 = new Entity(getPhysicsSimulator());
+		_Stairs7 = new Entity(this);
 		_Stairs7.getBody().setPosition(new Vector3(1000, 778, 0));
 		_Stairs7.getBody().setIsStatic(true);
 		_Stairs7.getBody().getShape().setDepthDistribution(DepthDistribution.Top);
 
 		// Create a staircase (west of dark block 11).
-		_Stairs8 = new Entity(getPhysicsSimulator());
+		_Stairs8 = new Entity(this);
 		_Stairs8.getBody().setPosition(new Vector3(1224.5, 914, 0));
 		_Stairs8.getBody().setIsStatic(true);
 		_Stairs8.getBody().getShape().setDepthDistribution(DepthDistribution.Right);
 
 		// Create a pathway.
-		_Pathway1 = new Entity(getPhysicsSimulator());
-		_Pathway2 = new Entity(getPhysicsSimulator());
-		_Pathway3 = new Entity(getPhysicsSimulator());
-		_Pathway4 = new Entity(getPhysicsSimulator());
-		_PathwayArch1 = new Entity(getPhysicsSimulator());
+		_Pathway1 = new Entity(this);
+		_Pathway2 = new Entity(this);
+		_Pathway3 = new Entity(this);
+		_Pathway4 = new Entity(this);
+		_PathwayArch1 = new Entity(this);
 		_Pathway1.getBody().setPosition(new Vector3(936.5, 1000, 0));
 		_Pathway2.getBody().setPosition(new Vector3(968.5, 1000, 0));
 		_PathwayArch1.getBody().setPosition(new Vector3(1000, 1000, 0));
@@ -287,28 +288,28 @@ public class LargeDemoScene extends Scene
 		_PathwayArch1.getBody().setIsStatic(true);
 
 		// Create a pathway platform (south of dark block 1).
-		_PathwayPlatform1 = new Entity(getPhysicsSimulator());
+		_PathwayPlatform1 = new Entity(this);
 		_PathwayPlatform1.getBody().setPosition(new Vector3(852, 1107.5, 0));
 		_PathwayPlatform1.getBody().setIsStatic(true);
 
 		// Create a pathway platform (south of dark block 2).
-		_PathwayPlatform2 = new Entity(getPhysicsSimulator());
+		_PathwayPlatform2 = new Entity(this);
 		_PathwayPlatform2.getBody().setPosition(new Vector3(1149, 1107.5, 0));
 		_PathwayPlatform2.getBody().setIsStatic(true);
 
 		// Create a pathway platform (south of dark block 9).
-		_PathwayPlatform3 = new Entity(getPhysicsSimulator());
+		_PathwayPlatform3 = new Entity(this);
 		_PathwayPlatform3.getBody().setPosition(new Vector3(1305, 1107.5, 0));
 		_PathwayPlatform3.getBody().setIsStatic(true);
 
 		// Create the floor.
-		_Floor = new Entity(getPhysicsSimulator());
+		_Floor = new Entity(this);
 		_Floor.getBody().setPosition(new Vector3(1000, 1050, 0));
 		_Floor.getBody().setIsStatic(true);
 
 		// Add all entities to the scene.
-		addEntity(_Player);
 		addEntity(_Character);
+		addEntity(_Exit1);
 		addEntity(_Shelf1);
 		addEntity(_Shelf2);
 		addEntity(_Shelf3);
@@ -352,8 +353,8 @@ public class LargeDemoScene extends Scene
 		addEntity(_Floor);
 
 		// Give a name to all entities.
-		_Player.setName("Player");
 		_Character.setName("Character");
+		_Exit1.setName("Exit1");
 		_Shelf1.setName("Shelf1");
 		_Shelf2.setName("Shelf2");
 		_Shelf3.setName("Shelf3");
@@ -403,8 +404,8 @@ public class LargeDemoScene extends Scene
 	public void loadContent()
 	{
 		// Load all entities' content.
-		_Player.loadContent();
 		_Character.loadContent();
+		_Exit1.loadContent("Bookshelf[1].png", 12);
 		_Shelf1.loadContent("Bookshelf[1].png", 12);
 		_Shelf2.loadContent("Bookshelf[1].png", 12);
 		_Shelf3.loadContent("Bookshelf[1].png", 12);
@@ -448,6 +449,7 @@ public class LargeDemoScene extends Scene
 		_Floor.loadContent("WoodTiledFloor[1].png");
 
 		// Set their depths.
+		_Exit1.getBody().getShape().setBottomDepth(1);
 		_Shelf1.getBody().getShape().setBottomDepth(1);
 		_Shelf2.getBody().getShape().setBottomDepth(1);
 		_Shelf3.getBody().getShape().setBottomDepth(48);

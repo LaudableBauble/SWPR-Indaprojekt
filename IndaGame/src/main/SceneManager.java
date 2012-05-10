@@ -128,8 +128,9 @@ public class SceneManager
 		// Add the scene and set its manager.
 		_Scenes.add(scene);
 		scene.setSceneManager(this);
+		scene.loadContent();
 
-		// Set the current scene if it has not already.
+		// Set the current scene if it has not already ben set.
 		if (_CurrentScene == null && _Scenes.size() > 0)
 		{
 			_CurrentScene = _Scenes.get(0);
@@ -167,5 +168,57 @@ public class SceneManager
 	public void setCurrentScene(int index)
 	{
 		_CurrentScene = _Scenes.get(index);
+	}
+
+	/**
+	 * Set the scene to be active.
+	 * 
+	 * @param scene
+	 *            The scene to be active.
+	 */
+	public void setCurrentScene(Scene scene)
+	{
+		// If the scene has not been added yet, do so.
+		if (_Scenes.contains(scene))
+		{
+			addScene(scene);
+		}
+
+		// Switch to the scene.
+		_CurrentScene = scene;
+	}
+
+	/**
+	 * Set the scene to be active.
+	 * 
+	 * @param name
+	 *            The name of scene to be active.
+	 */
+	public void setCurrentScene(String name)
+	{
+		// Get the scene with the given name.
+		Scene scene = getScene(name);
+
+		// Switch scenes, but only if the new scene is not null.
+		_CurrentScene = scene != null ? scene : _CurrentScene;
+	}
+
+	/**
+	 * Get the scene with the given name.
+	 * 
+	 * @param name
+	 *            The name of the scene to find.
+	 * @return The scene with the given name.
+	 */
+	public Scene getScene(String name)
+	{
+		// Find the scene with the given name.
+		for (Scene scene : _Scenes)
+		{
+			if (scene.getName().equals(name)) { return scene; }
+		}
+
+		// No scene with that name was found, return null.
+		return null;
 	}
 }

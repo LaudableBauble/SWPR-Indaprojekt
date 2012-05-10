@@ -16,9 +16,6 @@ import debug.DebugManager;
  */
 public class SmallDemoScene extends Scene
 {
-	// The player.
-	private Player _Player;
-
 	// Entities.
 	private Entity _Shelf;
 	private Entity _Block1;
@@ -52,39 +49,33 @@ public class SmallDemoScene extends Scene
 		// Name the scene.
 		_Name = "SmallDemoScene";
 
-		// Create the player.
-		_Player = new Player(getPhysicsSimulator());
-		_Player.getBody().setBottomPosition(new Vector3(910, 1080, 100));
-		DebugManager.getInstance().setDebugBody(_Player.getBody());
-
 		// Create the shelf.
-		_Shelf = new Entity(getPhysicsSimulator());
+		_Shelf = new Entity(this);
 		_Shelf.getBody().setPosition(new Vector3(1100, 1100, 0));
 		_Shelf.getBody().setIsStatic(true);
 
 		// Create a block.
-		_Block1 = new Entity(getPhysicsSimulator());
+		_Block1 = new Entity(this);
 		_Block1.getBody().setPosition(new Vector3(950, 933.5, 0));
 		_Block1.getBody().setIsStatic(true);
 
 		// Create a block.
-		_Block2 = new Entity(getPhysicsSimulator());
+		_Block2 = new Entity(this);
 		_Block2.getBody().setPosition(new Vector3(1000, 1020, 0));
 		_Block2.getBody().setIsStatic(true);
 
 		// Create a staircase.
-		_Stairs = new Entity(getPhysicsSimulator());
+		_Stairs = new Entity(this);
 		_Stairs.getBody().setPosition(new Vector3(930, 1080, 0));
 		_Stairs.getBody().setIsStatic(true);
 		_Stairs.getBody().getShape().setDepthDistribution(DepthDistribution.Right);
 
 		// Create the floor.
-		_Floor = new Entity(getPhysicsSimulator());
+		_Floor = new Entity(this);
 		_Floor.getBody().setPosition(new Vector3(1000, 1000, 0));
 		_Floor.getBody().setIsStatic(true);
 
 		// Add all entities to the scene.
-		addEntity(_Player);
 		addEntity(_Shelf);
 		addEntity(_Block1);
 		addEntity(_Block2);
@@ -92,7 +83,6 @@ public class SmallDemoScene extends Scene
 		addEntity(_Floor);
 
 		// Give a name to all entities.
-		_Player.setName("Player");
 		_Shelf.setName("Shelf");
 		_Block1.setName("Block1");
 		_Block2.setName("Block2");
@@ -106,8 +96,6 @@ public class SmallDemoScene extends Scene
 	@Override
 	public void loadContent()
 	{
-		// Load all entities' content.
-		_Player.loadContent();
 		_Shelf.loadContent("Bookshelf[1].png", 12);
 		_Block1.loadContent("ElevatedBlock[3].png", 48);
 		_Block2.loadContent("ElevatedBlock[2].png", 85);

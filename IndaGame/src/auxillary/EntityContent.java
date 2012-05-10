@@ -64,12 +64,13 @@ public class EntityContent
 		try
 		{
 			// Create the entity.
-			Entity entity = new Entity(_Body.getPhysicsSimulator());
+			Entity entity = new Entity(null);
 
 			// Populate with with data.
 			entity.setName(_Name);
 			entity.setSprites(_Sprites);
 			entity.setBody(_Body);
+			_Body.setEntity(entity);
 
 			// For all sprites, set their sprite manager.
 			for (Sprite sprite : _Sprites.getSprites())

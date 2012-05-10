@@ -23,7 +23,6 @@ public class Camera2D
 	private Rectangle _Viewport;
 	private Rectangle _WorldRect;
 	private AffineTransform _Transform;
-	private AffineTransform _Projection;
 
 	/**
 	 * Create the camera from which eyes the player will look upon the game world.
@@ -59,7 +58,6 @@ public class Camera2D
 		_Origin = new Vector2(_Viewport.getWidth() / 2, _Viewport.getHeight() / 2);
 		_MaxZoom = .6f;
 		_MinZoom = 2;
-		// _Projection = Matrix.CreateOrthographicOffCenter(0, _Viewport.getWidth(), _Viewport.getHeight(), 0, 0, 1);
 
 		// Set the camera's zoom.
 		zoom(1f);
@@ -106,6 +104,17 @@ public class Camera2D
 	{
 		// Set the position.
 		moveAmount(Vector2.multiply(direction, _CameraSpeed));
+	}
+	
+	/**
+	 * Rotate the camera.
+	 * 
+	 * @param angle
+	 *            The angle of the rotation in radians.
+	 */
+	public void rotate(float angle)
+	{
+		_Rotation += angle;
 	}
 
 	/**

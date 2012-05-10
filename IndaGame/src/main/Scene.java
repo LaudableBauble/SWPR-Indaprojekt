@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import auxillary.Vector2;
+import auxillary.Vector3;
 
 import physics.PhysicsSimulator;
 import debug.DebugManager;
@@ -30,6 +31,8 @@ public class Scene
 	protected ArrayList<Entity> _Entities;
 	// The composite z-buffer.
 	protected DepthComposite _Composite;
+	// The entrance positions.
+	protected ArrayList<Vector3> _Entrances;
 
 	/**
 	 * Empty constructor for a scene.
@@ -64,6 +67,7 @@ public class Scene
 		_Entities = new ArrayList<>();
 		_Physics = new PhysicsSimulator();
 		_Composite = new DepthComposite(_SceneManager.getCamera().getViewportSize());
+		_Entrances = new ArrayList<Vector3>();
 
 		// Let the debug manager know about the physics simulator.
 		DebugManager.getInstance().setPhysicsSimulator(_Physics);
@@ -75,7 +79,6 @@ public class Scene
 	public void loadContent()
 	{
 		// Load all entities' content.
-
 	}
 
 	/**
@@ -118,7 +121,7 @@ public class Scene
 	 *            The graphics component.
 	 */
 	public void draw(Graphics2D graphics)
-	{		
+	{
 		// Enable depth sorting by composite.
 		Composite old = graphics.getComposite();
 		graphics.setComposite(_Composite);
@@ -137,7 +140,7 @@ public class Scene
 	}
 
 	/**
-	 * Add an entity to the scene. Assumes that its physics simulator already has been set and notified of its existence.
+	 * Add an entity to the scene.
 	 * 
 	 * @param entity
 	 *            The entity to add.
@@ -146,6 +149,8 @@ public class Scene
 	public Entity addEntity(Entity entity)
 	{
 		_Entities.add(entity);
+		entity.setScene(this);
+		_Physics.addBody(entity.getBody());
 		Collections.sort(_Entities, new EntityDepthComparator());
 		return entity;
 	}
@@ -160,6 +165,19 @@ public class Scene
 	{
 		_Entities.remove(entity);
 		_Physics.removeBody(entity.getBody());
+	}
+
+	/**
+	 * Add an entrance position to the scene.
+	 * 
+	 * @param entrance
+	 *            The entrance to add.
+	 * @return The added entrance position.
+	 */
+	public Vector3 addEntrance(Vector3 entrance)
+	{
+		_Entrances.add(entrance);
+		return entrance;
 	}
 
 	/**
@@ -194,6 +212,16 @@ public class Scene
 	}
 
 	/**
+	 * Get the scene's manager.
+	 * 
+	 * @return The scene's manager.
+	 */
+	public SceneManager getSceneManager()
+	{
+		return _SceneManager;
+	}
+
+	/**
 	 * Set the scene's manager.
 	 * 
 	 * @param manager
@@ -223,5 +251,15 @@ public class Scene
 	public void setEntities(ArrayList<Entity> entities)
 	{
 		_Entities = entities;
+	}
+
+	/**
+	 * Get the list of entrances.
+	 * 
+	 * @return The list of entrances.
+	 */
+	public ArrayList<Vector3> getEntrances()
+	{
+		return _Entrances;
 	}
 }

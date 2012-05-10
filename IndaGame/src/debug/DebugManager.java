@@ -75,7 +75,7 @@ public class DebugManager
 	public void handleInput(InputManager input)
 	{
 		// Turn on/off debug mode.
-		if (input.isKeyDown(KeyEvent.VK_ENTER))
+		if (input.isKeyDown(KeyEvent.VK_F1))
 		{
 			debug = !debug;
 		}
@@ -298,6 +298,7 @@ public class DebugManager
 		// How to use the camera.
 		graphics.drawString("JKLI to move camera", x, 500);
 		graphics.drawString("OP to zoom camera", x, 520);
+		graphics.drawString("YU to rotate camera", x, 540);
 
 		// Let the player know that the magic happens with F1.
 		graphics.drawString("Press F1 to toggle", x, 580);

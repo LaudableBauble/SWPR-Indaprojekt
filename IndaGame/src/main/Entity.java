@@ -30,6 +30,7 @@ public class Entity
 {
 	// The name of the entity. Primarily used as file name when serialized.
 	protected String _Name;
+	protected Scene _Scene;
 	// The Sprite and Body.
 	protected SpriteManager _Sprites;
 	protected Body _Body;
@@ -37,26 +38,28 @@ public class Entity
 	/**
 	 * Constructor for an entity.
 	 * 
-	 * @param physics
-	 *            The physics simulator this entity is part of.
+	 * @param scene
+	 *            The scene this entity is part of.
 	 */
-	public Entity(PhysicsSimulator physics)
+	public Entity(Scene scene)
 	{
-		initialize(physics);
+		initialize(scene);
 	}
 
 	/**
 	 * Initialize the entity.
 	 * 
-	 * @param physics
-	 *            The physics simulator this entity is part of.
+	 * @param scene
+	 *            The scene this entity is part of.
 	 */
-	protected void initialize(PhysicsSimulator physics)
+	protected void initialize(Scene scene)
 	{
 		// Initialize the variables.
 		_Name = "";
+		_Scene = scene;
 		_Sprites = new SpriteManager();
-		_Body = new Body(physics);
+		_Body = new Body(_Scene.getPhysicsSimulator());
+		_Body.setEntity(this);
 		_Body.addBody();
 	}
 
@@ -81,6 +84,9 @@ public class Entity
 	 */
 	public void loadContent(String spritePath, float height)
 	{
+		// Clear all sprites.
+		_Sprites = new SpriteManager();
+		
 		// Add a sprite.
 		_Sprites.addSprite(new Sprite("Entity"));
 		_Sprites.getSprite(0).addFrame(new Frame(spritePath));
@@ -270,5 +276,26 @@ public class Entity
 	public String toString()
 	{
 		return _Name;
+	}
+
+	/**
+	 * Get the scene the entity is part of.
+	 * 
+	 * @return The scene of the entity.
+	 */
+	public Scene getScene()
+	{
+		return _Scene;
+	}
+
+	/**
+	 * Set the scene the entity is part of.
+	 * 
+	 * @param scene
+	 *            The scene of the entity.
+	 */
+	public void setScene(Scene scene)
+	{
+		_Scene = scene;
 	}
 }

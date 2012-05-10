@@ -14,6 +14,7 @@ import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 
 import scenes.LargeDemoScene;
+import scenes.SmallDemoScene;
 
 import main.Entity;
 import main.Player;
@@ -36,6 +37,9 @@ public class GameplayScreen extends GameScreen
 	private SceneManager _SceneManager;
 	// The camera.
 	private Camera2D _Camera;
+
+	// The player.
+	private Player _Player;
 
 	/**
 	 * Constructor for the game screen.
@@ -61,6 +65,14 @@ public class GameplayScreen extends GameScreen
 
 		// Add a scene to the scene manager.
 		_SceneManager.addScene(new LargeDemoScene(_SceneManager));
+		_SceneManager.addScene(new SmallDemoScene(_SceneManager));
+
+		// Create the player.
+		_Player = new Player(_SceneManager.getCurrentScene());
+		_Player.setName("Player");
+		_Player.getBody().setBottomPosition(new Vector3(910, 1080, 100));
+		_SceneManager.getCurrentScene().addEntity(_Player);
+		DebugManager.getInstance().setDebugBody(_Player.getBody());
 	}
 
 	/**
@@ -73,6 +85,9 @@ public class GameplayScreen extends GameScreen
 
 		// Load the scene manager's content.
 		_SceneManager.loadContent();
+
+		// Load the player's content.
+		_Player.loadContent();
 
 		// Once the load has finished, we use ResetElapsedTime to tell the game's
 		// timing mechanism that we have just finished a very long frame, and that
@@ -111,6 +126,16 @@ public class GameplayScreen extends GameScreen
 			if (input.isKeyDown(KeyEvent.VK_P))
 			{
 				_Camera.zoom(-.01f);
+			}
+			// If to rotate right.
+			if (input.isKeyDown(KeyEvent.VK_U))
+			{
+				_Camera.rotate(-.01f);
+			}
+			// If to rotate left.
+			if (input.isKeyDown(KeyEvent.VK_Y))
+			{
+				_Camera.rotate(.01f);
 			}
 			// If to move up.
 			if (input.isKeyDown(KeyEvent.VK_I))

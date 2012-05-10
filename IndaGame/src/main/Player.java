@@ -2,12 +2,16 @@ package main;
 
 import graphics.Frame;
 import graphics.Sprite;
+import graphics.SpriteManager;
 import infrastructure.Enums.Visibility;
 import infrastructure.GameTimer;
 import input.InputManager;
 
 import java.awt.event.KeyEvent;
 
+import org.omg.CORBA._PolicyStub;
+
+import physics.Body;
 import physics.PhysicsSimulator;
 import auxillary.Vector2;
 import auxillary.Vector3;
@@ -27,24 +31,24 @@ public class Player extends Entity
 	/**
 	 * Constructor for a player.
 	 * 
-	 * @param physics
-	 *            The physics simulator this player is part of.
+	 * @param scene
+	 *            The scene this player is part of.
 	 */
-	public Player(PhysicsSimulator physics)
+	public Player(Scene scene)
 	{
-		super(physics);
+		super(scene);
 	}
 
 	/**
 	 * Initialize the player.
 	 * 
-	 * @param physics
-	 *            The physics simulator this entity is part of.
+	 * @param scene
+	 *            The scene this entity is part of.
 	 */
-	protected void initialize(PhysicsSimulator physics)
+	protected void initialize(Scene scene)
 	{
 		// Call the base method.
-		super.initialize(physics);
+		super.initialize(scene);
 
 		// Initialize the variables.
 		_CanBeControlled = true;
@@ -56,7 +60,8 @@ public class Player extends Entity
 	 */
 	public void loadContent()
 	{
-		// Add and load all the different sprites.
+		// Clear all sprites.
+		_Sprites = new SpriteManager();
 
 		// Front.
 		Sprite front = _Sprites.addSprite(new Sprite("Front"));
@@ -162,6 +167,40 @@ public class Player extends Entity
 
 		// Determine which sprite should be drawn.
 		changeSprite();
+		// If to change scenes.
+		changeScene();
+	}
+
+	/**
+	 * Change scenes if the player has collided with an exit.
+	 */
+	private void changeScene()
+	{
+		// Create the variable to store the exit.
+		Exit exit = null;
+
+		// Check if the player has collided with an exit.
+		for (Body body : _Body.getCollisions())
+		{
+			if (body.getEntity() instanceof Exit)
+			{
+				exit = (Exit) body.getEntity();
+			}
+		}
+
+		// If no exit was found, exit.
+		if (exit == null) { return; }
+
+		// The exit is not inactive.
+		exit.setIsActive(false);
+
+		// Change the position to match the entrance.
+		_Body.setPosition(exit.getEntrance());
+		
+		// Remove the player from this scene, change scenes and add the player to the goto scene.
+		_Scene.removeEntity(this);
+		_Scene.getSceneManager().setCurrentScene(exit.getGotoScene());
+		_Scene.getSceneManager().getScene(exit.getGotoScene()).addEntity(this);
 	}
 
 	/**
@@ -220,7 +259,7 @@ public class Player extends Entity
 			return _Sprites.getSprite(2);
 		}
 		// If facing left.
-		else if ((dir >= 150 && dir <= 180) || (dir >= -180 && dir <= -120)) { return _Sprites.getSprite(3); }	
+		else if ((dir >= 150 && dir <= 180) || (dir >= -180 && dir <= -120)) { return _Sprites.getSprite(3); }
 
 		// No sprite matched.
 		return _CurrentSprite;

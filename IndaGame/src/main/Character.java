@@ -7,6 +7,7 @@ import javax.swing.Timer;
 
 import graphics.Frame;
 import graphics.Sprite;
+import graphics.SpriteManager;
 import infrastructure.Enums.Visibility;
 import infrastructure.GameTimer;
 import input.InputManager;
@@ -46,13 +47,13 @@ public class Character extends Entity
 	/**
 	 * Constructor for a character.
 	 * 
-	 * @param physics
-	 *            The physics simulator this Character is part of.
+	 * @param scene
+	 *            The scene this Character is part of.
 	 */
-	public Character(PhysicsSimulator physics, String chara, int nrOfPics)
+	public Character(Scene scene, String chara, int nrOfPics)
 	{
-		super(physics);
-		initialize(physics, chara, nrOfPics);
+		super(scene);
+		initialize(scene, chara, nrOfPics);
 	}
 
 	/**
@@ -61,7 +62,7 @@ public class Character extends Entity
 	 * @param physics
 	 *            The physics simulator this entity is part of.
 	 */
-	protected void initialize(PhysicsSimulator physics, String chara, int nrOfPics)
+	protected void initialize(Scene scene, String chara, int nrOfPics)
 	{
 		// Call the base method.
 		// super.initialize(physics);
@@ -84,6 +85,9 @@ public class Character extends Entity
 	 */
 	public void loadContent()
 	{
+		// Clear all sprites.
+		_Sprites = new SpriteManager();
+		
 		// Add and load all the different sprites.
 		Sprite down = _Sprites.addSprite(new Sprite("Down"));
 		Sprite up = _Sprites.addSprite(new Sprite("Up"));
