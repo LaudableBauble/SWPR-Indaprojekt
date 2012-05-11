@@ -32,6 +32,7 @@ public final class Helper
 	// Colors.
 	public static final Color CornFlowerBlue = new Color(100, 149, 237);
 	public static final Color Mantis = new Color(116, 195, 101);
+	public static final Color ZealPalace = new Color(48, 32, 16);
 
 	/**
 	 * The ratio between height (Y-coordinate) and depth (Z-coordinate). Used to simulate depth. Positive depth is 'upwards'.

@@ -13,6 +13,8 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 
+import scenes.BedroomScene;
+import scenes.EscapeScene;
 import scenes.LargeDemoScene;
 import scenes.SmallDemoScene;
 
@@ -64,13 +66,15 @@ public class GameplayScreen extends GameScreen
 		DebugManager.getInstance().debug = true;
 
 		// Add a scene to the scene manager.
+		_SceneManager.addScene(new EscapeScene(_SceneManager));
+		_SceneManager.addScene(new BedroomScene(_SceneManager));
 		_SceneManager.addScene(new LargeDemoScene(_SceneManager));
 		_SceneManager.addScene(new SmallDemoScene(_SceneManager));
 
 		// Create the player.
 		_Player = new Player(_SceneManager.getCurrentScene());
 		_Player.setName("Player");
-		_Player.getBody().setBottomPosition(new Vector3(800, 1090, 100));
+		_Player.getBody().setBottomPosition(new Vector3(1000, 1000, 100));
 		_SceneManager.getCurrentScene().addEntity(_Player);
 		DebugManager.getInstance().setDebugBody(_Player.getBody());
 	}
@@ -81,7 +85,7 @@ public class GameplayScreen extends GameScreen
 	public void loadContent()
 	{
 		// Set the background color to blue.
-		_ScreenManager.getGame().getWindow().setBackBufferColor(Helper.CornFlowerBlue);
+		_ScreenManager.getGame().getWindow().setBackBufferColor(Helper.ZealPalace);
 
 		// Load the scene manager's content.
 		_SceneManager.loadContent();

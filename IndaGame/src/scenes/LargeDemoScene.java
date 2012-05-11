@@ -1,6 +1,7 @@
 package scenes;
 
 import infrastructure.Enums.DepthDistribution;
+import infrastructure.Enums.Visibility;
 
 import main.Character;
 import main.Entity;
@@ -20,9 +21,10 @@ public class LargeDemoScene extends Scene
 {
 	// Character.
 	private Character _Character;
-	
-	//The exits.
+
+	// The exits.
 	private Exit _Exit1;
+	private Exit _Exit2;
 
 	// Entities.
 	private Entity _Shelf1;
@@ -65,6 +67,11 @@ public class LargeDemoScene extends Scene
 	private Entity _PathwayPlatform1;
 	private Entity _PathwayPlatform2;
 	private Entity _PathwayPlatform3;
+	private Entity _Pillar1;
+	private Entity _Pillar2;
+	private Entity _MarbleArch;
+	private Entity _MarbleWall1;
+	private Entity _MarbleWall2;
 	private Entity _Floor;
 
 	/**
@@ -96,11 +103,16 @@ public class LargeDemoScene extends Scene
 		// Create a character.
 		_Character = new main.Character(this, "hydra", 3);
 		_Character.getBody().setPosition(new Vector3(1040, 1010, 50));
-		
-		//Create the exits.
-		_Exit1 = new Exit(this, "SmallDemoScene", new Vector3(910, 1080, 100));
-		_Exit1.getBody().setPosition(new Vector3(800, 1100, 0));
+
+		// Create the exit.
+		_Exit1 = new Exit(this, "EscapeScene", new Vector3(980, 980, 15));
+		_Exit1.getBody().setPosition(new Vector3(1015, 690, 0));
 		_Exit1.getBody().setIsStatic(true);
+
+		// Create the exit.
+		_Exit2 = new Exit(this, "BedroomScene", new Vector3(890, 900, 15));
+		_Exit2.getBody().setPosition(new Vector3(1000, 1230, 0));
+		_Exit2.getBody().setIsStatic(true);
 
 		// Create the shelf (south of pathway arch).
 		_Shelf1 = new Entity(this);
@@ -234,7 +246,7 @@ public class LargeDemoScene extends Scene
 		_Stairs2.getBody().setIsStatic(true);
 		_Stairs2.getBody().getShape().setDepthDistribution(DepthDistribution.Right);
 
-		// Create a staircase (north of dark block 5).
+		// Create a staircase (north of dark block 5, main stairs).
 		_Stairs3 = new Entity(this);
 		_Stairs3.getBody().setPosition(new Vector3(1000, 931.5, 0));
 		_Stairs3.getBody().setIsStatic(true);
@@ -254,13 +266,13 @@ public class LargeDemoScene extends Scene
 
 		// Create a staircase (north of block 5, main stairs).
 		_Stairs6 = new Entity(this);
-		_Stairs6.getBody().setPosition(new Vector3(1000, 861, 0));
+		_Stairs6.getBody().setPosition(new Vector3(1015, 861, 0));
 		_Stairs6.getBody().setIsStatic(true);
 		_Stairs6.getBody().getShape().setDepthDistribution(DepthDistribution.Top);
 
 		// Create a staircase (south of dark block 8, main stairs).
 		_Stairs7 = new Entity(this);
-		_Stairs7.getBody().setPosition(new Vector3(1000, 778, 0));
+		_Stairs7.getBody().setPosition(new Vector3(1015, 778, 0));
 		_Stairs7.getBody().setIsStatic(true);
 		_Stairs7.getBody().getShape().setDepthDistribution(DepthDistribution.Top);
 
@@ -302,6 +314,31 @@ public class LargeDemoScene extends Scene
 		_PathwayPlatform3.getBody().setPosition(new Vector3(1305, 1107.5, 0));
 		_PathwayPlatform3.getBody().setIsStatic(true);
 
+		// Create a pillar (west of marble arch).
+		_Pillar1 = new Entity(this);
+		_Pillar1.getBody().setPosition(new Vector3(991, 690, 0));
+		_Pillar1.getBody().setIsStatic(true);
+
+		// Create a pillar (east of marble arch).
+		_Pillar2 = new Entity(this);
+		_Pillar2.getBody().setPosition(new Vector3(1039, 690, 0));
+		_Pillar2.getBody().setIsStatic(true);
+
+		// Create a marble arch (north of dark block 8).
+		_MarbleArch = new Entity(this);
+		_MarbleArch.getBody().setPosition(new Vector3(1015, 690, 0));
+		_MarbleArch.getBody().setIsStatic(true);
+
+		// Create a marble wall (west of pillar 1).
+		_MarbleWall1 = new Entity(this);
+		_MarbleWall1.getBody().setPosition(new Vector3(823, 680, 0));
+		_MarbleWall1.getBody().setIsStatic(true);
+
+		// Create a marble wall (east of pillar 2).
+		_MarbleWall2 = new Entity(this);
+		_MarbleWall2.getBody().setPosition(new Vector3(1207, 680, 0));
+		_MarbleWall2.getBody().setIsStatic(true);
+
 		// Create the floor.
 		_Floor = new Entity(this);
 		_Floor.getBody().setPosition(new Vector3(1000, 1050, 0));
@@ -310,6 +347,7 @@ public class LargeDemoScene extends Scene
 		// Add all entities to the scene.
 		addEntity(_Character);
 		addEntity(_Exit1);
+		addEntity(_Exit2);
 		addEntity(_Shelf1);
 		addEntity(_Shelf2);
 		addEntity(_Shelf3);
@@ -350,11 +388,17 @@ public class LargeDemoScene extends Scene
 		addEntity(_PathwayPlatform1);
 		addEntity(_PathwayPlatform2);
 		addEntity(_PathwayPlatform3);
+		addEntity(_Pillar1);
+		addEntity(_Pillar2);
+		addEntity(_MarbleArch);
+		addEntity(_MarbleWall1);
+		addEntity(_MarbleWall2);
 		addEntity(_Floor);
 
 		// Give a name to all entities.
 		_Character.setName("Character");
 		_Exit1.setName("Exit1");
+		_Exit1.setName("Exit2");
 		_Shelf1.setName("Shelf1");
 		_Shelf2.setName("Shelf2");
 		_Shelf3.setName("Shelf3");
@@ -394,6 +438,11 @@ public class LargeDemoScene extends Scene
 		_PathwayPlatform1.setName("PathwayPlatform1");
 		_PathwayPlatform2.setName("PathwayPlatform2");
 		_PathwayPlatform3.setName("PathwayPlatform3");
+		_Pillar1.setName("Pillar1");
+		_Pillar1.setName("Pillar2");
+		_MarbleArch.setName("MarbleArch");
+		_MarbleWall1.setName("MarbleWall1");
+		_MarbleWall1.setName("MarbleWall2");
 		_Floor.setName("Floor");
 	}
 
@@ -405,7 +454,9 @@ public class LargeDemoScene extends Scene
 	{
 		// Load all entities' content.
 		_Character.loadContent();
-		_Exit1.loadContent("Bookshelf[1].png", 12);
+		_Exit1.loadContent("DoorDarkness[1].png", 1);
+		_Exit2.loadContent("DoorDarkness[1].png", 1);
+		_Exit2.getSprites().getSprite(0).setVisibility(Visibility.Invisible);
 		_Shelf1.loadContent("Bookshelf[1].png", 12);
 		_Shelf2.loadContent("Bookshelf[1].png", 12);
 		_Shelf3.loadContent("Bookshelf[1].png", 12);
@@ -446,10 +497,16 @@ public class LargeDemoScene extends Scene
 		_PathwayPlatform1.loadContent("StonePathwayBlock[2].png", 81);
 		_PathwayPlatform2.loadContent("StonePathwayBlock[4].png", 81);
 		_PathwayPlatform3.loadContent("StonePathwayBlock[3].png", 81);
+		_Pillar1.loadContent("MarblePillar[1].png", 13);
+		_Pillar2.loadContent("MarblePillar[1].png", 13);
+		_MarbleArch.loadContent("MarbleArch[1].png", 5);
+		_MarbleWall1.loadContent("MarbleWall[1].png", 22);
+		_MarbleWall2.loadContent("MarbleWall[1].png", 22);
 		_Floor.loadContent("WoodTiledFloor[1].png");
 
 		// Set their depths.
-		_Exit1.getBody().getShape().setBottomDepth(1);
+		_Exit1.getBody().getShape().setBottomDepth(144);
+		_Exit2.getBody().getShape().setBottomDepth(1);
 		_Shelf1.getBody().getShape().setBottomDepth(1);
 		_Shelf2.getBody().getShape().setBottomDepth(1);
 		_Shelf3.getBody().getShape().setBottomDepth(48);
@@ -493,6 +550,11 @@ public class LargeDemoScene extends Scene
 		_PathwayPlatform1.getBody().getShape().setBottomDepth(37);
 		_PathwayPlatform2.getBody().getShape().setBottomDepth(37);
 		_PathwayPlatform3.getBody().getShape().setBottomDepth(1);
+		_Pillar1.getBody().getShape().setBottomDepth(144);
+		_Pillar2.getBody().getShape().setBottomDepth(144);
+		_MarbleArch.getBody().getShape().setBottomDepth(184);
+		_MarbleWall1.getBody().getShape().setBottomDepth(144);
+		_MarbleWall2.getBody().getShape().setBottomDepth(144);
 		_Floor.getBody().getShape().setBottomDepth(0);
 	}
 }
