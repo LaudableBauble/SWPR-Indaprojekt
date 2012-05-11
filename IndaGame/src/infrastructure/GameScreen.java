@@ -4,6 +4,8 @@ import input.InputManager;
 
 import java.awt.Graphics2D;
 
+import screens.GameOverScreen;
+
 import auxillary.Helper;
 
 /**
@@ -73,10 +75,10 @@ public abstract class GameScreen
 	 */
 	public void update(GameTimer gameTime, boolean otherScreenHasFocus, boolean coveredByOtherScreen)
 	{
-		//Whether another screen has focus.
+		// Whether another screen has focus.
 		_OtherScreenHasFocus = otherScreenHasFocus;
 
-		//If exiting...
+		// If exiting...
 		if (_IsExiting)
 		{
 			// If the screen is going away to die, it should transition off.
@@ -196,6 +198,17 @@ public abstract class GameScreen
 			// Otherwise flag that it should transition off and then exit.
 			_IsExiting = true;
 		}
+	}
+
+	/**
+	 * End the game.
+	 * 
+	 * @param win
+	 *            Whether the game was won or lost.
+	 */
+	public void gameOver(boolean win)
+	{
+		_ScreenManager.addScreen(new GameOverScreen(win));
 	}
 
 	/**

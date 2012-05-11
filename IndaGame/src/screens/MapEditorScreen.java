@@ -51,7 +51,7 @@ public class MapEditorScreen extends GameScreen
 	private SceneManager _SceneManager;
 	// The camera.
 	private Camera2D _Camera;
-	
+
 	// The player.
 	private Player _Player;
 
@@ -82,10 +82,10 @@ public class MapEditorScreen extends GameScreen
 		_Camera.setPosition(new Vector2(1000, 1000));
 
 		// Create the scene manager, enable debug and add a scene.
-		_SceneManager = new SceneManager(_Camera);
+		_SceneManager = new SceneManager(this, _Camera);
 		DebugManager.getInstance().debug = true;
 		_SceneManager.addScene(new SmallDemoScene(_SceneManager));
-		
+
 		// Create the player.
 		_Player = new Player(_SceneManager.getCurrentScene());
 		_Player.setName("Player");
@@ -98,7 +98,7 @@ public class MapEditorScreen extends GameScreen
 		_Tabs.setFocusable(false);
 		_EntityTree = new FileTree(new File("src/data/entities"));
 		_SceneTree = new SceneTree(_SceneManager.getCurrentScene());
-		_InfoPanel = new EntityInfoPanel();
+		_InfoPanel = new EntityInfoPanel(_SceneManager.getCurrentScene());
 		_MenuBar = new JMenuBar();
 
 		// Handle the tree events.
@@ -190,7 +190,7 @@ public class MapEditorScreen extends GameScreen
 
 		// Load the scene manager's content.
 		_SceneManager.loadContent();
-		
+
 		// Load the player's content.
 		_Player.loadContent();
 

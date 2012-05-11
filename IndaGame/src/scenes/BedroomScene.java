@@ -5,6 +5,7 @@ import infrastructure.Enums.DepthDistribution;
 import main.Entity;
 import main.Exit;
 import main.Player;
+import main.Character;
 import main.Scene;
 import main.SceneManager;
 
@@ -17,10 +18,14 @@ import debug.DebugManager;
  */
 public class BedroomScene extends Scene
 {
+	// The characters.
+	private Character _Character;
+
 	// The exits.
 	private Exit _Exit1;
-	
+
 	// Entities.
+	private Entity _Key;
 	private Entity _Shelf;
 	private Entity _Wall1;
 	private Entity _Wall2;
@@ -58,11 +63,20 @@ public class BedroomScene extends Scene
 
 		// Name the scene.
 		_Name = "BedroomScene";
-		
+
+		// Create a character.
+		_Character = new Character(this, "Robeguy", 3);
+		_Character.getBody().setPosition(new Vector3(1000, 1025, 0));
+
 		// Create the exit.
 		_Exit1 = new Exit(this, "LargeDemoScene", new Vector3(1000, 1200, 15));
 		_Exit1.getBody().setPosition(new Vector3(890, 858, 0));
 		_Exit1.getBody().setIsStatic(true);
+
+		// Create a key.
+		_Key = new Entity(this);
+		_Key.getBody().setPosition(new Vector3(960, 900, 0));
+		_Key.getBody().setIsImmaterial(true);
 
 		// Create the shelf.
 		_Shelf = new Entity(this);
@@ -87,7 +101,7 @@ public class BedroomScene extends Scene
 		_Block2 = new Entity(this);
 		_Block2.getBody().setPosition(new Vector3(1130, 1077, 0));
 		_Block2.getBody().setIsStatic(true);
-		
+
 		// Create a block (main block west).
 		_Block3 = new Entity(this);
 		_Block3.getBody().setPosition(new Vector3(993, 943, 0));
@@ -98,17 +112,17 @@ public class BedroomScene extends Scene
 		_Stairs.getBody().setPosition(new Vector3(1037.5, 1026.5, 0));
 		_Stairs.getBody().setIsStatic(true);
 		_Stairs.getBody().getShape().setDepthDistribution(DepthDistribution.Right);
-		
+
 		// Create a pillar (west of marble arch).
 		_Pillar1 = new Entity(this);
 		_Pillar1.getBody().setPosition(new Vector3(866, 860, 0));
 		_Pillar1.getBody().setIsStatic(true);
-		
+
 		// Create a pillar (east of marble arch).
 		_Pillar2 = new Entity(this);
 		_Pillar2.getBody().setPosition(new Vector3(914, 860, 0));
 		_Pillar2.getBody().setIsStatic(true);
-		
+
 		// Create a marble arch (north of dark block 8).
 		_MarbleArch = new Entity(this);
 		_MarbleArch.getBody().setPosition(new Vector3(890, 860, 0));
@@ -120,7 +134,9 @@ public class BedroomScene extends Scene
 		_Floor.getBody().setIsStatic(true);
 
 		// Add all entities to the scene.
+		addEntity(_Character);
 		addEntity(_Exit1);
+		addEntity(_Key);
 		addEntity(_Shelf);
 		addEntity(_Wall1);
 		addEntity(_Wall2);
@@ -134,7 +150,9 @@ public class BedroomScene extends Scene
 		addEntity(_Floor);
 
 		// Give a name to all entities.
+		_Character.setName("Robeguy");
 		_Exit1.setName("Exit1");
+		_Key.setName("Key");
 		_Shelf.setName("Shelf");
 		_Wall1.setName("Wall1");
 		_Wall2.setName("Wall2");
@@ -143,7 +161,7 @@ public class BedroomScene extends Scene
 		_Block3.setName("Block3");
 		_Stairs.setName("Stairs");
 		_Pillar1.setName("Pillar1");
-		_Pillar1.setName("Pillar2");
+		_Pillar2.setName("Pillar2");
 		_MarbleArch.setName("MarbleArch");
 		_Floor.setName("Floor");
 	}
@@ -154,7 +172,9 @@ public class BedroomScene extends Scene
 	@Override
 	public void loadContent()
 	{
+		_Character.loadContent();
 		_Exit1.loadContent("DoorDarkness[1].png", 1);
+		_Key.loadContent("GoldenKey[1].png", 2);
 		_Shelf.loadContent("Bookshelf[1].png", 12);
 		_Wall1.loadContent("MarbleWall[2].png", 5);
 		_Wall2.loadContent("MarbleWall[3].png", 49);
@@ -168,7 +188,9 @@ public class BedroomScene extends Scene
 		_Floor.loadContent("DarkTiledFloor[1].png");
 
 		// Set their depths.
+		_Character.getBody().getShape().setBottomDepth(1);
 		_Exit1.getBody().getShape().setBottomDepth(1);
+		_Key.getBody().getShape().setBottomDepth(47);
 		_Shelf.getBody().getShape().setBottomDepth(47);
 		_Wall1.getBody().getShape().setBottomDepth(47);
 		_Wall2.getBody().getShape().setBottomDepth(47);

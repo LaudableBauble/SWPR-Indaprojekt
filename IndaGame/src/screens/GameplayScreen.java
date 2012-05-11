@@ -60,7 +60,7 @@ public class GameplayScreen extends GameScreen
 		_Camera.setPosition(new Vector2(1000, 900));
 
 		// Create the scene manager.
-		_SceneManager = new SceneManager(_Camera);
+		_SceneManager = new SceneManager(this, _Camera);
 
 		// Enable debug.
 		DebugManager.getInstance().debug = true;
@@ -69,7 +69,6 @@ public class GameplayScreen extends GameScreen
 		_SceneManager.addScene(new EscapeScene(_SceneManager));
 		_SceneManager.addScene(new BedroomScene(_SceneManager));
 		_SceneManager.addScene(new LargeDemoScene(_SceneManager));
-		_SceneManager.addScene(new SmallDemoScene(_SceneManager));
 
 		// Create the player.
 		_Player = new Player(_SceneManager.getCurrentScene());

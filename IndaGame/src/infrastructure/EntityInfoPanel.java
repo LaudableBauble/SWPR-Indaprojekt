@@ -23,6 +23,7 @@ import auxillary.Vector2;
 import auxillary.Vector3;
 
 import main.Entity;
+import main.Scene;
 
 /**
  * An entity info panel displays information about an entity.
@@ -45,8 +46,11 @@ public class EntityInfoPanel extends JPanel
 
 	/**
 	 * Constructor for an entity info panel.
+	 * 
+	 * @param scene
+	 *            The scene to edit.
 	 */
-	public EntityInfoPanel()
+	public EntityInfoPanel(Scene scene)
 	{
 		// Set some settings.
 		setLayout(null);
@@ -85,7 +89,7 @@ public class EntityInfoPanel extends JPanel
 		_StaticState.setSize(150, 20);
 
 		// Initialize some variables.
-		_Entity = new Entity(null);
+		_Entity = new Entity(scene);
 		_Image = null;
 		_ImagePosition = Vector2.empty();
 	}

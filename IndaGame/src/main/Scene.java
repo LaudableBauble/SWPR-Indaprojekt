@@ -68,9 +68,6 @@ public class Scene
 		_Physics = new PhysicsSimulator();
 		_Composite = new DepthComposite(_SceneManager.getCamera().getViewportSize());
 		_Entrances = new ArrayList<Vector3>();
-
-		// Let the debug manager know about the physics simulator.
-		DebugManager.getInstance().setPhysicsSimulator(_Physics);
 	}
 
 	/**

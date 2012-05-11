@@ -159,10 +159,10 @@ public class Character extends Entity
 
 		// If no target has been found or if the distance to it is too far, skip here.
 		if (_Target == null || Vector3.distance(_Target.getPosition(), getPosition()) > 200) { return false; }
-		
-		//If the velocity is too high, skip.
+
+		// If the velocity is too high, skip.
 		if (_Body.getVelocity().toVector2().getLength() > _MaxSpeed) { return false; }
-		
+
 		_Body.addForce(Vector2.multiply(Vector3.subtract(_Target.getPosition(), getPosition()).toVector2().normalize(), _Speed));
 
 		// Check if the character has collided with the player.
@@ -170,8 +170,8 @@ public class Character extends Entity
 		{
 			if (body.getEntity() instanceof Player)
 			{
-				// player = (Player) body.getEntity();
-				// player.healthReduce();
+				// Damage the player.
+				((Player) body.getEntity()).reduceHealth(.5f);
 			}
 		}
 

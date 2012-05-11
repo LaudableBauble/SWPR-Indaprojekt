@@ -105,7 +105,25 @@ public class Camera2D
 		// Set the position.
 		moveAmount(Vector2.multiply(direction, _CameraSpeed));
 	}
-	
+
+	/**
+	 * Move the camera.
+	 * 
+	 * @param destination
+	 *            The destination to move to.
+	 */
+	public void moveTo(Vector2 destination)
+	{
+		// If the distance to the destination is too short, stop here.
+		if (Vector2.getDistance(_Position, destination) < 100) { return; }
+
+		// Get the direction.
+		Vector2 direction = Vector2.subtract(destination, _Position).normalize();
+
+		// Set the position.
+		moveAmount(Vector2.multiply(direction, 2));
+	}
+
 	/**
 	 * Rotate the camera.
 	 * 

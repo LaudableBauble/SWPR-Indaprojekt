@@ -1,12 +1,15 @@
 package main;
 
 import infrastructure.Camera2D;
+import infrastructure.GameScreen;
 import infrastructure.GameTimer;
 import input.InputManager;
 
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
+
+import auxillary.Helper;
 
 import debug.DebugManager;
 
@@ -15,6 +18,8 @@ import debug.DebugManager;
  */
 public class SceneManager
 {
+	// The screen this scene manager is displayed in.
+	private GameScreen _Screen;
 	// The camera.
 	private Camera2D _Camera;
 	// List of entities.
@@ -25,23 +30,28 @@ public class SceneManager
 	/**
 	 * Constructor for a scene manager.
 	 * 
+	 * @param screen
+	 *            The screen this manager is part of.
 	 * @param camera
 	 *            The camera that will be used to view the scenes with.
 	 */
-	public SceneManager(Camera2D camera)
+	public SceneManager(GameScreen screen, Camera2D camera)
 	{
-		initialize(camera);
+		initialize(screen, camera);
 	}
 
 	/**
 	 * Initialize the scene manager.
 	 * 
+	 * @param screen
+	 *            The screen this manager is part of.
 	 * @param camera
 	 *            The camera that will be used to view the scenes with.
 	 */
-	protected void initialize(Camera2D camera)
+	protected void initialize(GameScreen screen, Camera2D camera)
 	{
 		// Initialize the variables.
+		_Screen = screen;
 		_Camera = camera;
 		_Scenes = new ArrayList<>();
 		_CurrentScene = null;
@@ -89,7 +99,12 @@ public class SceneManager
 		}
 
 		// Update the camera.
+		if (!DebugManager.getInstance().debug)
+		{
+			_Camera.moveTo(Helper.getScreenPosition(DebugManager.getInstance().getDebugBody().getPosition()));
+		}
 		_Camera.update(gameTime);
+
 		// Share the camera matrix with the debug manager.
 		DebugManager.getInstance().setTransformMatrix(_Camera.getTransformMatrix());
 	}
@@ -130,10 +145,10 @@ public class SceneManager
 		scene.setSceneManager(this);
 		scene.loadContent();
 
-		// Set the current scene if it has not already ben set.
+		// Set the current scene if it has not already been set.
 		if (_CurrentScene == null && _Scenes.size() > 0)
 		{
-			_CurrentScene = _Scenes.get(0);
+			setCurrentScene(0);
 		}
 
 		return scene;
@@ -167,7 +182,7 @@ public class SceneManager
 	 */
 	public void setCurrentScene(int index)
 	{
-		_CurrentScene = _Scenes.get(index);
+		setCurrentScene(_Scenes.get(index));
 	}
 
 	/**
@@ -179,13 +194,14 @@ public class SceneManager
 	public void setCurrentScene(Scene scene)
 	{
 		// If the scene has not been added yet, do so.
-		if (_Scenes.contains(scene))
+		if (!_Scenes.contains(scene))
 		{
 			addScene(scene);
 		}
 
 		// Switch to the scene.
 		_CurrentScene = scene;
+		DebugManager.getInstance().setPhysicsSimulator(_CurrentScene.getPhysicsSimulator());
 	}
 
 	/**
@@ -200,7 +216,7 @@ public class SceneManager
 		Scene scene = getScene(name);
 
 		// Switch scenes, but only if the new scene is not null.
-		_CurrentScene = scene != null ? scene : _CurrentScene;
+		setCurrentScene(scene != null ? scene : _CurrentScene);
 	}
 
 	/**
@@ -220,5 +236,15 @@ public class SceneManager
 
 		// No scene with that name was found, return null.
 		return null;
+	}
+
+	/**
+	 * Get the screen this manager is part of.
+	 * 
+	 * @return The screen.
+	 */
+	public GameScreen getScreen()
+	{
+		return _Screen;
 	}
 }

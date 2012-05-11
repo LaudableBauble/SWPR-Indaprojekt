@@ -101,7 +101,7 @@ public class LargeDemoScene extends Scene
 		_Name = "LargeDemoScene";
 
 		// Create a character.
-		_Character = new main.Character(this, "hydra", 3);
+		_Character = new main.Character(this, "Skeleton", 3);
 		_Character.getBody().setPosition(new Vector3(1040, 1010, 50));
 
 		// Create the exit.

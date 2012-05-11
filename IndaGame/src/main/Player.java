@@ -30,6 +30,12 @@ public class Player extends Entity
 	private double _MaxSpeed;
 	// The currently active sprite.
 	private Sprite _CurrentSprite;
+	// The health.
+	private float _Health;
+	// Whether the player is dead.
+	private boolean _IsDead;
+	// Whether the player has a key or not.
+	private boolean _HasKey;
 
 	/**
 	 * Constructor for a player.
@@ -56,6 +62,9 @@ public class Player extends Entity
 		// Initialize the variables.
 		_CanBeControlled = true;
 		_MaxSpeed = 2;
+		_Health = 10;
+		_IsDead = false;
+		_HasKey = false;
 	}
 
 	/**
@@ -172,6 +181,22 @@ public class Player extends Entity
 		changeSprite();
 		// If to change scenes.
 		changeScene();
+
+		// Check for fall damage, key pickup and game win.
+		checkFall();
+		pickUpKey();
+		checkEndGame();
+	}
+
+	/**
+	 * If the player has a high downward velocity and a low position, damage him.
+	 */
+	private void checkFall()
+	{
+		if (_Body.getVelocity().z < -10 && _Body.getPosition().z < 0)
+		{
+			reduceHealth(1);
+		}
 	}
 
 	/**
@@ -179,6 +204,9 @@ public class Player extends Entity
 	 */
 	private void changeScene()
 	{
+		// We can only change scene if the player has picked up a key.
+		if (!_HasKey) { return; }
+
 		// Create the variable to store the exit.
 		Exit exit = null;
 
@@ -204,6 +232,38 @@ public class Player extends Entity
 		_Scene.removeEntity(this);
 		_Scene.getSceneManager().setCurrentScene(exit.getGotoScene());
 		_Scene.getSceneManager().getScene(exit.getGotoScene()).addEntity(this);
+	}
+
+	/**
+	 * Pickup a key if the player has collided with it.
+	 */
+	private void pickUpKey()
+	{
+		// Check if the player has collided with an exit.
+		for (Body body : _Body.getCollisions())
+		{
+			if (body.getEntity().getName().equals("Key"))
+			{
+				_HasKey = true;
+				body.getEntity().getSprites().getSprite(0).setVisibility(Visibility.Invisible);
+			}
+		}
+	}
+
+	/**
+	 * End the game if the player has collided with an end door.
+	 */
+	private void checkEndGame()
+	{
+		// Check if the player has collided with an end door.
+		for (Body body : _Body.getCollisions())
+		{
+			if (body.getEntity().getName().equals("EndDoor") && !_IsDead)
+			{
+				_Scene.getSceneManager().getScreen().gameOver(true);
+				_IsDead = true;
+			}
+		}
 	}
 
 	/**
@@ -266,6 +326,24 @@ public class Player extends Entity
 
 		// No sprite matched.
 		return _CurrentSprite;
+	}
+
+	/**
+	 * Reduce the player's health with a specified amount.
+	 * 
+	 * @param amount
+	 *            The amount to reduce the health.
+	 */
+	public void reduceHealth(double amount)
+	{
+		_Health -= amount;
+
+		// If the health has dropped beneath 0, end the game.
+		if (_Health < 0 && !_IsDead)
+		{
+			_Scene.getSceneManager().getScreen().gameOver(false);
+			_IsDead = true;
+		}
 	}
 
 	/**
