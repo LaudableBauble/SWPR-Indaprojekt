@@ -44,7 +44,7 @@ public class WindowFrame extends JFrame
 	public WindowFrame()
 	{
 		// Create a JFrame as window.
-		super("Inda11");
+		super("Inda11 - A game made by Sebastian Wigren and Philip Rendén");
 
 		// Set the window's bounds, make the window visible and make the window unable to resize.
 		setVisible(true);
