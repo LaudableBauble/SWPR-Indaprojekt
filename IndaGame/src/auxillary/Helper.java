@@ -34,6 +34,9 @@ public final class Helper
 	public static final Color Mantis = new Color(116, 195, 101);
 	public static final Color ZealPalace = new Color(48, 32, 16);
 
+	// Paths.
+	public static final String ContentRoot = "src/data/";
+
 	/**
 	 * The ratio between height (Y-coordinate) and depth (Z-coordinate). Used to simulate depth. Positive depth is 'upwards'.
 	 */
@@ -266,7 +269,7 @@ public final class Helper
 	public static BufferedImage loadImage(String path, boolean pathHelp)
 	{
 		// If path help is enabled.
-		if (pathHelp) { return loadImage("src/data/images/" + path); }
+		if (pathHelp) { return loadImage(ContentRoot + "/images/" + path); }
 		return loadImage(path);
 	}
 
@@ -388,7 +391,7 @@ public final class Helper
 		try
 		{
 			// Create the file.
-			File file = new File("src/data/scenes/" + path);
+			File file = new File(ContentRoot + "/scenes/" + path);
 
 			// Set up the unmarshaller and load the scene content.
 			SceneContent content = (SceneContent) JAXBContext.newInstance(SceneContent.class).createUnmarshaller().unmarshal(file);
@@ -417,7 +420,7 @@ public final class Helper
 		try
 		{
 			// Create the file.
-			File file = new File("src/data/scenes/" + scene.getName() + ".xml");
+			File file = new File(ContentRoot + "/scenes/" + scene.getName() + ".xml");
 
 			// Create the scene content data.
 			SceneContent content = SceneContent.createContent(scene);
@@ -448,7 +451,7 @@ public final class Helper
 		try
 		{
 			// Create the file.
-			File file = new File("src/data/entities/" + path);
+			File file = new File(ContentRoot + "/entities/" + path);
 
 			// Set up the unmarshaller and load the entity content.
 			EntityContent content = (EntityContent) JAXBContext.newInstance(EntityContent.class).createUnmarshaller().unmarshal(file);
@@ -477,7 +480,7 @@ public final class Helper
 		try
 		{
 			// Create the file.
-			File file = new File("src/data/entities/" + entity.getName() + ".xml");
+			File file = new File(ContentRoot + "/entities/" + entity.getName() + ".xml");
 
 			// Create the entity content data.
 			EntityContent content = EntityContent.createContent(entity);
@@ -554,7 +557,7 @@ public final class Helper
 	{
 		try
 		{
-			ImageIO.write(image, "bmp", new File("src/data/image.bmp"));
+			ImageIO.write(image, "bmp", new File(ContentRoot + "/image.bmp"));
 		}
 		catch (Exception e)
 		{

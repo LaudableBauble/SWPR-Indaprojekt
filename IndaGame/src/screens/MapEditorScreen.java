@@ -96,7 +96,7 @@ public class MapEditorScreen extends GameScreen
 		// Create the GUI components.
 		_Tabs = new JTabbedPane();
 		_Tabs.setFocusable(false);
-		_EntityTree = new FileTree(new File("src/data/entities"));
+		_EntityTree = new FileTree(new File(Helper.ContentRoot + "/entities"));
 		_SceneTree = new SceneTree(_SceneManager.getCurrentScene());
 		_InfoPanel = new EntityInfoPanel(_SceneManager.getCurrentScene());
 		_MenuBar = new JMenuBar();
@@ -132,7 +132,7 @@ public class MapEditorScreen extends GameScreen
 			public void actionPerformed(ActionEvent e)
 			{
 				// Create a file chooser and show it.
-				JFileChooser fc = new JFileChooser("src/data/scenes");
+				JFileChooser fc = new JFileChooser(Helper.ContentRoot + "/scenes");
 				int decision = fc.showOpenDialog(_ScreenManager.getGame().getWindow());
 
 				// If the user wants to load a file, do so.
@@ -402,7 +402,7 @@ public class MapEditorScreen extends GameScreen
 	private Entity loadEntity(String path)
 	{
 		// Load the entity from file. Remove the first 17 characters from the path (src/data/entities).
-		Entity entity = Helper.loadEntity(path.substring(17));
+		Entity entity = Helper.loadEntity(path.substring(Helper.ContentRoot.length() + 9));
 		// Add the body to the physics simulator.
 		_SceneManager.getCurrentScene().getPhysicsSimulator().addBody(entity.getBody());
 
