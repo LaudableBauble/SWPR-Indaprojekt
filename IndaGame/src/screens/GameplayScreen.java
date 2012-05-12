@@ -66,8 +66,8 @@ public class GameplayScreen extends GameScreen
 		DebugManager.getInstance().debug = true;
 
 		// Add a scene to the scene manager.
-		_SceneManager.addScene(new EscapeScene(_SceneManager));
 		_SceneManager.addScene(new BedroomScene(_SceneManager));
+		_SceneManager.addScene(new EscapeScene(_SceneManager));
 		_SceneManager.addScene(new LargeDemoScene(_SceneManager));
 
 		// Create the player.

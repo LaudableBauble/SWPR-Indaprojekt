@@ -58,7 +58,7 @@ public class Entity
 		_Name = "";
 		_Scene = scene;
 		_Sprites = new SpriteManager();
-		_Body = new Body(_Scene.getPhysicsSimulator());
+		_Body = new Body(_Scene != null ? _Scene.getPhysicsSimulator() : null);
 		_Body.setEntity(this);
 		_Body.addBody();
 	}
@@ -86,7 +86,7 @@ public class Entity
 	{
 		// Clear all sprites.
 		_Sprites = new SpriteManager();
-		
+
 		// Add a sprite.
 		_Sprites.addSprite(new Sprite("Entity"));
 		_Sprites.getSprite(0).addFrame(new Frame(spritePath));

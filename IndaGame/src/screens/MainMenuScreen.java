@@ -21,7 +21,7 @@ public class MainMenuScreen extends MenuScreen
 		// Create our menu entries.
 		MenuEntry playGameMenuEntry = new MenuEntry("Play Game");
 		MenuEntry mapEditorMenuEntry = new MenuEntry("Map Editor");
-		MenuEntry optionsMenuEntry = new MenuEntry("Options");
+		MenuEntry aboutMenuEntry = new MenuEntry("About");
 		MenuEntry exitMenuEntry = new MenuEntry("Exit");
 
 		// Hook up menu event handlers.
@@ -40,7 +40,13 @@ public class MainMenuScreen extends MenuScreen
 				mapEditorMenuEntrySelected();
 			}
 		});
-		// optionsMenuEntry.Selected += OptionsMenuEntrySelected;
+		aboutMenuEntry.addEntrySelectEventListener(new EntrySelectEventListener()
+		{
+			public void handleEvent(EntrySelectEvent e)
+			{
+				aboutMenuEntrySelected();
+			}
+		});
 		exitMenuEntry.addEntrySelectEventListener(new EntrySelectEventListener()
 		{
 			public void handleEvent(EntrySelectEvent e)
@@ -52,7 +58,7 @@ public class MainMenuScreen extends MenuScreen
 		// Add entries to the menu.
 		_MenuEntries.add(playGameMenuEntry);
 		_MenuEntries.add(mapEditorMenuEntry);
-		_MenuEntries.add(optionsMenuEntry);
+		_MenuEntries.add(aboutMenuEntry);
 		_MenuEntries.add(exitMenuEntry);
 	}
 
@@ -78,9 +84,9 @@ public class MainMenuScreen extends MenuScreen
 	 * @param sender
 	 * @param e
 	 */
-	void optionsMenuEntrySelected()
+	void aboutMenuEntrySelected()
 	{
-		// _ScreenManager.AddScreen(new OptionsMenuScreen());
+		_ScreenManager.addScreen(new AboutMenuScreen());
 	}
 
 	/**

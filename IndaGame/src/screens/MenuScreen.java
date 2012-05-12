@@ -23,6 +23,8 @@ public abstract class MenuScreen extends GameScreen
 	protected ArrayList<MenuEntry> _MenuEntries;
 	protected int _SelectedEntry;
 	protected String _MenuTitle;
+	protected Vector2 _MenuPosition;
+	protected Vector2 _TitlePosition;
 
 	/**
 	 * Constructor for the menu screen.
@@ -38,6 +40,8 @@ public abstract class MenuScreen extends GameScreen
 		_TransitionOffTime = TimeSpan.FromSeconds(1);
 		_SelectedEntry = 0;
 		_MenuEntries = new ArrayList<MenuEntry>();
+		_MenuPosition = new Vector2(100, 300);
+		_TitlePosition = new Vector2(250, 80);
 	}
 
 	/**
@@ -135,7 +139,7 @@ public abstract class MenuScreen extends GameScreen
 		// Get the font.
 		Font font = _ScreenManager.getMenuFont();
 		// The position of the menu.
-		Vector2 position = new Vector2(100, 300);
+		Vector2 position = new Vector2(_MenuPosition.x, _MenuPosition.y);
 
 		// Make the menu slide into place during transitions, using a
 		// power curve to make things look more interesting (this makes
@@ -162,7 +166,7 @@ public abstract class MenuScreen extends GameScreen
 		}
 
 		// Draw the menu title.
-		Vector2 titlePosition = new Vector2(250, 80);
+		Vector2 titlePosition = new Vector2(_TitlePosition.x, _TitlePosition.y);
 		Vector2 titleOrigin = Vector2.divide(new Vector2(font.getStringBounds(_MenuTitle, graphics.getFontRenderContext())), 2);
 		Color titleColor = new Color(62, 69, 71, getTransitionAlpha());
 		float titleScale = 1.5f;
