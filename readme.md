@@ -1,15 +1,15 @@
-Indaprojekt - Sebastian Wigren och Philip Rendén
+Indaprojekt
 
-För att testa spelet kör IndaGame.jar som finns i IndaGame - Runnable mappen. Fungerar det inte att bara dubbelklicka på den så kan man köra den igenom kommandotolken istället.
+Fï¿½r att testa spelet kï¿½r IndaGame.jar som finns i IndaGame - Runnable mappen. Fungerar det inte att bara dubbelklicka pï¿½ den sï¿½ kan man kï¿½ra den igenom kommandotolken istï¿½llet.
 
 java -jar IndaGame.jar
 
 Man styr spelaren genom piltangenterna och hoppar med mellanslag.
 
-Kameran kan förflyttas med JKLI, roteras med YU och zoomas med OP.
+Kameran kan fï¿½rflyttas med JKLI, roteras med YU och zoomas med OP.
 
-Debug hanteraren kan stängas av och på med F1. När debug hanteraren är på kan man också ställa in fysik simulatorn med diverse inställningar.
+Debug hanteraren kan stï¿½ngas av och pï¿½ med F1. Nï¿½r debug hanteraren ï¿½r pï¿½ kan man ocksï¿½ stï¿½lla in fysik simulatorn med diverse instï¿½llningar.
 
-Man förflyttar sig i menyn med piltangenter och Enter/Escape för att gå fram och tillbaka.
+Man fï¿½rflyttar sig i menyn med piltangenter och Enter/Escape fï¿½r att gï¿½ fram och tillbaka.
 
-Map editorn använder sig av musen för att placera entiteter (krävs ett dubbelklick) och siffrorna 1 och 2 för att förflytta entiteten i höjdled.
+Map editorn anvï¿½nder sig av musen fï¿½r att placera entiteter (krï¿½vs ett dubbelklick) och siffrorna 1 och 2 fï¿½r att fï¿½rflytta entiteten i hï¿½jdled.
